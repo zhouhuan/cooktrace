@@ -8,7 +8,7 @@ name: android
 #                  （Release 资产同时就是应用内在线升级的下载源，见
 #                   src/lib/updates.js → zhouhuan/cooktrace）
 #   init-signing — 一次性手动触发：生成 release 签名密钥库。把输出的
-#                  base64 与口令存为仓库 secrets（KEYSTORE_BASE64 /
+#                  keystore 与口令存为仓库 secrets（KEYSTORE_BASE64 /
 #                  KEYSTORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD）后，后续
 #                  所有 release 构建将使用同一签名，保证覆盖安装升级可用。
 #                  生成后请同时把 keystore 文件自行备份——丢失后无法再对
@@ -21,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       keystore_password:
-        description: 'init-signing 用的密钥库口令（留空则自动生成随机口令）'
+        description: '输入你自行生成并妥善保存的强口令（至少 20 位）；不要复用其他服务密码'
         required: true
 
 permissions:
@@ -53,7 +53,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
           TAG_VERSION="${GITHUB_REF_NAME#v}"
-          APP_VERSION=$(grep -oP 'versionName\\s+"[^"]+"' android/app/build.gradle | head -1 | sed 's/.*"\\(.*\\)"/\\1/')
+          APP_VERSION=$(grep -oP 'versionName\s+"[^"]+"' android/app/build.gradle | head -1 | sed 's/.*"\(.*\)"/\1/')
           test "$TAG_VERSION" = "$APP_VERSION" || { echo "Tag $TAG_VERSION does not match Android versionName $APP_VERSION"; exit 1; }
 
       - uses: actions/setup-node@v4
@@ -148,21 +148,14 @@ jobs:
             -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass "$PASS" -keypass "$PASS" \
             -dname "CN=CookTrace, OU=Apps, O=zhouhuan, C=CN"
-          echo "=============================================================="
-          echo " 1) 备份以下 base64 到本地文件（例如 cooktrace-release.keystore.b64）"
-          echo "=============================================================="
-          base64 -w 0 cooktrace-release.keystore
-          echo ""
-          echo "=============================================================="
-          echo " 2) 把以下值存为仓库 Settings → Secrets and variables → Actions："
-          echo "      KEYSTORE_BASE64  = 上面的 base64"
-          echo "      KEYSTORE_PASSWORD = the password you entered in the workflow form"
-          echo "      KEY_ALIAS         = cooktrace"
-          echo "      KEY_PASSWORD      = the same password you entered in the workflow form"
-          echo " 3) 手动保存 keystore 文件本身（本产物不落盘到仓库）："
-          echo "=============================================================="
-          echo "The password is masked in logs; retain the value you entered."
-          ls -la cooktrace-release.keystore
+          echo "Keystore generated. No private-key material or password is printed to logs."
+          echo "Download the short-lived release-keystore artifact, back up the file offline,"
+          echo "then locally base64-encode it and save the values as repository Actions secrets:"
+          echo "  KEYSTORE_BASE64  = base64-encoded keystore file"
+          echo "  KEYSTORE_PASSWORD = the password entered in this workflow"
+          echo "  KEY_ALIAS         = cooktrace"
+          echo "  KEY_PASSWORD      = the same password entered in this workflow"
+          ls -lh cooktrace-release.keystore
       - uses: actions/upload-artifact@v4
         with:
           name: release-keystore
