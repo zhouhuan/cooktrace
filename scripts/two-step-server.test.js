@@ -221,7 +221,7 @@ test('setup: password first, then the secret; on only after a right code; ten re
   assert.ok(existsSync(keyFile));
   assert.equal(statSync(keyFile).mode & 0o077, 0, 'key file is private');
   assert.equal(S.log.includes(secrets.alice), false, 'the log never has the secret');
-  assert.match(S.log, /\[two-step\] alice \(id \d+\): turned on/);
+  assert.match(S.log, /\[two-step\] alice \(id \d+\): 已开启/);
   // safeUser says it's on (Settings, Users), never more.
   const users = await send(S, { method: 'GET', path: '/api/auth/users', bearer: tok.admin, ip });
   const a = users.data.find((u) => u.username === 'alice');
@@ -401,7 +401,7 @@ test('new recovery codes and turning off take the password and a code', { skip: 
   const db = openDb(S);
   assert.equal(db.prepare('SELECT COUNT(*) n FROM user_two_step_recovery WHERE user_id = ?').get(ids.ivy).n, 0);
   db.close();
-  assert.match(S.log, /ivy \(id \d+\): turned off by its owner/);
+  assert.match(S.log, /ivy \(id \d+\): 被账号所有者关闭/);
   // A browser session needs its CSRF token.
   const cookieLogin = await login('ivy', ip);
   const csrf = jwt().decode(cookieLogin.cookie).csrf;
@@ -422,7 +422,7 @@ test('admin reset: own password, not themselves, admins only, own code when they
   assert.equal((await reset('admin', ids.jo, { password: PW })).status, 200);
   assert.equal((await reset('admin', ids.jo, { password: PW })).status, 400, 'already off');
   assert.equal((await login('jo', ip)).status, 200);
-  assert.match(S.log, /jo \(id \d+\): reset by an admin by admin \(id \d+\)/);
+  assert.match(S.log, /jo \(id \d+\): 被管理员重置 by admin \(id \d+\)/);
 
   // An admin with two-step sign-in on gives their code as well: a session left open isn't enough.
   await enable('admin2');
@@ -449,7 +449,7 @@ test('RECOVERY_TOKEN resets one account and nothing else', { skip: !ready }, asy
   assert.equal((await recover({ token: RECOVERY_TOKEN, username: 'Lee ' })).status, 200);
   assert.equal((await login('lee', ip)).status, 200, 'lee: password alone');
   assert.equal((await login('max', ip)).data.two_step, 'verify', 'max: still asked');
-  assert.match(S.log, /lee \(id \d+\): reset with the RECOVERY_TOKEN/);
+  assert.match(S.log, /lee \(id \d+\): 使用 RECOVERY_TOKEN 重置/);
   assert.equal(S.log.includes(RECOVERY_TOKEN), false);
   // Every account is still there.
   assert.ok((await send(S, { method: 'GET', path: '/api/auth/users', bearer: tok.admin, ip })).data.length > 10);
