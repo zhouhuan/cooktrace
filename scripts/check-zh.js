@@ -45,15 +45,61 @@ function flatten(obj, prefix = '') {
 }
 
 function placeholders(s) {
-  const source = String(s);
-  // Compare interpolation names and ICU expression structure separately.
-  // A greedy "{...}" match breaks on ICU's nested plural/select branches.
-  const variables = [...source.matchAll(/\\{\\s*([A-Za-z_][\\w.-]*)\\s*(?=\\}|,)/g)].map(m => m[1]).sort();
-  const icu = [...source.matchAll(/\\{\\s*([A-Za-z_][\\w.-]*)\\s*,\\s*(plural|select|selectordinal)\\s*,/g)]
-    .map(m => `${m[1]}:${m[2]}`).sort();
-  const selectors = [...source.matchAll(/(?:^|[\\s,])((?:=\\d+)|zero|one|two|few|many|other)\\s*\\{/g)]
-    .map(m => m[1]).sort();
-  return JSON.stringify({ variables, icu, selectors });
+  const variables = [];
+  const icu = [];
+  const selectors = [];
+
+  function closingBrace(source, open) {
+    let depth = 0;
+    for (let i = open; i < source.length; i++) {
+      if (source[i] === '{') depth++;
+      else if (source[i] === '}' && --depth === 0) return i;
+    }
+    return -1;
+  }
+
+  function scan(source) {
+    for (let i = 0; i < source.length; i++) {
+      if (source[i] !== '{') continue;
+      const rest = source.slice(i + 1);
+      const header = rest.match(/^\\s*([A-Za-z_][\\w.-]*)\\s*,\\s*(plural|select|selectordinal)\\s*,/);
+      if (header) {
+        variables.push(header[1]);
+        icu.push(`${header[1]}:${header[2]}`);
+        let pos = i + 1 + header[0].length;
+        while (pos < source.length) {
+          while (/\\s/.test(source[pos] || '')) pos++;
+          if (source[pos] === '}') { i = pos; break; }
+          const selector = source.slice(pos).match(/^(?:=\\d+|[A-Za-z_][\\w-]*)/);
+          if (!selector) break;
+          selectors.push(selector[0]);
+          pos += selector[0].length;
+          while (/\\s/.test(source[pos] || '')) pos++;
+          if (source[pos] !== '{') break;
+          const end = closingBrace(source, pos);
+          if (end < 0) break;
+          scan(source.slice(pos + 1, end));
+          pos = end + 1;
+        }
+        i = pos;
+        continue;
+      }
+      // A simple interpolation is a lowercase identifier. Uppercase words
+      // such as {Today} are literal branch text in existing ICU messages.
+      const simple = rest.match(/^\\s*([a-z_][\\w.-]*)\\s*\\}/);
+      if (simple) {
+        variables.push(simple[1]);
+        i += simple[0].length;
+      }
+    }
+  }
+
+  scan(String(s));
+  return JSON.stringify({
+    variables: variables.sort(),
+    icu: icu.sort(),
+    selectors: selectors.sort(),
+  });
 }
 
 function foreignRuns(value) {
