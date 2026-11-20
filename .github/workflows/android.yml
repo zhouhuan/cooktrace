@@ -84,7 +84,7 @@ jobs:
           printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/app/cooktrace-release.keystore
           keytool -list -keystore android/app/cooktrace-release.keystore -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
           cat > android/keystore.properties <<EOF
-          storeFile=cooktrace-release.keystore
+          storeFile=../app/cooktrace-release.keystore
           storePassword=$KEYSTORE_PASSWORD
           keyAlias=$KEY_ALIAS
           keyPassword=$KEY_PASSWORD
