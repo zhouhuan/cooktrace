@@ -248,7 +248,7 @@
     "env_locked": "由环境锁定",
     "model_hint_prefix": "输入厂商提供的准确模型 ID（参见",
     "model_list_google": "Google 模型列表",
-    "model_list_anthropic": "Anthropic 模型列表",
+    "model_list_anthropic": "第三方模型列表",
     "model_list_openai": "OpenAI 模型列表",
     "model_hint_suffix": "）。如果预设下拉列表中没有你想要的模型，可使用此选项。",
     "show": "显示",
