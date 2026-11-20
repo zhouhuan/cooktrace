@@ -104,17 +104,17 @@ function placeholders(s) {
 
 function foreignRuns(value) {
   const stripped = String(value)
-    .replace(/https?:\\/\\/[^\\s<>"{}]+/gi, ' ')
-    .replace(/@:[\\w.]+/g, ' ')
-    .replace(/<code>[\\s\\S]*?<\\/code>/gi, ' ')
-    .replace(/<\\/?[a-zA-Z][^>]*>/g, ' ')
+    .replace(/https?:\/\/[^\s<>"{}]+/gi, ' ')
+    .replace(/@:[\w.]+/g, ' ')
+    .replace(/<code>[\s\S]*?<\/code>/gi, ' ')
+    .replace(/<\/?[a-zA-Z][^>]*>/g, ' ')
     // Ignore interpolation identifiers and ICU control syntax, but keep the
     // human-readable text inside plural/select branches for translation checks.
-    .replace(/\\{\\s*[A-Za-z_][\\w.-]*(?:\\s*,\\s*(?:plural|select|selectordinal)\\s*,)?/g, ' ')
-    .replace(/\\b(?:zero|one|two|few|many|other|=\\d+)\\s*(?=\\{)/g, ' ')
+    .replace(/\{\s*[A-Za-z_][\w.-]*(?:\s*,\s*(?:plural|select|selectordinal)\s*,)?/g, ' ')
+    .replace(/\b(?:zero|one|two|few|many|other|=\d+)\s*(?=\{)/g, ' ')
     .replace(/[{}]/g, ' ')
     // Environment variable names and other all-caps configuration tokens.
-    .replace(/\\b[A-Z][A-Z0-9_]{2,}\\b/g, ' ');
+    .replace(/\b[A-Z][A-Z0-9_]{2,}\b/g, ' ');
   const out = [];
   for (const m of stripped.matchAll(/[A-Za-z][A-Za-z0-9'’-]*/g)) {
     if (!WHITELIST.has(m[0])) out.push(m[0]);
