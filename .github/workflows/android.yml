@@ -19,10 +19,6 @@ on:
     branches: ['**']
     tags: ['v*']
   workflow_dispatch:
-    inputs:
-      keystore_password:
-        description: '输入你自行生成并妥善保存的强口令（至少 20 位）；不要复用其他服务密码'
-        required: true
 
 permissions:
   contents: write
@@ -136,25 +132,36 @@ jobs:
           java-version: '21'
       - name: Generate release keystore
         env:
-          KEYSTORE_PASSWORD: ${{ inputs.keystore_password }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
           set -euo pipefail
-          PASS="$KEYSTORE_PASSWORD"
-          if [ ${#PASS} -lt 20 ]; then echo "::error::Use a password of at least 20 characters"; exit 1; fi
-          echo "::add-mask::$PASS"
+          for name in KEYSTORE_PASSWORD KEY_PASSWORD KEY_ALIAS; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Create the repository Actions secret $name before running init-signing"
+              exit 1
+            fi
+          done
+          if [ ${#KEYSTORE_PASSWORD} -lt 20 ] || [ ${#KEY_PASSWORD} -lt 20 ]; then
+            echo "::error::Signing passwords must be at least 20 characters"
+            exit 1
+          fi
+          if [ "$KEY_ALIAS" != "cooktrace" ]; then
+            echo "::error::KEY_ALIAS must be cooktrace"
+            exit 1
+          fi
+          echo "::add-mask::$KEYSTORE_PASSWORD"
+          echo "::add-mask::$KEY_PASSWORD"
           keytool -genkeypair -v \
             -keystore cooktrace-release.keystore \
-            -alias cooktrace \
+            -alias "$KEY_ALIAS" \
             -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass "$PASS" -keypass "$PASS" \
+            -storepass "$KEYSTORE_PASSWORD" -keypass "$KEY_PASSWORD" \
             -dname "CN=CookTrace, OU=Apps, O=zhouhuan, C=CN"
           echo "Keystore generated. No private-key material or password is printed to logs."
-          echo "Download the short-lived release-keystore artifact, back up the file offline,"
-          echo "then locally base64-encode it and save the values as repository Actions secrets:"
-          echo "  KEYSTORE_BASE64  = base64-encoded keystore file"
-          echo "  KEYSTORE_PASSWORD = the password entered in this workflow"
-          echo "  KEY_ALIAS         = cooktrace"
-          echo "  KEY_PASSWORD      = the same password entered in this workflow"
+          echo "Download the short-lived release-keystore artifact and back up the file offline."
+          echo "Locally base64-encode the file and add it as the repository Actions secret KEYSTORE_BASE64."
           ls -lh cooktrace-release.keystore
       - uses: actions/upload-artifact@v4
         with:
