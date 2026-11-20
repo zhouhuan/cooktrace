@@ -62,10 +62,6 @@
   let parseResult = null;    // server response from /extract-and-parse
   let confidence = 0;
   let confidenceThreshold = 0.7;
-  // When extract-and-parse returns empty on a PDF (scanned, no text
-  // layer), we hold onto the original file so the AI Vision fallback
-  // can send it as a document block to Claude or Gemini.
-  let scannedPdfFile = null;
 
   $: if (open) _onOpen();
 
@@ -99,7 +95,6 @@
     errorMessage = '';
     parseResult = null;
     confidence = 0;
-    scannedPdfFile = null;
   }
 
   function close() {
@@ -153,15 +148,9 @@
 
   // ── Image path (AI vision, unchanged from PhotoImportDialog) ─────────────
 
-  function _buildImageMessage(provider, text, image) {
-    if (provider === 'claude') {
-      return { role: 'user', content: [
-        { type: 'image', source: { type: 'base64', media_type: image.mimeType, data: image.base64 } },
-        { type: 'text', text },
-      ]};
-    } else if (provider === 'gemini') {
-      return { role: 'user', content: text, _image: image };
-    }
+  function _buildImageMessage(text, image) {
+    // All built-in providers in this edition use OpenAI-compatible
+    // Chat Completions image_url content blocks.
     return { role: 'user', content: [
       { type: 'image_url', image_url: { url: `data:${image.mimeType};base64,${image.base64}` } },
       { type: 'text', text },
@@ -224,7 +213,7 @@ Rules:
 
   async function importImage() {
     if (!rawImage) return;
-    const userMsg = _buildImageMessage($aiProvider, '请导入这道菜谱。', rawImage);
+    const userMsg = _buildImageMessage('请导入这道菜谱。', rawImage);
     await _runAi({ userMsg, label: $_('file_import_dialog_ui.reading_photo') });
   }
 
@@ -253,16 +242,6 @@ Rules:
         return;
       }
       if (data.empty) {
-        // Scanned / image-only PDF. Offer the AI Vision fallback if the
-        // configured provider supports PDF document blocks. Otherwise
-        // surface the original hint.
-        const provider = $aiProvider;
-        const aiPdfCapable = $aiEnabled && !envLocked && (provider === 'claude' || provider === 'gemini');
-        if (data.type === 'pdf' && aiPdfCapable) {
-          scannedPdfFile = textFile.file;
-          phase = 'scanned-pdf';
-          return;
-        }
         phase = 'error';
         errorMessage = data.hint || $_('file_import_dialog_ui.no_text');
         return;
@@ -275,57 +254,6 @@ Rules:
       phase = 'error';
       errorMessage = e.message || $_('file_import_dialog_ui.extract_failed');
     }
-  }
-
-  // ── PDF AI Vision fallback (scanned PDFs) ────────────────────────────────
-
-  async function _fileToBase64(file) {
-    return await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = String(reader.result);
-        resolve(dataUrl.split(',')[1] || '');
-      };
-      reader.onerror = () => reject(new Error($_('file_import_dialog_ui.read_failed')));
-      reader.readAsDataURL(file);
-    });
-  }
-
-  function _buildPdfMessage(provider, text, base64) {
-    if (provider === 'claude') {
-      return { role: 'user', content: [
-        { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } },
-        { type: 'text', text },
-      ]};
-    }
-    if (provider === 'gemini') {
-      return { role: 'user', content: text, _image: { mimeType: 'application/pdf', base64 } };
-    }
-    // Other providers don't support PDF natively in chat-completions. We
-    // gate the button on Claude/Gemini above, so this is a safety net.
-    return null;
-  }
-
-  async function importScannedPdf() {
-    if (!scannedPdfFile) return;
-    const provider = $aiProvider;
-    // 20 MB ceiling to stay safely under provider inline-document limits.
-    const MAX_BYTES = 20 * 1024 * 1024;
-    if (scannedPdfFile.size > MAX_BYTES) {
-      phase = 'error';
-      errorMessage = $_('file_import_dialog_ui.pdf_too_large', { values: { size: (scannedPdfFile.size / 1024 / 1024).toFixed(1) } });
-      return;
-    }
-    let base64;
-    try { base64 = await _fileToBase64(scannedPdfFile); }
-    catch (e) { phase = 'error'; errorMessage = e.message; return; }
-    const userMsg = _buildPdfMessage(provider, '请从附带的 PDF 中导入这道菜谱。', base64);
-    if (!userMsg) {
-      phase = 'error';
-      errorMessage = $_('file_import_dialog_ui.pdf_needs_provider');
-      return;
-    }
-    await _runAi({ userMsg, label: $_('file_import_dialog_ui.reading_pdf') });
   }
 
   async function saveHeuristic() {
@@ -359,7 +287,6 @@ Rules:
 
   async function retryWithAi() {
     if (!parseResult?.text) return;
-    const provider = $aiProvider;
     const userMsg = {
       role: 'user',
       content: `请导入下面的菜谱。
@@ -368,7 +295,7 @@ Rules:
 ${parseResult.text}
 ----- END RECIPE TEXT -----`,
     };
-    // Gemini takes a flat string here; Claude / OpenAI accept the same shape.
+    // Text messages use the common OpenAI-compatible chat format.
     await _runAi({ userMsg, label: $_('file_import_dialog_ui.reading_recipe') });
   }
 
@@ -462,19 +389,6 @@ ${parseResult.text}
           <span class="material-symbols-rounded spin">progress_activity</span>
           <p class="progress">{progressLine || $_('file_import_dialog_ui.working')}</p>
         </div>
-
-      {:else if phase === 'scanned-pdf'}
-        <div class="state info">
-          <span class="material-symbols-rounded">picture_as_pdf</span>
-          <p>{$_('file_import_dialog_ui.scanned_desc', { values: { provider: $aiProvider === 'claude' ? 'Claude' : 'Gemini' } })}</p>
-        </div>
-        <footer class="actions">
-          <button class="btn btn-secondary" on:click={close}>{$_('file_import_dialog.cancel')}</button>
-          <button class="btn btn-primary" on:click={importScannedPdf}>
-            <span class="material-symbols-rounded">auto_awesome</span>
-            {$_('file_import_dialog_ui.read_with_vision')}
-          </button>
-        </footer>
 
       {:else if phase === 'review'}
         <div class="review">
