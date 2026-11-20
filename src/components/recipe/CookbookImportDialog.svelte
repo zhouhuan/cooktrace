@@ -129,7 +129,7 @@ ${text}
 ----- END COOKBOOK TEXT -----`,
       };
     }
-    // Scanned path: caller handles base64 + provider-specific shape.
+    // Scanned PDFs are rejected in prepare(); only extracted text reaches this helper.
     return null;
   }
 
