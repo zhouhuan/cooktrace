@@ -8,7 +8,8 @@
  * sent once more, and a second empty reply is said as an error. A
  * stand-in endpoint answers the way theirs did, for the app directly and
  * through the server's own chat (Trace set by environment variables), in
- * OpenAI's, Claude's and Gemini's shapes.
+ * Qwen and a custom OpenAI-compatible provider; pure response-shape helpers
+ * still cover older formats.
  */
 import assert from 'node:assert/strict';
 import http from 'node:http';
@@ -147,8 +148,7 @@ const _fetch = globalThis.fetch;
 globalThis.fetch = (url, opts) => {
   const u = String(url);
   if (u.startsWith('/')) return _fetch(`${base}${u}`, opts);
-  if (u.startsWith('https://api.anthropic.com')) return _fetch(`${ENDPOINT}/claude`, opts);
-  if (u.startsWith('https://generativelanguage.googleapis.com')) return _fetch(`${ENDPOINT}/gemini`, opts);
+  if (u.startsWith('https://dashscope.aliyuncs.com')) return _fetch(`${ENDPOINT}/openai`, opts);
   if (u.startsWith('https://api.openai.com')) return _fetch(u.replace('https://api.openai.com', ENDPOINT), opts);
   return _fetch(url, opts);
 };
@@ -158,9 +158,8 @@ client.setToolHandler(async (name, args) => { toolCalls.push({ name, args }); re
 const TOOLS = [{ name: 'lookup', description: 'Look something up', parameters: { type: 'object', properties: {} } }];
 
 const PROVIDERS = {
-  'oai-compat': { provider: 'oai-compat', baseUrl: ENDPOINT, model: 'gemma4:31b', apiKey: '' },
-  claude: { provider: 'claude', apiKey: 'sk-ant', model: 'claude-sonnet-4-5' },
-  gemini: { provider: 'gemini', apiKey: 'g', model: 'gemini-3-flash' },
+  'oai-compat': { provider: 'oai-compat', baseUrl: ENDPOINT, model: 'qwen3-local', apiKey: '' },
+  qwen: { provider: 'qwen', apiKey: 'sk-test', model: 'qwen-plus' },
 };
 const ask = (p, o = {}) => client.callAI({ ...PROVIDERS[p], messages: [{ role: 'user', content: 'Log a turkey sandwich for lunch.' }], systemPrompt: 'You are Trace.', ...o });
 const isEmpty = (e) => e.code === 'trace_stopped_empty';
@@ -210,7 +209,7 @@ const envLock = (provider, model) => {
 test("the server's own chat: the same, once on the server and never again from the app", async (t) => {
   if (!db) return t.skip('better-sqlite3 is not built for this Node');
   const proxy = () => client.callAIProxy({ messages: [{ role: 'user', content: 'Log a turkey sandwich for lunch.' }], systemPrompt: 'You are Trace.' });
-  for (const [p, model] of [['oai-compat', 'gemma4:31b'], ['claude', 'claude-sonnet-4-5'], ['gemini', 'gemini-3-flash']]) {
+  for (const [p, model] of [['oai-compat', 'qwen3-local'], ['qwen', 'qwen-plus']]) {
     envLock(p, model);
     fresh([], 'empty');
     await assert.rejects(proxy(), isEmpty, `${p}: said, with its code`);

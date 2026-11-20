@@ -63,8 +63,8 @@ test('the old raw spots are gone', () => {
 test('a shared recipe: names escaped in the HTML, as typed in the subject and text', () => {
   const body = fnSrc('sendRecipeShared');
   assert.match(body, /const safeRecipe = _escapeHtml\(recipeText\);/);
-  assert.match(body, /subject: `\$\{sharerText\} shared "\$\{recipeText\}" with you`/);
-  assert.match(body, /text: `\$\{sharerText\} shared "\$\{recipeText\}"/);
+  assert.match(body, /subject: `\$\{sharerText\} 与你分享了「\$\{recipeText\}」`/);
+  assert.match(body, /text: `\$\{sharerText\} 在 CookTrace 上与你分享了「\$\{recipeText\}」/);
 });
 
 test('weekly summary rows escape recipe names', () => {

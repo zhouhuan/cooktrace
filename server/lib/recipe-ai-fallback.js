@@ -204,19 +204,26 @@ function _sendToUserEndpoint(cfg) {
 // message ("model not found"), never the raw reply, which goes to the log.
 async function _providerError(name, res) {
   const raw = await res.text().catch(() => '');
-  logger.warn(`[recipe-ai] ${name} returned ${res.status}: ${raw.slice(0, 500)}`);
+  logger.warn(`[recipe-ai] ${name} returned HTTP ${res.status}`);
   let message = '';
   try {
     const e = JSON.parse(raw)?.error;
     message = typeof e === 'string' ? e : (typeof e?.message === 'string' ? e.message : '');
   } catch {}
-  return new Error(`${name} returned ${res.status}${message ? `: ${message.slice(0, 200)}` : ''}`);
+  return new Error(`AI 服务返回错误（HTTP ${res.status}）${message ? `：${message.slice(0, 200)}` : ''}`);
 }
 
 // OpenAI-compatible endpoints (Ollama, LM Studio...) often need no API key.
 export function isCompatibleProvider(provider) {
   return provider === 'custom' || provider === 'oai-compat';
 }
+
+const SUPPORTED_IMPORT_PROVIDERS = new Set([
+  ...Object.keys(AI_DEFAULT_MODELS),
+  'custom',
+  'oai-compat',
+]);
+const isSupportedImportProvider = (provider) => SUPPORTED_IMPORT_PROVIDERS.has(provider);
 
 /**
  * The AI an import uses, in this order: the user's own provider with a key;
@@ -228,10 +235,11 @@ export function isCompatibleProvider(provider) {
  */
 export function importAiConfig(user, env) {
   const { provider, apiKey, model, baseUrl } = user || {};
-  if (provider && apiKey) return { provider, apiKey, model: model || '', baseUrl: baseUrl || '', source: 'user' };
-  if (env.AI_API_KEY || (isCompatibleProvider(env.AI_PROVIDER) && env.AI_BASE_URL)) {
+  if (provider && apiKey && isSupportedImportProvider(provider)) return { provider, apiKey, model: model || '', baseUrl: baseUrl || '', source: 'user' };
+  const serverProvider = env.AI_PROVIDER || 'deepseek';
+  if ((env.AI_API_KEY || (isCompatibleProvider(serverProvider) && env.AI_BASE_URL)) && isSupportedImportProvider(serverProvider)) {
     return {
-      provider: env.AI_PROVIDER || 'deepseek',
+      provider: serverProvider,
       apiKey:   env.AI_API_KEY || '',
       model:    env.AI_MODEL || '',
       baseUrl:  env.AI_BASE_URL || '',

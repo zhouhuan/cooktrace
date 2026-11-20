@@ -99,8 +99,7 @@ const _fetch = globalThis.fetch;
 globalThis.fetch = (url, opts) => {
   const u = String(url);
   if (u.startsWith('/')) return _fetch(`${base}${u}`, opts);
-  if (u.startsWith('https://api.anthropic.com')) return _fetch(`${ENDPOINT}/claude`, opts);
-  if (u.startsWith('https://generativelanguage.googleapis.com')) return _fetch(`${ENDPOINT}/gemini`, opts);
+  if (u.startsWith('https://dashscope.aliyuncs.com')) return _fetch(`${ENDPOINT}/openai`, opts);
   if (u.startsWith('https://api.openai.com')) return _fetch(u.replace('https://api.openai.com', ENDPOINT), opts);
   return _fetch(url, opts);
 };
@@ -160,25 +159,21 @@ test('a tool call cut off at its limit is never run', async () => {
   assert.deepEqual(toolCalls, []);
 });
 
-test('named providers: the longer limit too, an older model asked again as before, and a reply that stopped short said', async () => {
-  const claude = { provider: 'claude', apiKey: 'sk-ant', model: 'claude-sonnet-4-5' };
+test('Qwen and OpenAI-compatible providers: long replies and safe handling of output limits', async () => {
+  const qwen = { provider: 'qwen', apiKey: 'sk-test', model: 'qwen-plus' };
   fresh({ need: 6000 });
-  assert.equal(await ask(claude), 'words:6000');
+  assert.equal(await ask(qwen), 'words:6000');
+  assert.deepEqual(asked(), [16384]);
+  fresh({ need: 20000 });
+  await assert.rejects(ask(qwen), (e) => e.code === 'trace_stopped_length');
+
+  const compatible = { provider: 'oai-compat', apiKey: '', model: 'qwen3-local', baseUrl: ENDPOINT };
+  fresh({ need: 6000 });
+  assert.equal(await ask(compatible), 'words:6000');
   assert.deepEqual(asked(), [16384]);
   fresh({ need: 100, modelMax: 4096 });
-  assert.equal(await ask({ ...claude, model: 'claude-3-haiku-20240307' }), 'words:100');
-  assert.deepEqual(asked(), [16384, 4096], 'a model that writes at most 4,096');
-  fresh({ need: 20000 });
-  await assert.rejects(ask(claude), (e) => e.code === 'trace_stopped_length');
-  const openai = { provider: 'openai', apiKey: 'sk', model: 'gpt-5.5', baseUrl: undefined };
-  fresh({ need: 6000 });
-  assert.equal(await ask(openai), 'words:6000', "a reasoning model's thinking and answer fit");
-  assert.deepEqual(seen.map(x => x.body.max_completion_tokens), [16384]);
-  fresh({ need: 100, modelMax: 4096 });
-  assert.equal(await ask({ ...openai, model: 'gpt-4-turbo' }), 'words:100');
-  assert.deepEqual(seen.map(x => x.body.max_completion_tokens), [16384, 4096]);
-  fresh({ need: 9000 });
-  await assert.rejects(ask({ provider: 'gemini', apiKey: 'g', model: 'gemini-3-flash' }), (e) => e.code === 'trace_stopped_length');
+  assert.equal(await ask(compatible), 'words:100');
+  assert.deepEqual(asked(), [16384, 4096], 'an endpoint refusing the larger output limit is retried with 4,096');
 });
 
 test("the server's own chat: the app's limits, and a reply that stopped short is said", async (t) => {
@@ -192,9 +187,9 @@ test("the server's own chat: the app's limits, and a reply that stopped short is
   assert.deepEqual(asked(), [16384, 4096]);
   fresh({ need: 20000 });
   await assert.rejects(proxy(), (e) => e.code === 'trace_stopped_length');
-  envLock('claude', 'claude-sonnet-4-5');
+  envLock('qwen', 'qwen-plus');
   fresh({ need: 6000 });
-  assert.equal(await proxy(), 'words:6000', 'Claude as the app has it (it was 1,024 here)');
+  assert.equal(await proxy(), 'words:6000', 'Qwen uses the same OpenAI-compatible reply path as the app');
   fresh({ need: 100, modelMax: 4096 });
   assert.equal(await proxy(), 'words:100');
   assert.deepEqual(asked(), [16384, 4096]);

@@ -17,12 +17,19 @@ const I18N_DIR = path.join(__dirname, '..', 'src', 'i18n');
 // Brand names and standard symbols that may appear in Latin letters.
 const WHITELIST = new Set([
   'CookTrace', 'Trace', 'NutriTrace', 'NoteTrace', 'LiftTrace', 'DeepSeek', 'Kimi',
-  'Moonshot', 'GLM', 'Qwen', 'Doubao', 'GitHub', 'OpenAI', 'Gemini', 'Claude',
+  'Moonshot', 'GLM', 'Qwen', 'Doubao', 'GitHub', 'OpenAI', 'Claude',
   'USDA', 'OpenFoodFacts', 'Mealie', 'Mealime', 'Paprika', 'Tandoor', 'Android',
   'Wear', 'OS', 'PWA', 'APK', 'OCR', 'SMTP', 'OIDC', 'API', 'MCP', 'JWT', 'TOTP',
   'Wi-Fi', 'SQLite', 'Docker', 'CSV', 'AI', 'ID', 'IP', 'UUID', 'PIN', 'QR',
   'URL', 'JSON', 'HTML', 'CSS', 'Nginx', 'YAML', 'Markdown', 'Webhook',
-  'OAuth', 'Apprise', 'Gotify', 'ntfy', 'sh', 'npm', 'DMS',
+  'OAuth', 'PKCE', 'Apprise', 'Gotify', 'ntfy', 'Weblate', 'sh', 'npm', 'DMS',
+  'Cursor', 'Codex', 'Auth0', 'Authelia', 'Authentik', 'Keycloak', 'Google', 'Pocket',
+  'Open', 'Food', 'Facts', 'OFF', 'CookTraceAdmins', 'paprikarecipes', 'PDF', 'RTF', 'TXT', 'MD', 'ZIP',
+  'Mifflin', 'Mifflin-St', 'St', 'Jeor', 'King', 'Arthur', 'X', 'Y', 'MM-DD', 'Omega-3', 'Aegis', 'FAS', 'Authenticator', 'Password',
+  'Cloudflare', 'Access', 'zxcvbn', 'MM', 'DD', 'Omega', 'Ctrl', 'B', 'I', 'U', 'Material', 'Symbol', 'Symbols',
+  'YouTube', 'Vimeo', 'Chrome', 'iPhone', 'Safari',
+  'HTTP', 'HTTPS', 'URI', 'POST', 'VPN', 'SSO', 'TLS', 'README', 'YYYY', 'YYYY-MM-DD',
+  'MB', 'KB', 'Esc', 'A', 'D', 'E', 'K', 'M', 'B1', 'B2', 'B3', 'B5', 'B6', 'B9', 'B12',
   'g', 'kg', 'mg', 'ug', 'ml', 'cl', 'dl', 'l', 'oz', 'lb', 'lbs', 'cup', 'cups',
   'tsp', 'tbsp', 'pt', 'qt', 'gal', 'fl', 'kcal', 'kJ', 'C', 'F', 'cm', 'mm',
   'km', 'in', 'pcs', 'pc',
@@ -39,14 +46,74 @@ function flatten(obj, prefix = '') {
 }
 
 function placeholders(s) {
-  return (String(s).match(/\{[^}]+\}/g) || []).sort().join(',');
+  const variables = [];
+  const icu = [];
+  const selectors = [];
+
+  function closingBrace(source, open) {
+    let depth = 0;
+    for (let i = open; i < source.length; i++) {
+      if (source[i] === '{') depth++;
+      else if (source[i] === '}' && --depth === 0) return i;
+    }
+    return -1;
+  }
+
+  function scan(source) {
+    for (let i = 0; i < source.length; i++) {
+      if (source[i] !== '{') continue;
+      const rest = source.slice(i + 1);
+      const header = rest.match(/^\s*([A-Za-z_][\w.-]*)\s*,\s*(plural|select|selectordinal)\s*,/);
+      if (header) {
+        variables.push(header[1]);
+        icu.push(header[1] + ':' + header[2]);
+        let pos = i + 1 + header[0].length;
+        while (pos < source.length) {
+          while (/\s/.test(source[pos] || '')) pos++;
+          if (source[pos] === '}') { i = pos; break; }
+          const selector = source.slice(pos).match(/^(?:=\d+|[A-Za-z_][\w-]*)/);
+          if (!selector) break;
+          selectors.push(selector[0]);
+          pos += selector[0].length;
+          while (/\s/.test(source[pos] || '')) pos++;
+          if (source[pos] !== '{') break;
+          const end = closingBrace(source, pos);
+          if (end < 0) break;
+          scan(source.slice(pos + 1, end));
+          pos = end + 1;
+        }
+        i = pos;
+        continue;
+      }
+      // A simple interpolation is a lowercase identifier. Uppercase words
+      // such as {Today} are literal branch text in existing ICU messages.
+      const simple = rest.match(/^\s*([a-z_][\w.-]*)\s*\}/);
+      if (simple) {
+        variables.push(simple[1]);
+        i += simple[0].length;
+      }
+    }
+  }
+
+  scan(String(s));
+  return JSON.stringify({
+    variables: variables.sort(),
+    icu: icu.sort(),
+    selectors: selectors.sort(),
+  });
 }
 
 function foreignRuns(value) {
   const stripped = String(value)
     .replace(/https?:\/\/[^\s<>"{}]+/gi, ' ')
     .replace(/@:[\w.]+/g, ' ')
-    .replace(/<\/?[a-zA-Z][^>]*>/g, ' ');
+    .replace(/<code>[\s\S]*?<\/code>/gi, ' ')
+    .replace(/<\/?[a-zA-Z][^>]*>/g, ' ')
+    // Ignore interpolation identifiers and ICU control syntax, but keep the
+    // human-readable text inside plural/select branches for translation checks.
+    .replace(/\{\s*[A-Za-z_][\w.-]*(?:\s*,\s*(?:plural|select|selectordinal)\s*,)?/g, ' ')
+    .replace(/\b(?:zero|one|two|few|many|other|=\d+)\s*(?=\{)/g, ' ')
+    .replace(/[{}]/g, ' ');
   const out = [];
   for (const m of stripped.matchAll(/[A-Za-z][A-Za-z0-9'’-]*/g)) {
     if (!WHITELIST.has(m[0])) out.push(m[0]);

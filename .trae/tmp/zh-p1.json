@@ -1,1053 +1,1053 @@
 {
- "nav": {
-  "recipes": "菜谱",
-  "pantry": "食材库",
-  "diary": "烹饪日记",
-  "shopping": "购物",
-  "manage": "管理",
-  "settings": "设置"
- },
- "sync": {
-  "synced": "已同步",
-  "syncing": "同步中…",
-  "pending_web": "{count, plural, =0 {Offline. Your kitchen still works here.} one {Offline. # change is waiting to go up.} other {Offline. # changes are waiting to go up.}}",
-  "refused": "你的服务器未接受 {what}：{reason}。",
-  "sign_out_waiting_title": "仍有更改等待同步",
-  "sign_out_waiting": "{count, plural, one {# change has not reached your server yet. Signing out now discards it. Connect and try again to keep it.} other {# changes have not reached your server yet. Signing out now discards them. Connect and try again to keep them.}}",
-  "sign_out_anyway": "仍要退出登录",
-  "switch_account_waiting_title": "另一账号的更改仍在等待",
-  "switch_account_waiting": "{count, plural, one {# change made on this device by the account signed in before has not reached the server. Signing in now discards it. To keep it, sign in as that account first.} other {# changes made on this device by the account signed in before have not reached the server. Signing in now discards them. To keep them, sign in as that account first.}}",
-  "switch_account_anyway": "仍要登录",
-  "same_server_title": "是同一台服务器吗？",
-  "same_server": "此服务器的地址与本设备之前使用的不同，应用无法判断它是否为同一台服务器。如果是，你的数据会保留在这里并与它同步；如果不是，它会被视为另一个账号的服务器。",
-  "same_server_yes": "同一服务器",
-  "same_server_no": "不同服务器",
-  "account_check_failed_title": "无法打开你的数据",
-  "account_check_failed": "本设备无法确认数据归属，因此暂时没有显示任何内容。请重试，或退出登录。",
-  "sync_offline": "离线",
-  "sync_failing": "无法连接服务器",
-  "not_synced": "尚未同步",
-  "retry": "重试",
-  "retrying": "重试中…",
-  "dismiss_message": "关闭同步消息",
-  "error_title": "同步失败",
-  "connection": {
-   "server_fallback": "服务器",
-   "no_network_title": "无网络连接",
-   "cant_reach_title": "无法连接 {host}",
-   "reconnect": "请重新连接互联网。",
-   "server_error": "服务器返回了 HTTP {status}。请稍后重试。",
-   "mobile_data": "你正在通过移动数据联网。此服务器可能需要你的家庭 Wi-Fi 或 VPN。",
-   "check_connection": "请检查你的 Wi-Fi、VPN 或服务器。",
-   "saved_locally": "你的更改已保存在本地，之后会自动同步。"
-  }
- },
- "routes": {
-  "recipes": {
-   "title": "菜谱",
-   "search_placeholder": "搜索菜谱…",
-   "new_recipe": "新建菜谱",
-   "empty_title": "还没有菜谱",
-   "empty_desc": "添加你的第一道菜谱，开始使用吧。",
-   "create_cta": "创建菜谱",
-   "no_match": "没有菜谱匹配“{q}”。"
+  "nav": {
+    "recipes": "菜谱",
+    "pantry": "食材库",
+    "diary": "烹饪日记",
+    "shopping": "购物",
+    "manage": "管理",
+    "settings": "设置"
   },
-  "pantry": {
-   "title": "食材库",
-   "search_placeholder": "搜索食材库…",
-   "empty_title": "食材库为空",
-   "empty_desc": "在这里添加食材，或保存一道菜谱。你用到的每种食材都会自动进入食材库。",
-   "add_item": "添加条目",
-   "no_match": "没有条目匹配“{q}”。"
+  "sync": {
+    "synced": "已同步",
+    "syncing": "同步中…",
+    "pending_web": "{count, plural, =0 {离线模式下，你的厨房仍可正常使用。} one {离线模式下，有 # 项更改等待上传。} other {离线模式下，有 # 项更改等待上传。}}",
+    "refused": "你的服务器未接受 {what}：{reason}。",
+    "sign_out_waiting_title": "仍有更改等待同步",
+    "sign_out_waiting": "{count, plural, one {还有 # 项更改尚未同步到服务器。现在退出会丢弃这些更改。请先连接并重试，以保留更改。} other {还有 # 项更改尚未同步到服务器。现在退出会丢弃这些更改。请先连接并重试，以保留更改。}}",
+    "sign_out_anyway": "仍要退出登录",
+    "switch_account_waiting_title": "另一账号的更改仍在等待",
+    "switch_account_waiting": "{count, plural, one {此设备上由之前登录的账号所做的 # 项更改尚未同步到服务器。现在登录会丢弃这些更改。若要保留，请先使用之前的账号登录。} other {此设备上由之前登录的账号所做的 # 项更改尚未同步到服务器。现在登录会丢弃这些更改。若要保留，请先使用之前的账号登录。}}",
+    "switch_account_anyway": "仍要登录",
+    "same_server_title": "是同一台服务器吗？",
+    "same_server": "此服务器的地址与本设备之前使用的不同，应用无法判断它是否为同一台服务器。如果是，你的数据会保留在这里并与它同步；如果不是，它会被视为另一个账号的服务器。",
+    "same_server_yes": "同一服务器",
+    "same_server_no": "不同服务器",
+    "account_check_failed_title": "无法打开你的数据",
+    "account_check_failed": "本设备无法确认数据归属，因此暂时没有显示任何内容。请重试，或退出登录。",
+    "sync_offline": "离线",
+    "sync_failing": "无法连接服务器",
+    "not_synced": "尚未同步",
+    "retry": "重试",
+    "retrying": "重试中…",
+    "dismiss_message": "关闭同步消息",
+    "error_title": "同步失败",
+    "connection": {
+      "server_fallback": "服务器",
+      "no_network_title": "无网络连接",
+      "cant_reach_title": "无法连接 {host}",
+      "reconnect": "请重新连接互联网。",
+      "server_error": "服务器返回了 HTTP {status}。请稍后重试。",
+      "mobile_data": "你正在通过移动数据联网。此服务器可能需要你的家庭 Wi-Fi 或 VPN。",
+      "check_connection": "请检查你的 Wi-Fi、VPN 或服务器。",
+      "saved_locally": "你的更改已保存在本地，之后会自动同步。"
+    }
   },
-  "diary": {
-   "title": "烹饪日记",
-   "empty_title": "还没有记录",
-   "empty_desc": "在菜谱页将菜谱标记为已烹饪，或为以后的日期计划一道菜。",
-   "plan_cook": "计划烹饪",
-   "no_matches_title": "没有匹配项",
-   "no_matches_desc": "当前时间范围内没有找到 {name} 的日记条目。",
-   "this_recipe": "这道菜谱",
-   "clear_filter": "清除筛选"
+  "routes": {
+    "recipes": {
+      "title": "菜谱",
+      "search_placeholder": "搜索菜谱…",
+      "new_recipe": "新建菜谱",
+      "empty_title": "还没有菜谱",
+      "empty_desc": "添加你的第一道菜谱，开始使用吧。",
+      "create_cta": "创建菜谱",
+      "no_match": "没有菜谱匹配“{q}”。"
+    },
+    "pantry": {
+      "title": "食材库",
+      "search_placeholder": "搜索食材库…",
+      "empty_title": "食材库为空",
+      "empty_desc": "在这里添加食材，或保存一道菜谱。你用到的每种食材都会自动进入食材库。",
+      "add_item": "添加条目",
+      "no_match": "没有条目匹配“{q}”。"
+    },
+    "diary": {
+      "title": "烹饪日记",
+      "empty_title": "还没有记录",
+      "empty_desc": "在菜谱页将菜谱标记为已烹饪，或为以后的日期计划一道菜。",
+      "plan_cook": "计划烹饪",
+      "no_matches_title": "没有匹配项",
+      "no_matches_desc": "当前时间范围内没有找到 {name} 的日记条目。",
+      "this_recipe": "这道菜谱",
+      "clear_filter": "清除筛选"
+    },
+    "shopping": {
+      "title": "购物",
+      "empty_title": "清单为空",
+      "empty_desc": "在上方添加条目，或从菜谱中提取缺少的食材。",
+      "add_from_recipe": "从菜谱添加",
+      "add_placeholder": "添加条目…",
+      "group_by_label": "分组方式",
+      "group_by_aisle": "按货架分区",
+      "group_by_recipe": "按菜谱",
+      "group_by_flat": "平铺",
+      "uncategorized": "未分类",
+      "other": "其他",
+      "change_aisle": "更改货架分区",
+      "delete": "删除",
+      "aisle_help": "选择现有货架分区，或输入一个新标签。之后从同一食材库分类添加的条目会自动使用其默认货架分区。",
+      "aisle_placeholder": "如：农产品、乳制品、烘焙…",
+      "aisle_set": "设置",
+      "aisle_none": "无货架分区",
+      "hide_checked": "隐藏已勾选",
+      "show_checked_n": "显示 {n} 项已勾选"
+    },
+    "settings": {
+      "title": "设置"
+    }
   },
-  "shopping": {
-   "title": "购物",
-   "empty_title": "清单为空",
-   "empty_desc": "在上方添加条目，或从菜谱中提取缺少的食材。",
-   "add_from_recipe": "从菜谱添加",
-   "add_placeholder": "添加条目…",
-   "group_by_label": "分组方式",
-   "group_by_aisle": "按货架分区",
-   "group_by_recipe": "按菜谱",
-   "group_by_flat": "平铺",
-   "uncategorized": "未分类",
-   "other": "其他",
-   "change_aisle": "更改货架分区",
-   "delete": "删除",
-   "aisle_help": "选择现有货架分区，或输入一个新标签。之后从同一食材库分类添加的条目会自动使用其默认货架分区。",
-   "aisle_placeholder": "如：农产品、乳制品、烘焙…",
-   "aisle_set": "设置",
-   "aisle_none": "无货架分区",
-   "hide_checked": "隐藏已勾选",
-   "show_checked_n": "显示 {n} 项已勾选"
+  "common": {
+    "sign_out": "退出登录",
+    "log_out": "退出登录",
+    "signing_out": "退出中…",
+    "experimental": "实验性",
+    "hide": "隐藏",
+    "save": "保存",
+    "saving": "保存中…",
+    "cancel": "取消",
+    "delete": "删除",
+    "back": "返回",
+    "edit": "编辑",
+    "done": "完成",
+    "close": "关闭",
+    "clear": "清除",
+    "loading": "加载中…",
+    "signed_in": "已登录",
+    "signed_out": "已退出登录",
+    "linked": "已关联",
+    "unlinked": "账号已解除关联",
+    "admin": "管理员",
+    "errors": {
+      "cant_reach_server": "无法连接服务器。",
+      "failed": "操作未能完成。请重试。",
+      "unlink_failed": "无法解除账号关联"
+    }
+  },
+  "pantry_sheet": {
+    "name": "名称",
+    "brand": "品牌",
+    "barcode": "条形码",
+    "on_hand": "现有数量",
+    "variants": "变体",
+    "expires_on": "过期日期",
+    "expires_on_hint": "（可选，有助于发现快过期的食材）"
+  },
+  "trace": {
+    "panel_label": "AI 助手对话",
+    "panel_sub": "你的 AI 烹饪与菜谱助手",
+    "welcome_name": "你好，我是 {name}！",
+    "welcome_desc": "问我任何关于菜谱、食材库、一周菜单或购物的问题。我可以访问你的厨房数据，帮你查找菜谱、调整份数、记录你做过的菜，还能根据现有食材告诉你能做什么。",
+    "chip_pantry": "用我的食材库做菜",
+    "chip_pantry_ask": "食材库里现有的东西能做什么菜？",
+    "chip_suggestion": "菜谱推荐",
+    "chip_suggestion_ask": "推荐一道今晚做的菜。",
+    "chip_recent": "最近烹饪",
+    "chip_recent_ask": "我最近做过哪些菜？",
+    "chip_shopping": "购物清单",
+    "chip_shopping_ask": "为这周生成一份购物清单。",
+    "ask_placeholder": "问 {name}…",
+    "listening": "正在聆听…",
+    "clear_conversation": "清空对话",
+    "clear_confirm_title": "清空此对话？",
+    "clear_confirm_message": "此对话中的消息将被删除，且无法恢复。",
+    "clear_confirm_ok": "清空",
+    "attach_image": "附加图片"
+  },
+  "editor": {
+    "name_required": "名称 *",
+    "description": "描述",
+    "rating": "评分",
+    "prep_min": "准备（分钟）",
+    "cook_min": "烹饪（分钟）",
+    "rest_min": "静置（分钟）",
+    "total_min": "总计（分钟）",
+    "yield": "产出",
+    "category": "分类",
+    "source_url": "来源 URL",
+    "video_url": "视频 URL",
+    "add_ingredient": "添加食材",
+    "add_step": "添加步骤",
+    "add_group": "添加分组"
+  },
+  "cooking_now": {
+    "label": "正在烹饪",
+    "untitled": "一道菜谱",
+    "label_many": "正在烹饪 {n} 道菜",
+    "just_started": "刚刚开始",
+    "minutes": "{n, plural, one {# 分钟} other {# 分钟}}",
+    "hours": "{n} 时 {m} 分",
+    "more": "{n, plural, one {还有 # 道菜正在烹饪} other {还有 # 道菜正在烹饪}}"
+  },
+  "recipe": {
+    "prep_time": "准备时间",
+    "cook_time": "烹饪时间",
+    "rest_time": "静置时间",
+    "total_time": "总时间",
+    "servings": "份数",
+    "serving_singular": "份",
+    "ingredients": "食材",
+    "instructions": "做法",
+    "kitchen_gear": "厨房用具",
+    "video_instructions": "视频做法",
+    "notes": "备注",
+    "nutrition": "营养成分",
+    "cook_history": "烹饪历史",
+    "cook_mode": "烹饪模式",
+    "tags": "标签"
   },
   "settings": {
-   "title": "设置"
-  }
- },
- "common": {
-  "sign_out": "退出登录",
-  "log_out": "退出登录",
-  "signing_out": "退出中…",
-  "experimental": "实验性",
-  "hide": "隐藏",
-  "save": "保存",
-  "saving": "保存中…",
-  "cancel": "取消",
-  "delete": "删除",
-  "back": "返回",
-  "edit": "编辑",
-  "done": "完成",
-  "close": "关闭",
-  "clear": "清除",
-  "loading": "加载中…",
-  "signed_in": "已登录",
-  "signed_out": "已退出登录",
-  "linked": "已关联",
-  "unlinked": "账号已解除关联",
-  "admin": "管理员",
-  "errors": {
-   "cant_reach_server": "无法连接服务器。",
-   "failed": "操作未能完成。请重试。",
-   "unlink_failed": "无法解除账号关联"
-  }
- },
- "pantry_sheet": {
-  "name": "名称",
-  "brand": "品牌",
-  "barcode": "条形码",
-  "on_hand": "现有数量",
-  "variants": "变体",
-  "expires_on": "过期日期",
-  "expires_on_hint": "（可选，有助于发现快过期的食材）"
- },
- "trace": {
-  "panel_label": "AI 助手对话",
-  "panel_sub": "你的 AI 烹饪与菜谱助手",
-  "welcome_name": "你好，我是 {name}！",
-  "welcome_desc": "问我任何关于菜谱、食材库、一周菜单或购物的问题。我可以访问你的厨房数据，帮你查找菜谱、调整份数、记录你做过的菜，还能根据现有食材告诉你能做什么。",
-  "chip_pantry": "用我的食材库做菜",
-  "chip_pantry_ask": "食材库里现有的东西能做什么菜？",
-  "chip_suggestion": "菜谱推荐",
-  "chip_suggestion_ask": "推荐一道今晚做的菜。",
-  "chip_recent": "最近烹饪",
-  "chip_recent_ask": "我最近做过哪些菜？",
-  "chip_shopping": "购物清单",
-  "chip_shopping_ask": "为这周生成一份购物清单。",
-  "ask_placeholder": "问 {name}…",
-  "listening": "正在聆听…",
-  "clear_conversation": "清空对话",
-  "clear_confirm_title": "清空此对话？",
-  "clear_confirm_message": "此对话中的消息将被删除，且无法恢复。",
-  "clear_confirm_ok": "清空",
-  "attach_image": "附加图片"
- },
- "editor": {
-  "name_required": "名称 *",
-  "description": "描述",
-  "rating": "评分",
-  "prep_min": "准备（分钟）",
-  "cook_min": "烹饪（分钟）",
-  "rest_min": "静置（分钟）",
-  "total_min": "总计（分钟）",
-  "yield": "产出",
-  "category": "分类",
-  "source_url": "来源 URL",
-  "video_url": "视频 URL",
-  "add_ingredient": "添加食材",
-  "add_step": "添加步骤",
-  "add_group": "添加分组"
- },
- "cooking_now": {
-  "label": "正在烹饪",
-  "untitled": "一道菜谱",
-  "label_many": "正在烹饪 {n} 道菜",
-  "just_started": "刚刚开始",
-  "minutes": "{n, plural, one {# min} other {# min}}",
-  "hours": "{n} 时 {m} 分",
-  "more": "{n, plural, one {# more cooking} other {# more cooking}}"
- },
- "recipe": {
-  "prep_time": "准备时间",
-  "cook_time": "烹饪时间",
-  "rest_time": "静置时间",
-  "total_time": "总时间",
-  "servings": "份数",
-  "serving_singular": "份",
-  "ingredients": "食材",
-  "instructions": "做法",
-  "kitchen_gear": "厨房用具",
-  "video_instructions": "视频做法",
-  "notes": "备注",
-  "nutrition": "营养成分",
-  "cook_history": "烹饪历史",
-  "cook_mode": "烹饪模式",
-  "tags": "标签"
- },
- "settings": {
-  "appearance": {
-   "section": "外观",
-   "theme": "主题",
-   "accent_color": "强调色",
-   "navigation_style": "导航样式"
+    "appearance": {
+      "section": "外观",
+      "theme": "主题",
+      "accent_color": "强调色",
+      "navigation_style": "导航样式"
+    },
+    "regional": {
+      "section": "区域与单位",
+      "language": "语言"
+    },
+    "cooking": {
+      "section": "烹饪"
+    },
+    "household": {
+      "section": "家庭"
+    },
+    "nutrition": {
+      "section": "营养"
+    },
+    "server_connection": {
+      "section": "服务器连接"
+    },
+    "email": {
+      "section": "邮件（SMTP）"
+    },
+    "backup": {
+      "section": "备份与恢复"
+    },
+    "import": {
+      "section": "从其他应用导入"
+    },
+    "kitchens": {
+      "section": "厨房"
+    },
+    "diagnostics": {
+      "section": "诊断"
+    },
+    "updates": {
+      "section": "更新"
+    },
+    "support": {
+      "section": "支持"
+    },
+    "about": {
+      "section": "关于"
+    },
+    "diary": {
+      "section": "日记"
+    },
+    "water": {
+      "section": "饮水"
+    },
+    "foods": {
+      "section": "食物"
+    },
+    "categories": {
+      "section": "分类"
+    },
+    "nutrients": {
+      "section": "营养素"
+    },
+    "goals": {
+      "section": "目标"
+    },
+    "body_stats": {
+      "section": "身体指标"
+    },
+    "statistics": {
+      "section": "统计"
+    },
+    "connected_services": {
+      "section": "食物来源"
+    },
+    "ai": {
+      "section": "AI 助手"
+    },
+    "notifications": {
+      "section": "通知"
+    },
+    "wellness": {
+      "section": "健康"
+    },
+    "sharing": {
+      "section": "食物分享"
+    },
+    "profile_hero": {
+      "label_fallback": "我的资料",
+      "subtitle_empty": "点击添加你的姓名和照片"
+    },
+    "authentication": {
+      "section": "身份验证"
+    },
+    "apitokens": {
+      "section": "API 令牌"
+    },
+    "webhooks": {
+      "section": "Webhook 通知"
+    },
+    "users": {
+      "section": "用户",
+      "users_heading": "用户",
+      "add_user": "+ 添加用户",
+      "username": "用户名",
+      "username_required": "用户名 *",
+      "full_name": "姓名（可选）",
+      "password_required": "密码 *",
+      "confirm_required": "确认密码 *",
+      "role": "角色",
+      "role_admin": "管理员",
+      "role_user": "用户",
+      "role_self_suffix": "（你）",
+      "create": "创建",
+      "creating": "创建中…",
+      "delete_user_title": "删除 {name}？",
+      "delete_user_message": "该用户的所有数据（食物、餐食、日记条目、设置）都将被删除，且无法恢复。",
+      "delete": "删除",
+      "promote_title": "将 {name} 设为管理员？",
+      "promote_message": "之后他们将能够管理用户、分享、邮件配置和 OIDC 提供商。",
+      "promote_confirm": "设为管理员",
+      "demote_title": "撤销 {name} 的管理员权限？",
+      "demote_message": "他们将失去管理员权限。之后你可以重新将其设为管理员。",
+      "demote_confirm": "撤销权限",
+      "reset_password": "重置密码",
+      "reset_password_prompt": "为 {name} 设置新密码\n\n（至少 8 位，须包含大写字母、小写字母、数字和特殊字符。）",
+      "invite_user": "邀请用户",
+      "invite_user_explainer": "发送注册链接，让用户自行设置密码。推荐使用。",
+      "email_optional": "邮箱（可选）",
+      "send_invite": "发送邀请",
+      "generate_link": "生成邀请链接",
+      "invite_sent": "邀请已发送",
+      "invite_sent_to": "邀请已发送至 {email}",
+      "user_fallback": "用户",
+      "share_link_intro": "分享此链接：",
+      "copy": "复制",
+      "copy_link": "复制链接",
+      "add_user_show": "手动添加用户",
+      "add_user_hide": "收起手动添加",
+      "add_user_explainer": "由你自己设置用户名和密码，然后告知该用户。适合未配置 SMTP 或离线部署的情况。",
+      "create_directly": "创建用户",
+      "session_duration": "会话时长",
+      "session_never": "永不过期",
+      "session_8h": "8 小时",
+      "session_1d": "1 天",
+      "session_7d": "7 天",
+      "session_30d": "30 天",
+      "session_90d": "90 天",
+      "session_1y": "1 年",
+      "save": "保存",
+      "disable_um": "关闭用户管理",
+      "disable_um_subtitle": "移除所有用户账号，恢复单用户模式",
+      "disable_um_title": "关闭用户管理？",
+      "disable_um_message": "这将删除所有用户账号，其数据无法恢复。应用将恢复为单用户模式。",
+      "disable_um_confirm": "关闭并全部删除",
+      "enable_um": "开启用户管理",
+      "enable_um_subtitle": "添加多个用户账号，各账号拥有独立的数据和设置",
+      "create_admin_account": "创建管理员账号",
+      "create_admin_explainer": "第一个账号始终是管理员。此服务器上现有的所有食物、餐食和日记数据都会归属到该账号。",
+      "enable_create": "开启并创建管理员",
+      "enabling": "开启中…",
+      "toast_user_created": "用户已添加",
+      "toast_user_deleted": "用户已删除",
+      "toast_password_reset": "密码已重置",
+      "toast_role_changed": "已将 {name} 的角色改为 {role}",
+      "toast_um_enabled": "用户管理已开启",
+      "toast_um_disabled": "用户管理已关闭",
+      "toast_invite_sent": "邀请已发送",
+      "toast_link_copied": "链接已复制",
+      "err_username_required": "请输入用户名。",
+      "err_passwords_mismatch": "两次输入的密码不一致。",
+      "err_username_password_required": "请输入用户名和密码。",
+      "err_registration_failed": "无法创建管理员账号",
+      "err_failed_to_add": "无法添加用户",
+      "err_could_not_change_role": "无法更改角色",
+      "err_could_not_reset_password": "无法重置密码",
+      "err_could_not_reach_server": "无法连接服务器。"
+    },
+    "server": {
+      "section": "服务器连接"
+    }
   },
-  "regional": {
-   "section": "区域与单位",
-   "language": "语言"
+  "attach_image": {
+    "button": "附加图片",
+    "camera": "相机",
+    "gallery": "相册"
   },
-  "cooking": {
-   "section": "烹饪"
+  "login": {
+    "subtitle": "登录你的账号",
+    "username": "用户名",
+    "username_placeholder": "输入用户名",
+    "password": "密码",
+    "password_placeholder": "输入密码",
+    "sign_in": "登录",
+    "signing_in": "登录中…",
+    "forgot_password": "忘记密码？",
+    "locked_out": "被锁定了？",
+    "session_ended": "你已在此设备上退出登录：账号的密码或两步验证已更改，或者使用了“退出所有设备”。请重新登录以继续。此设备上等待的更改会在你登录后上传。",
+    "sso_sign_in_with": "使用 {provider} 登录",
+    "sso_or": "或",
+    "no_signin_methods": "没有可用的登录方式。请联系你的管理员。",
+    "errors": {
+      "failed": "登录失败"
+    },
+    "cookie_warning": {
+      "http_title": "在此地址上无法登录",
+      "http_body": "此页面使用纯 HTTP，但服务器只通过 HTTPS 发送登录凭据，因此浏览器会将其丢弃，导致登录后又跳回登录页。请通过 HTTPS 打开 CookTrace；或者在可信的家庭网络中，在服务器上设置 <code>INSECURE_COOKIES=1</code> 并重启。",
+      "dropped_title": "浏览器未能保持你的登录状态",
+      "dropped_body": "你的密码正确，但浏览器没有保留登录凭据。请检查浏览器是否允许此站点保存登录信息；如果 CookTrace 部署在反向代理后面，还要检查代理是否正确传递登录凭据。",
+      "fix_link": "如何解决"
+    },
+    "recovery": {
+      "confirm_delete": "这将删除所有用户账号及其中保存的全部内容（菜谱、食材库和计划）。是否继续？",
+      "explainer_delete": "如果你并不是有意设置用户账号，可以关闭用户管理。<strong>这会删除所有用户账号及其中保存的全部内容</strong>（菜谱、食材库和计划）。",
+      "token_prompt": "输入你服务器环境中的 <code>RECOVERY_TOKEN</code>：",
+      "token_placeholder": "恢复令牌",
+      "action": "关闭用户管理并重置",
+      "disabling": "正在关闭…",
+      "failed": "无法恢复账号",
+      "success": "用户管理已关闭。你现在处于单用户模式。",
+      "done": "用户管理已关闭。<br>正在跳转…"
+    }
   },
-  "household": {
-   "section": "家庭"
+  "forgot_password": {
+    "title": "重置密码",
+    "intro": "输入你的邮箱地址，我们会向你发送一封用于重置密码的邮件。",
+    "email_label": "邮箱地址",
+    "send_link": "发送重置链接",
+    "sending": "发送中…",
+    "back_to_signin": "返回登录",
+    "sent": "如果 <strong>{email}</strong> 存在对应的账号，重置链接已发送。请查看你的收件箱。"
   },
-  "nutrition": {
-   "section": "营养"
+  "reset_password": {
+    "title": "新密码",
+    "verifying": "正在验证链接…",
+    "invalid_link": "此重置链接无效或已过期。",
+    "request_new": "请求新的链接",
+    "success": "密码已更新。正在跳转…",
+    "set_for": "为 <strong>{username}</strong> 设置新密码",
+    "new_password": "新密码",
+    "confirm_password": "确认密码",
+    "password_placeholder": "8 位以上，含大小写、数字、符号",
+    "submit": "设置新密码",
+    "saving": "保存中…",
+    "errors": {
+      "required": "请输入密码",
+      "mismatch": "两次输入的密码不一致。",
+      "failed": "重置失败"
+    }
   },
-  "server_connection": {
-   "section": "服务器连接"
+  "profile": {
+    "title": "个人资料",
+    "personal_info": "个人信息",
+    "security": "安全",
+    "change_photo": "更换照片",
+    "full_name": "姓名",
+    "full_name_placeholder": "你的姓名",
+    "email_placeholder": "用于密码重置",
+    "nickname": "昵称 / 显示名称",
+    "nickname_placeholder": "我们该怎么称呼你？",
+    "birthday": "生日",
+    "gender": "性别",
+    "gender_unset": "不愿透露",
+    "change_password": "更改密码",
+    "set_password": "设置密码",
+    "current_password": "当前密码",
+    "confirm_new_password": "确认新密码",
+    "saved": "个人资料已保存",
+    "password_changed": "密码已更改",
+    "sign_out_everywhere": "退出所有设备",
+    "sign_out_everywhere_hint": "其他所有浏览器、手机和手表都会退出登录，本设备保持登录状态。",
+    "sign_out_everywhere_title": "退出所有设备？",
+    "sign_out_everywhere_message": "登录你账号的其他所有浏览器、手机和手表都会被退出登录，需要重新登录。手表会通过你的手机重新登录。本设备保持登录状态。API 令牌不受影响：可在“API 令牌”页将其吊销。",
+    "signed_out_everywhere": "已退出其他所有设备",
+    "linked_accounts": "已关联账号",
+    "no_linked_accounts": "尚未关联任何身份提供商。",
+    "link_with": "关联方式",
+    "unlink": "解除关联",
+    "danger_zone": "危险操作",
+    "delete_account": "删除我的账号",
+    "delete_account_explainer": "永久删除你的账号及所有相关数据——食物、餐食、日记、健康和设置。",
+    "delete_account_title": "删除你的账号？",
+    "delete_account_message": "你的食物、餐食、日记、设置和健康数据将被永久删除，且无法恢复。",
+    "delete_account_confirm": "删除账号",
+    "deleting": "删除中…",
+    "account_deleted": "账号已删除",
+    "errors": {
+      "save_failed": "无法保存个人资料",
+      "upload_failed": "无法上传照片",
+      "password_change_failed": "无法更改密码",
+      "delete_account_failed": "无法删除账号"
+    }
   },
-  "email": {
-   "section": "邮件（SMTP）"
+  "wizard": {
+    "nav": {
+      "skip": "跳过",
+      "get_started": "开始使用",
+      "next": "下一步",
+      "finish": "完成"
+    },
+    "welcome": {
+      "title": "欢迎来到 CookTrace",
+      "desc": "你的个人营养追踪助手，大约一分钟就能完成设置。"
+    },
+    "name": {
+      "title": "我们该怎么称呼你？",
+      "desc": "用于问候、侧边菜单和你的 AI 助手。之后可以在设置中更改。",
+      "placeholder": "你的名字（可选）"
+    },
+    "usermgmt": {
+      "create_account_title": "创建你的账号",
+      "create_account_desc": "设置管理员账号以保护你的 CookTrace 实例。之后可以在设置中邀请其他用户。",
+      "multi_user_title": "多用户支持",
+      "multi_user_desc": "CookTrace 可以在单用户模式（默认）或具有独立登录和密码重置的多用户模式下运行。之后随时可以在设置中开启。"
+    },
+    "units": {
+      "title": "计量系统",
+      "desc": "你平时用什么计量方式？"
+    },
+    "gender": {
+      "title": "你的性别是什么？",
+      "desc": "用于计算你的卡路里需求。"
+    },
+    "dob": {
+      "title": "你的出生日期是？",
+      "desc": "年龄会影响你的代谢率。"
+    },
+    "height": {
+      "title": "你的身高是多少？",
+      "desc": "用于估算你的卡路里需求。"
+    },
+    "weight": {
+      "title": "你的体重是多少？"
+    },
+    "target": {
+      "title": "你的目标体重是多少？"
+    },
+    "activity": {
+      "title": "你的活动量有多大？",
+      "desc": "会影响你的每日卡路里需求。"
+    },
+    "integrations": {
+      "title": "集成",
+      "desc": "连接可选的服务。不需要的直接跳过——之后可以在设置中配置。"
+    },
+    "notifications": {
+      "title": "保持正轨",
+      "desc": "获取实用的提醒，庆祝你的进步。之后可以在设置中自定义所有这些内容。"
+    },
+    "summary": {
+      "title": "你的每日目标",
+      "desc": "根据你的各项数据，使用 Mifflin-St Jeor 公式计算得出。"
+    },
+    "skip_modal": {
+      "title": "跳过设置？",
+      "desc": "你可以随时在<strong>设置</strong>中配置目标、单位和集成。在此之前，卡路里目标不会自动计算。",
+      "continue": "继续设置",
+      "skip_now": "暂时跳过"
+    }
   },
-  "backup": {
-   "section": "备份与恢复"
-  },
-  "import": {
-   "section": "从其他应用导入"
-  },
-  "kitchens": {
-   "section": "厨房"
-  },
-  "diagnostics": {
-   "section": "诊断"
-  },
-  "updates": {
-   "section": "更新"
-  },
-  "support": {
-   "section": "支持"
-  },
-  "about": {
-   "section": "关于"
+  "wizard_ct": {
+    "household": {
+      "title": "你为谁做饭？",
+      "desc": "添加你为其做饭的人，并注明过敏情况或饮食习惯。计划份数和过敏原警告会用到这些信息。之后可以在设置中更改。",
+      "skip": "跳过"
+    },
+    "updates": {
+      "title": "检查更新",
+      "desc": "当新版本 CookTrace 发布时，你的服务器可以通知你。",
+      "toggle": "自动检查更新",
+      "toggle_sub": "借此了解新功能、修复和安全更新",
+      "note": "你的服务器会每隔几小时向 GitHub 查询是否有新版本的 CookTrace。不会发送任何与你或你的数据有关的信息。你可以随时在“设置 → 更新”中更改。"
+    },
+    "welcome": "欢迎来到 CookTrace",
+    "get_started": "开始使用",
+    "name_ph": "你的名字",
+    "back": "返回",
+    "next": "下一步",
+    "create_admin": "创建你的管理员账号",
+    "enable_user_accounts": "开启用户账号",
+    "admin_account": "管理员账号",
+    "nickname": "昵称",
+    "optional_ph": "可选",
+    "full_name": "姓名",
+    "email": "邮箱",
+    "continue": "继续",
+    "cooking_preferences": "烹饪偏好",
+    "measurement_system": "计量系统",
+    "default_servings": "默认份数",
+    "open_cooktrace": "打开 CookTrace"
   },
   "diary": {
-   "section": "日记"
-  },
-  "water": {
-   "section": "饮水"
+    "add_food": "添加食物",
+    "notes_placeholder": "今天感觉如何？睡眠、精力、饥饿、食欲…",
+    "nav": {
+      "previous_day": "前一天",
+      "next_day": "后一天",
+      "jump_to_date": "跳转到日期"
+    },
+    "actions": {
+      "cancel_selection": "取消选择",
+      "delete_selected": "删除所选",
+      "log_water": "记录饮水",
+      "log_water_long": "饮水——记录你的饮水量",
+      "nutrition_summary": "营养摘要",
+      "nutrition_summary_long": "营养摘要——今日营养素的完整明细",
+      "body_stats": "身体指标",
+      "body_stats_long": "身体指标——记录体重、体脂和围度"
+    },
+    "toast": {
+      "body_stats_saved": "身体指标已保存",
+      "updated": "已更新",
+      "item_removed": "条目已移除",
+      "activity_removed": "活动已移除"
+    },
+    "errors": {
+      "note_save_failed": "备注保存失败",
+      "name_required": "请输入名称",
+      "nothing_to_save": "没有可保存的内容",
+      "activity_save_failed": "无法保存活动",
+      "activity_delete_failed": "无法删除活动"
+    },
+    "activity": {
+      "section": "活动",
+      "tap_to_add": "点击添加活动",
+      "add": "添加活动",
+      "add_to_diary": "添加到日记",
+      "save_changes": "保存更改",
+      "title_add": "添加活动",
+      "title_edit": "编辑活动",
+      "field_name": "活动",
+      "field_name_placeholder": "如：晨间徒步",
+      "field_kcal": "消耗卡路里",
+      "field_kcal_placeholder": "kcal",
+      "field_duration": "时长",
+      "field_duration_placeholder": "分钟",
+      "field_distance": "距离",
+      "field_distance_placeholder": "如：10 英里",
+      "field_optional": "（可选）",
+      "saving": "添加中…",
+      "estimated_short": "估算",
+      "wellness_hint": "从设备同步的训练记录位于“健康”中",
+      "not_counted": "未计入——正在使用穿戴设备",
+      "policy_chip": "规则：以穿戴设备为准。可在“设置 → 日记”中切换。",
+      "actions": {
+        "edit": "编辑",
+        "delete": "删除"
+      },
+      "errors": {
+        "name_required": "请输入名称",
+        "kcal_required": "请输入卡路里"
+      }
+    }
   },
   "foods": {
-   "section": "食物"
+    "search_placeholder": "搜索食物或扫描条形码…",
+    "scan_barcode": "扫描条形码",
+    "add_new": "新建",
+    "n_selected": "已选择 {n} 项",
+    "add_n": "添加 {n} 项",
+    "adding": "添加中…",
+    "add_selected_to_diary": "将所选添加到日记",
+    "search_in": "搜索 {source}",
+    "searching_in": "正在搜索 {source}…",
+    "no_results_in": "{source} 中没有结果",
+    "sources": {
+      "local": "本地",
+      "from_others": "来自他人"
+    },
+    "toast": {
+      "deleted": "已删除",
+      "cloned": "已克隆"
+    }
   },
-  "categories": {
-   "section": "分类"
-  },
-  "nutrients": {
-   "section": "营养素"
+  "smart_log": {
+    "placeholder": "早餐我吃了 2 个鸡蛋和吐司"
   },
   "goals": {
-   "section": "目标"
+    "save_goal": "保存目标",
+    "toast": {
+      "goal_saved": "目标已保存",
+      "water_goal_saved": "饮水目标已保存",
+      "template_saved": "模板已保存",
+      "template_applied": "“{name}”已应用"
+    }
   },
-  "body_stats": {
-   "section": "身体指标"
+  "food_editor": {
+    "name_placeholder": "食物名称",
+    "brand_placeholder": "品牌（可选）",
+    "saved": "已保存",
+    "added_to_diary": "已添加到日记",
+    "errors": {
+      "name_required": "请输入名称"
+    }
   },
-  "statistics": {
-   "section": "统计"
+  "meal_editor": {
+    "meal_name_placeholder": "餐食名称",
+    "recipe_name_placeholder": "菜谱名称",
+    "errors": {
+      "no_ingredients": "请至少添加一种食材"
+    }
   },
-  "connected_services": {
-   "section": "食物来源"
+  "pantry": {
+    "title": "食材库",
+    "add_item": "添加条目",
+    "search_placeholder": "搜索食材库…",
+    "scan_barcode": "扫描条形码",
+    "filters": {
+      "all": "全部",
+      "in_stock": "有货",
+      "out": "无货",
+      "all_categories": "全部分类",
+      "uncategorized": "未分类",
+      "select_multiple": "选择",
+      "cancel_select": "取消"
+    },
+    "external": {
+      "searching_in": "正在搜索 {source}…",
+      "no_results_in": "{source} 中没有结果",
+      "sources": {
+        "local": "食材库",
+        "off": "OFF",
+        "usda": "USDA"
+      }
+    },
+    "actions": {
+      "edit": "编辑",
+      "select_multiple": "多选",
+      "delete": "删除",
+      "mark_in_stock": "标记为有货",
+      "mark_out_stock": "标记为无货"
+    },
+    "bulk": {
+      "selected": "已选择 {n} 项",
+      "select_all": "全选",
+      "clear": "清除",
+      "delete": "删除",
+      "confirm_title": "删除 {n} 个食材条目？",
+      "confirm_message": "引用它们的菜谱会保留，这只是将它们从你的食材库中移除。"
+    }
   },
-  "ai": {
-   "section": "AI 助手"
+  "pantry_editor": {
+    "title_add": "添加食材条目",
+    "title_edit": "编辑食材条目",
+    "cards": {
+      "photo": "照片",
+      "basic_info": "基本信息",
+      "inventory": "库存",
+      "category": "分类",
+      "notes": "备注",
+      "nutrition": "营养成分",
+      "danger": "危险操作"
+    },
+    "fields": {
+      "name": "名称",
+      "name_placeholder": "普通面粉",
+      "brand": "品牌",
+      "brand_placeholder": "如：King Arthur",
+      "barcode": "条形码",
+      "serving_size": "份量",
+      "serving_unit": "单位",
+      "on_hand": "现有数量",
+      "in_stock": "有货",
+      "in_stock_desc": "决定每个菜谱卡片上“X / Y 有货”徽标的显示。",
+      "category_none": "无",
+      "notes_placeholder": "存放位置、过期时间、其他备注…"
+    },
+    "actions": {
+      "share_to_off": "分享到 OFF",
+      "refresh_off": "从 OFF 刷新",
+      "refresh_usda": "从 USDA 刷新",
+      "uploading": "上传中…",
+      "loading": "加载中…",
+      "submitted": "已提交！",
+      "updated": "已更新！",
+      "show_all_nutrients": "显示全部营养素",
+      "show_less": "收起",
+      "remove": "从食材库移除"
+    },
+    "linked": {
+      "linked": "已关联：修改份量时，所有营养素按比例缩放",
+      "unlinked": "未关联：修改份量时，营养素数值保持不变"
+    },
+    "errors": {
+      "name_required": "请输入名称",
+      "save_failed": "保存失败",
+      "off_lookup_failed": "OFF 查询失败",
+      "off_not_found": "在 Open Food Facts 上未找到",
+      "share_no_barcode": "请先添加条形码再分享",
+      "refresh_no_barcode": "请先添加或扫描条形码"
+    }
   },
-  "notifications": {
-   "section": "通知"
+  "diary_entry": {
+    "title_add": "添加到烹饪日记",
+    "title_edit": "编辑烹饪日记条目",
+    "save_changes": "保存更改",
+    "submit": "添加到烹饪日记",
+    "fields": {
+      "date": "日期",
+      "notes": "备注",
+      "notes_hint": "（做得怎么样？）",
+      "photos": "照片",
+      "photos_hint": "（可选——想加多少张都行）"
+    },
+    "actions": {
+      "open_recipe": "打开菜谱",
+      "mark_cooked": "标记为已烹饪",
+      "delete": "删除"
+    }
   },
-  "wellness": {
-   "section": "健康"
+  "accept_invite": {
+    "title": "创建账号",
+    "verifying": "正在验证邀请…",
+    "invalid_link": "此邀请链接无效或已过期。请向你的管理员索取新链接。",
+    "success": "账号已创建！正在跳转…",
+    "intro": "你受邀加入 CookTrace。选择一个用户名和密码即可开始。",
+    "intro_with_email": "你受邀使用的邮箱是 <strong>{email}</strong>。选择一个用户名和密码即可开始。",
+    "username_label": "用户名 *",
+    "username_placeholder": "选择一个用户名",
+    "full_name_label": "姓名（可选）",
+    "full_name_placeholder": "你的姓名",
+    "password_label": "密码 *",
+    "confirm_label": "确认密码 *",
+    "submit": "创建账号",
+    "creating": "正在创建账号…",
+    "errors": {
+      "username_required": "请输入用户名",
+      "failed": "创建账号失败"
+    }
   },
-  "sharing": {
-   "section": "食物分享"
+  "two_step": {
+    "errors": {
+      "generic": "出了点问题。请重试。",
+      "copy_failed": "复制失败。请手动选中文本并复制。"
+    },
+    "setup": {
+      "loading": "加载中…",
+      "scan": "使用身份验证器应用（如 Aegis、2FAS、Google Authenticator 或 1Password）扫描此二维码。",
+      "qr_alt": "用于身份验证器应用的二维码",
+      "open_app": "在身份验证器应用中打开",
+      "key_intro": "无法扫描？改为在应用中输入此密钥：",
+      "copy_key": "复制密钥",
+      "key_copied": "密钥已复制",
+      "key_details": "基于时间，6 位数字，每 30 秒更新一次。",
+      "code_label": "应用中的 6 位验证码",
+      "turn_on": "开启",
+      "turning_on": "开启中…"
+    },
+    "codes": {
+      "title": "保存你的恢复码",
+      "explain": "如果手机丢失，每个恢复码可登录一次。请将它们保存在安全的地方，例如密码管理器中。这些恢复码不会再次显示。",
+      "copy": "复制恢复码",
+      "download": "下载",
+      "copied": "恢复码已复制",
+      "saved": "我已保存恢复码"
+    },
+    "signin": {
+      "title": "两步验证",
+      "setup_title": "设置两步验证",
+      "setup_intro": "你的管理员要求启用两步验证。请立即完成设置以继续登录。",
+      "intro": "输入身份验证器应用中的 6 位验证码。",
+      "recovery_intro": "输入你设置两步验证时保存的任一恢复码。",
+      "code_label": "验证码",
+      "recovery_label": "恢复码",
+      "verify": "验证",
+      "verifying": "验证中…",
+      "use_recovery": "使用恢复码",
+      "use_app": "使用应用中的验证码",
+      "back": "返回登录",
+      "lost_phone": "手机和恢复码都丢失了？请让管理员为你重置两步验证。",
+      "recovery_used": "已使用恢复码登录。{count, plural, =0 {你已没有剩余恢复码。请前往“设置 > 个人资料”生成新恢复码。} one {还剩 # 个恢复码。} other {还剩 # 个恢复码。}}"
+    },
+    "settings": {
+      "title": "两步验证",
+      "on": "开",
+      "off": "关",
+      "desc": "输入密码后，还需输入手机上身份验证器应用中的验证码。",
+      "sso": "你使用单点登录，两步验证由登录提供商处理。",
+      "load_failed": "无法加载你的两步验证设置。",
+      "required_note": "你的管理员要求启用两步验证，因此下次登录时会要求你进行设置。",
+      "key_problem": "当前无法在此服务器上校验身份验证器应用中的验证码（服务器的两步密钥已更改或缺失）。请使用恢复码登录，或请管理员重置两步验证后再重新设置。",
+      "cant_set_up": "当前无法在此服务器上设置两步验证：服务器无法保存其密钥。请联系管理员。",
+      "set_up": "设置两步验证",
+      "password_label": "你的密码",
+      "continue": "继续",
+      "on_since": "自 {date} 起开启",
+      "codes_left": "{count, plural, one {还剩 # 个恢复码} other {还剩 # 个恢复码}}",
+      "codes_low": "恢复码所剩不多。请生成新的恢复码，以便手机丢失时仍能登录。",
+      "new_codes": "新的恢复码",
+      "codes_explain": "新恢复码会替换你现有的恢复码。请输入你的密码和来自应用的验证码（或一个恢复码）。",
+      "turn_off": "关闭",
+      "off_explain": "之后仅凭密码即可登录。请输入你的密码和来自应用的验证码（或一个恢复码）。",
+      "code_label": "来自应用的验证码或恢复码",
+      "turned_on": "两步验证已开启",
+      "turned_off": "两步验证已关闭"
+    },
+    "admin": {
+      "require": "要求所有人启用两步验证",
+      "require_desc": "使用密码登录且尚未设置的用户，会在下次登录、输入密码后立即完成设置。单点登录账号不受影响。",
+      "required_on": "现已要求启用两步验证",
+      "required_off": "不再要求启用两步验证",
+      "required_failed": "无法保存：{msg}",
+      "reset": "重置两步验证",
+      "reset_title": "重置 {name} 的两步验证？",
+      "reset_message": "其身份验证器应用和恢复码将失效，在重新设置两步验证之前只能凭密码登录。如果服务器配置了邮件功能，会向其发送邮件通知。",
+      "your_password": "你的密码",
+      "your_code": "你的两步验证码",
+      "reset_confirm": "重置",
+      "resetting": "重置中…",
+      "reset_done": "已重置 {name} 的两步验证"
+    },
+    "locked_out": {
+      "title": "重置单个账号的两步验证",
+      "explain": "适用于手机和恢复码都丢失的用户。只有该账号会受影响：在重新设置两步验证之前，它只能凭密码登录。",
+      "username_placeholder": "用户名",
+      "action": "重置两步验证",
+      "resetting": "重置中…",
+      "failed": "无法重置两步验证",
+      "done": "{name} 的两步验证已关闭。请使用密码登录。",
+      "disable_title": "关闭用户管理"
+    },
+    "link": {
+      "title": "关联 {provider}？",
+      "message": "输入你的密码以关联 {provider}。之后你就可以使用它登录。",
+      "message_sso": "你使用单点登录，关联 {provider} 需要最近 15 分钟内有过一次登录。如果已超过，请先退出登录再重新登录。",
+      "password_label": "你的密码",
+      "code_label": "来自应用的验证码或恢复码",
+      "continue": "继续",
+      "checking": "正在检查…"
+    },
+    "email": {
+      "title": "确认你的新邮箱",
+      "explain": "输入你的密码进行确认。在此之前，密码重置仍会发往你的旧邮箱，单点登录也不会通过这个新邮箱关联到你的账号。",
+      "explain_sso": "请在登录后 15 分钟内确认。在此之前，密码重置仍会发往你的旧邮箱，单点登录也不会通过这个新邮箱关联到你的账号。如果已超过，请先退出登录再重新登录。",
+      "confirm": "确认邮箱",
+      "confirmed": "邮箱已确认"
+    },
+    "reset_password_done": "你的密码已更改。此账号已开启两步验证，请使用新密码和验证码登录。"
   },
-  "profile_hero": {
-   "label_fallback": "我的资料",
-   "subtitle_empty": "点击添加你的姓名和照片"
+  "connection_status": {
+    "connected": "已连接",
+    "not_connected": "未连接",
+    "not_connected_error": "未连接：{error}",
+    "test": "测试",
+    "testing": "测试中…",
+    "testing_connection": "正在测试连接…"
   },
-  "authentication": {
-   "section": "身份验证"
+  "watch": {
+    "keep_awake_text": "你的手表正通过这部手机工作"
   },
-  "apitokens": {
-   "section": "API 令牌"
+  "password": {
+    "too_short": "至少使用 8 个字符。",
+    "needs_lower": "请添加小写字母。",
+    "needs_upper": "请添加大写字母。",
+    "needs_number": "请添加数字。",
+    "needs_symbol": "请添加符号，如 ! 或 #。",
+    "strength_0": "太弱",
+    "strength_1": "弱",
+    "strength_2": "一般",
+    "strength_3": "强",
+    "strength_4": "很强"
   },
-  "webhooks": {
-   "section": "Webhooks"
+  "connect": {
+    "needs_setup": "此服务器尚未完成设置。请先在浏览器中打开它并创建第一个账号，然后再在此处连接。"
   },
-  "users": {
-   "section": "用户",
-   "users_heading": "用户",
-   "add_user": "+ 添加用户",
-   "username": "用户名",
-   "username_required": "用户名 *",
-   "full_name": "姓名（可选）",
-   "password_required": "密码 *",
-   "confirm_required": "确认密码 *",
-   "role": "角色",
-   "role_admin": "管理员",
-   "role_user": "用户",
-   "role_self_suffix": "（你）",
-   "create": "创建",
-   "creating": "创建中…",
-   "delete_user_title": "删除 {name}？",
-   "delete_user_message": "该用户的所有数据（食物、餐食、日记条目、设置）都将被删除，且无法恢复。",
-   "delete": "删除",
-   "promote_title": "将 {name} 设为管理员？",
-   "promote_message": "之后他们将能够管理用户、分享、邮件配置和 OIDC 提供商。",
-   "promote_confirm": "设为管理员",
-   "demote_title": "撤销 {name} 的管理员权限？",
-   "demote_message": "他们将失去管理员权限。之后你可以重新将其设为管理员。",
-   "demote_confirm": "撤销权限",
-   "reset_password": "重置密码",
-   "reset_password_prompt": "为 {name} 设置新密码\n\n（至少 8 位，须包含大写字母、小写字母、数字和特殊字符。）",
-   "invite_user": "邀请用户",
-   "invite_user_explainer": "发送注册链接，让用户自行设置密码。推荐使用。",
-   "email_optional": "邮箱（可选）",
-   "send_invite": "发送邀请",
-   "generate_link": "生成邀请链接",
-   "invite_sent": "邀请已发送",
-   "invite_sent_to": "邀请已发送至 {email}",
-   "user_fallback": "用户",
-   "share_link_intro": "分享此链接：",
-   "copy": "复制",
-   "copy_link": "复制链接",
-   "add_user_show": "手动添加用户",
-   "add_user_hide": "收起手动添加",
-   "add_user_explainer": "由你自己设置用户名和密码，然后告知该用户。适合未配置 SMTP 或离线部署的情况。",
-   "create_directly": "创建用户",
-   "session_duration": "会话时长",
-   "session_never": "永不过期",
-   "session_8h": "8 小时",
-   "session_1d": "1 天",
-   "session_7d": "7 天",
-   "session_30d": "30 天",
-   "session_90d": "90 天",
-   "session_1y": "1 年",
-   "save": "保存",
-   "disable_um": "关闭用户管理",
-   "disable_um_subtitle": "移除所有用户账号，恢复单用户模式",
-   "disable_um_title": "关闭用户管理？",
-   "disable_um_message": "这将删除所有用户账号，其数据无法恢复。应用将恢复为单用户模式。",
-   "disable_um_confirm": "关闭并全部删除",
-   "enable_um": "开启用户管理",
-   "enable_um_subtitle": "添加多个用户账号，各账号拥有独立的数据和设置",
-   "create_admin_account": "创建管理员账号",
-   "create_admin_explainer": "第一个账号始终是管理员。此服务器上现有的所有食物、餐食和日记数据都会归属到该账号。",
-   "enable_create": "开启并创建管理员",
-   "enabling": "开启中…",
-   "toast_user_created": "用户已添加",
-   "toast_user_deleted": "用户已删除",
-   "toast_password_reset": "密码已重置",
-   "toast_role_changed": "已将 {name} 的角色改为 {role}",
-   "toast_um_enabled": "用户管理已开启",
-   "toast_um_disabled": "用户管理已关闭",
-   "toast_invite_sent": "邀请已发送",
-   "toast_link_copied": "链接已复制",
-   "err_username_required": "请输入用户名。",
-   "err_passwords_mismatch": "两次输入的密码不一致。",
-   "err_username_password_required": "请输入用户名和密码。",
-   "err_registration_failed": "无法创建管理员账号",
-   "err_failed_to_add": "无法添加用户",
-   "err_could_not_change_role": "无法更改角色",
-   "err_could_not_reset_password": "无法重置密码",
-   "err_could_not_reach_server": "无法连接服务器。"
+  "plain_http": {
+    "warning_title": "不加密连接？",
+    "warning_body": "此服务器使用纯 HTTP，连接未经加密。同一网络中的任何人都可以读取和篡改传输的内容，包括你的密码。",
+    "warning_advice": "请仅在家庭网络或 VPN 中使用。",
+    "warning_stored": "在你连接之前，不会与此服务器同步任何内容，应用会继续使用这部手机上的数据。下次打开时会再次询问。",
+    "connect_anyway": "仍要连接",
+    "refused_title": "需要 HTTPS",
+    "refused_body": "此服务器使用纯 HTTP，且不在你自己的网络中，因此应用不会连接它。纯 HTTP 仅适用于私有地址（如 192.168.1.20）或本地域名（如 <code>cooktrace.local</code>）的服务器。其他情况请使用 HTTPS。",
+    "refused_stored": "不会与此服务器同步任何内容，应用会继续使用这部手机上的数据。要切换到 HTTPS 地址，请在“设置 > 服务器连接”中断开连接，然后重新连接。",
+    "refused_short": "纯 HTTP 仅适用于你自己网络中的服务器。请为此服务器使用 HTTPS 地址。",
+    "https_guide": "如何设置 HTTPS",
+    "unreachable": "无法连接 {url}。请检查地址，并确认这部手机与服务器在同一网络或 VPN 中。",
+    "not_encrypted": "未加密",
+    "invalid_address": "请输入以 <code>http://</code> 或 <code>https://</code> 开头的地址，例如 https://cooktrace.example.com。",
+    "blocked": "不允许向 {origin} 发送纯 HTTP 请求。请使用 HTTPS 地址，或使用你自己网络中的服务器。"
   },
-  "server": {
-   "section": "服务器连接"
+  "server_signin": {
+    "web_page": "响应的不是 CookTrace，而是一个网页：通常是登录代理（Authentik、Authelia、Cloudflare Access），或者这不是你服务器的地址。请确保应用可以访问你服务器上的 <code>/api</code>。",
+    "options_failed": "无法加载此服务器的登录选项。请重试；如果服务器允许，也可以使用密码登录。",
+    "token_refused": "无法校验此次登录，因此已将其终止。请更新你的 CookTrace 服务器，或改用密码连接。",
+    "retry": "重试",
+    "checking": "正在检查登录选项…",
+    "unreachable": "目前无法连接你的服务器。请确认它正在运行，然后重试。",
+    "proxy_sign_in": "服务器前面的某个服务要求你登录。请在那里登录，然后重新加载此页面。",
+    "server_error": "你的服务器返回了错误。请稍后重试。"
+  },
+  "when": {
+    "just_now": "刚刚",
+    "in_moments": "片刻后",
+    "today": "今天",
+    "yesterday": "昨天",
+    "tomorrow": "明天",
+    "minutes_ago": "{n, plural, one {# 分钟前} other {# 分钟前}}",
+    "minutes_ahead": "{n, plural, one {# 分钟后} other {# 分钟后}}",
+    "hours_ago": "{n, plural, one {# 小时前} other {# 小时前}}",
+    "hours_ahead": "{n, plural, one {# 小时后} other {# 小时后}}",
+    "days_ago": "{n, plural, one {# 天前} other {# 天前}}",
+    "days_ahead": "{n, plural, one {# 天后} other {# 天后}}",
+    "months_ago": "{n, plural, one {# 个月前} other {# 个月前}}",
+    "months_ahead": "{n, plural, one {# 个月后} other {# 个月后}}",
+    "years_ago": "{n, plural, one {# 年前} other {# 年前}}",
+    "years_ahead": "{n, plural, one {# 年后} other {# 年后}}"
+  },
+  "confirm": {
+    "title": "确定吗？",
+    "ok": "确定"
+  },
+  "notify": {
+    "update_title": "CookTrace 更新可用",
+    "update_body": "{version} 已就绪，点击即可安装。"
+  },
+  "migrate": {
+    "no_recipe": "其菜谱尚未上传，因此已被跳过。"
+  },
+  "app_ui": {
+    "open_menu": "打开菜单"
+  },
+  "login_ui": {
+    "biometric_reason": "登录 CookTrace"
+  },
+  "profile_ui": {
+    "biometric_enable_reason": "启用生物识别登录",
+    "gender_male": "男",
+    "gender_female": "女",
+    "gender_non_binary": "非二元性别",
+    "unlink_confirm": "解除与此提供商的关联？重新关联之前，你将无法使用它登录。",
+    "last_sign_in": "上次登录 {date}",
+    "biometric_desc": "使用指纹或面部解锁代替每次输入密码。首次登录仍需输入密码。默认情况下，登录会话最长可保持一年。管理员可以在",
+    "biometric_setup_prefix": "请先在",
+    "android_security_path": "Android 设置 > 安全",
+    "biometric_setup_suffix": "中设置指纹或面部解锁，然后再回到这里。",
+    "avatar_alt": "头像"
+  },
+  "sidebar_ui": {
+    "nav_menu": "导航菜单",
+    "tagline": "追溯每一道菜谱，从食材库到餐桌"
+  },
+  "bottom_nav_ui": {
+    "main_navigation": "主导航"
+  },
+  "sidebar_ct": {
+    "brand": "CookTrace"
+  },
+  "profile_ct": {
+    "toast": {
+      "biometric_cancelled": "生物识别验证已取消或失败。"
+    },
+    "biometric_signin": "使用生物识别登录"
+  },
+  "manage_ct": {
+    "title": "管理"
   }
- },
- "attach_image": {
-  "button": "附加图片",
-  "camera": "相机",
-  "gallery": "相册"
- },
- "login": {
-  "subtitle": "登录你的账号",
-  "username": "用户名",
-  "username_placeholder": "输入用户名",
-  "password": "密码",
-  "password_placeholder": "输入密码",
-  "sign_in": "登录",
-  "signing_in": "登录中…",
-  "forgot_password": "忘记密码？",
-  "locked_out": "被锁定了？",
-  "session_ended": "你已在此设备上退出登录：账号的密码或两步验证已更改，或者使用了“退出所有设备”。请重新登录以继续。此设备上等待的更改会在你登录后上传。",
-  "sso_sign_in_with": "使用 {provider} 登录",
-  "sso_or": "或",
-  "no_signin_methods": "没有可用的登录方式。请联系你的管理员。",
-  "errors": {
-   "failed": "登录失败"
-  },
-  "cookie_warning": {
-   "http_title": "在此地址上无法登录",
-   "http_body": "此页面使用纯 HTTP，但服务器只通过 HTTPS 发送登录 Cookie，因此浏览器会将其丢弃，导致登录后又跳回登录页。请通过 HTTPS 打开 CookTrace；或者在可信的家庭网络中，在服务器上设置 INSECURE_COOKIES=1 并重启。",
-   "dropped_title": "浏览器未能保持你的登录状态",
-   "dropped_body": "你的密码正确，但浏览器没有保留登录 Cookie。请检查本站点的 Cookie 是否被允许；如果 CookTrace 部署在反向代理后面，还要检查代理是否正确传递 Cookie。",
-   "fix_link": "如何解决"
-  },
-  "recovery": {
-   "confirm_delete": "这将删除所有用户账号及其中保存的全部内容（菜谱、食材库和计划）。是否继续？",
-   "explainer_delete": "如果你并不是有意设置用户账号，可以关闭用户管理。<strong>这会删除所有用户账号及其中保存的全部内容</strong>（菜谱、食材库和计划）。",
-   "token_prompt": "输入你服务器环境中的 <code>RECOVERY_TOKEN</code>：",
-   "token_placeholder": "恢复令牌",
-   "action": "关闭用户管理并重置",
-   "disabling": "正在关闭…",
-   "failed": "无法恢复账号",
-   "success": "用户管理已关闭。你现在处于单用户模式。",
-   "done": "用户管理已关闭。<br>正在跳转…"
-  }
- },
- "forgot_password": {
-  "title": "重置密码",
-  "intro": "输入你的邮箱地址，我们会向你发送一封用于重置密码的邮件。",
-  "email_label": "邮箱地址",
-  "send_link": "发送重置链接",
-  "sending": "发送中…",
-  "back_to_signin": "返回登录",
-  "sent": "如果 <strong>{email}</strong> 存在对应的账号，重置链接已发送。请查看你的收件箱。"
- },
- "reset_password": {
-  "title": "新密码",
-  "verifying": "正在验证链接…",
-  "invalid_link": "此重置链接无效或已过期。",
-  "request_new": "请求新的链接",
-  "success": "密码已更新。正在跳转…",
-  "set_for": "为 <strong>{username}</strong> 设置新密码",
-  "new_password": "新密码",
-  "confirm_password": "确认密码",
-  "password_placeholder": "8 位以上，含大小写、数字、符号",
-  "submit": "设置新密码",
-  "saving": "保存中…",
-  "errors": {
-   "required": "请输入密码",
-   "mismatch": "两次输入的密码不一致。",
-   "failed": "重置失败"
-  }
- },
- "profile": {
-  "title": "个人资料",
-  "personal_info": "个人信息",
-  "security": "安全",
-  "change_photo": "更换照片",
-  "full_name": "姓名",
-  "full_name_placeholder": "你的姓名",
-  "email_placeholder": "用于密码重置",
-  "nickname": "昵称 / 显示名称",
-  "nickname_placeholder": "我们该怎么称呼你？",
-  "birthday": "生日",
-  "gender": "性别",
-  "gender_unset": "不愿透露",
-  "change_password": "更改密码",
-  "set_password": "设置密码",
-  "current_password": "当前密码",
-  "confirm_new_password": "确认新密码",
-  "saved": "个人资料已保存",
-  "password_changed": "密码已更改",
-  "sign_out_everywhere": "退出所有设备",
-  "sign_out_everywhere_hint": "其他所有浏览器、手机和手表都会退出登录，本设备保持登录状态。",
-  "sign_out_everywhere_title": "退出所有设备？",
-  "sign_out_everywhere_message": "登录你账号的其他所有浏览器、手机和手表都会被退出登录，需要重新登录。手表会通过你的手机重新登录。本设备保持登录状态。API 令牌不受影响：可在“API 令牌”页将其吊销。",
-  "signed_out_everywhere": "已退出其他所有设备",
-  "linked_accounts": "已关联账号",
-  "no_linked_accounts": "尚未关联任何身份提供商。",
-  "link_with": "关联方式",
-  "unlink": "解除关联",
-  "danger_zone": "危险操作",
-  "delete_account": "删除我的账号",
-  "delete_account_explainer": "永久删除你的账号及所有相关数据——食物、餐食、日记、健康和设置。",
-  "delete_account_title": "删除你的账号？",
-  "delete_account_message": "你的食物、餐食、日记、设置和健康数据将被永久删除，且无法恢复。",
-  "delete_account_confirm": "删除账号",
-  "deleting": "删除中…",
-  "account_deleted": "账号已删除",
-  "errors": {
-   "save_failed": "无法保存个人资料",
-   "upload_failed": "无法上传照片",
-   "password_change_failed": "无法更改密码",
-   "delete_account_failed": "无法删除账号"
-  }
- },
- "wizard": {
-  "nav": {
-   "skip": "跳过",
-   "get_started": "开始使用",
-   "next": "下一步",
-   "finish": "完成"
-  },
-  "welcome": {
-   "title": "欢迎来到 CookTrace",
-   "desc": "你的个人营养追踪助手，大约一分钟就能完成设置。"
-  },
-  "name": {
-   "title": "我们该怎么称呼你？",
-   "desc": "用于问候、侧边菜单和你的 AI 助手。之后可以在设置中更改。",
-   "placeholder": "你的名字（可选）"
-  },
-  "usermgmt": {
-   "create_account_title": "创建你的账号",
-   "create_account_desc": "设置管理员账号以保护你的 CookTrace 实例。之后可以在设置中邀请其他用户。",
-   "multi_user_title": "多用户支持",
-   "multi_user_desc": "CookTrace 可以在单用户模式（默认）或具有独立登录和密码重置的多用户模式下运行。之后随时可以在设置中开启。"
-  },
-  "units": {
-   "title": "计量系统",
-   "desc": "你平时用什么计量方式？"
-  },
-  "gender": {
-   "title": "你的性别是什么？",
-   "desc": "用于计算你的卡路里需求。"
-  },
-  "dob": {
-   "title": "你的出生日期是？",
-   "desc": "年龄会影响你的代谢率。"
-  },
-  "height": {
-   "title": "你的身高是多少？",
-   "desc": "用于估算你的卡路里需求。"
-  },
-  "weight": {
-   "title": "你的体重是多少？"
-  },
-  "target": {
-   "title": "你的目标体重是多少？"
-  },
-  "activity": {
-   "title": "你的活动量有多大？",
-   "desc": "会影响你的每日卡路里需求。"
-  },
-  "integrations": {
-   "title": "集成",
-   "desc": "连接可选的服务。不需要的直接跳过——之后可以在设置中配置。"
-  },
-  "notifications": {
-   "title": "保持正轨",
-   "desc": "获取实用的提醒，庆祝你的进步。之后可以在设置中自定义所有这些内容。"
-  },
-  "summary": {
-   "title": "你的每日目标",
-   "desc": "根据你的各项数据，使用 Mifflin-St Jeor 公式计算得出。"
-  },
-  "skip_modal": {
-   "title": "跳过设置？",
-   "desc": "你可以随时在<strong>设置</strong>中配置目标、单位和集成。在此之前，卡路里目标不会自动计算。",
-   "continue": "继续设置",
-   "skip_now": "暂时跳过"
-  }
- },
- "wizard_ct": {
-  "household": {
-   "title": "你为谁做饭？",
-   "desc": "添加你为其做饭的人，并注明过敏情况或饮食习惯。计划份数和过敏原警告会用到这些信息。之后可以在设置中更改。",
-   "skip": "跳过"
-  },
-  "updates": {
-   "title": "检查更新",
-   "desc": "当新版本 CookTrace 发布时，你的服务器可以通知你。",
-   "toggle": "自动检查更新",
-   "toggle_sub": "借此了解新功能、修复和安全更新",
-   "note": "你的服务器会每隔几小时向 GitHub 查询是否有新版本的 CookTrace。不会发送任何与你或你的数据有关的信息。你可以随时在“设置 → 更新”中更改。"
-  },
-  "welcome": "欢迎来到 CookTrace",
-  "get_started": "开始使用",
-  "name_ph": "你的名字",
-  "back": "返回",
-  "next": "下一步",
-  "create_admin": "创建你的管理员账号",
-  "enable_user_accounts": "开启用户账号",
-  "admin_account": "管理员账号",
-  "nickname": "昵称",
-  "optional_ph": "可选",
-  "full_name": "姓名",
-  "email": "邮箱",
-  "continue": "继续",
-  "cooking_preferences": "烹饪偏好",
-  "measurement_system": "计量系统",
-  "default_servings": "默认份数",
-  "open_cooktrace": "打开 CookTrace"
- },
- "diary": {
-  "add_food": "添加食物",
-  "notes_placeholder": "今天感觉如何？睡眠、精力、饥饿、食欲…",
-  "nav": {
-   "previous_day": "前一天",
-   "next_day": "后一天",
-   "jump_to_date": "跳转到日期"
-  },
-  "actions": {
-   "cancel_selection": "取消选择",
-   "delete_selected": "删除所选",
-   "log_water": "记录饮水",
-   "log_water_long": "饮水——记录你的饮水量",
-   "nutrition_summary": "营养摘要",
-   "nutrition_summary_long": "营养摘要——今日营养素的完整明细",
-   "body_stats": "身体指标",
-   "body_stats_long": "身体指标——记录体重、体脂和围度"
-  },
-  "toast": {
-   "body_stats_saved": "身体指标已保存",
-   "updated": "已更新",
-   "item_removed": "条目已移除",
-   "activity_removed": "活动已移除"
-  },
-  "errors": {
-   "note_save_failed": "备注保存失败",
-   "name_required": "请输入名称",
-   "nothing_to_save": "没有可保存的内容",
-   "activity_save_failed": "无法保存活动",
-   "activity_delete_failed": "无法删除活动"
-  },
-  "activity": {
-   "section": "活动",
-   "tap_to_add": "点击添加活动",
-   "add": "添加活动",
-   "add_to_diary": "添加到日记",
-   "save_changes": "保存更改",
-   "title_add": "添加活动",
-   "title_edit": "编辑活动",
-   "field_name": "活动",
-   "field_name_placeholder": "如：晨间徒步",
-   "field_kcal": "消耗卡路里",
-   "field_kcal_placeholder": "kcal",
-   "field_duration": "时长",
-   "field_duration_placeholder": "分钟",
-   "field_distance": "距离",
-   "field_distance_placeholder": "如：10 mi",
-   "field_optional": "（可选）",
-   "saving": "添加中…",
-   "estimated_short": "估算",
-   "wellness_hint": "从设备同步的训练记录位于“健康”中",
-   "not_counted": "未计入——正在使用穿戴设备",
-   "policy_chip": "规则：以穿戴设备为准。可在“设置 → 日记”中切换。",
-   "actions": {
-    "edit": "编辑",
-    "delete": "删除"
-   },
-   "errors": {
-    "name_required": "请输入名称",
-    "kcal_required": "请输入卡路里"
-   }
-  }
- },
- "foods": {
-  "search_placeholder": "搜索食物或扫描条形码…",
-  "scan_barcode": "扫描条形码",
-  "add_new": "新建",
-  "n_selected": "已选择 {n} 项",
-  "add_n": "添加 {n} 项",
-  "adding": "添加中…",
-  "add_selected_to_diary": "将所选添加到日记",
-  "search_in": "搜索 {source}",
-  "searching_in": "正在搜索 {source}…",
-  "no_results_in": "{source} 中没有结果",
-  "sources": {
-   "local": "本地",
-   "from_others": "来自他人"
-  },
-  "toast": {
-   "deleted": "已删除",
-   "cloned": "已克隆"
-  }
- },
- "smart_log": {
-  "placeholder": "早餐我吃了 2 个鸡蛋和吐司"
- },
- "goals": {
-  "save_goal": "保存目标",
-  "toast": {
-   "goal_saved": "目标已保存",
-   "water_goal_saved": "饮水目标已保存",
-   "template_saved": "模板已保存",
-   "template_applied": "“{name}”已应用"
-  }
- },
- "food_editor": {
-  "name_placeholder": "食物名称",
-  "brand_placeholder": "品牌（可选）",
-  "saved": "已保存",
-  "added_to_diary": "已添加到日记",
-  "errors": {
-   "name_required": "请输入名称"
-  }
- },
- "meal_editor": {
-  "meal_name_placeholder": "餐食名称",
-  "recipe_name_placeholder": "菜谱名称",
-  "errors": {
-   "no_ingredients": "请至少添加一种食材"
-  }
- },
- "pantry": {
-  "title": "食材库",
-  "add_item": "添加条目",
-  "search_placeholder": "搜索食材库…",
-  "scan_barcode": "扫描条形码",
-  "filters": {
-   "all": "全部",
-   "in_stock": "有货",
-   "out": "无货",
-   "all_categories": "全部分类",
-   "uncategorized": "未分类",
-   "select_multiple": "选择",
-   "cancel_select": "取消"
-  },
-  "external": {
-   "searching_in": "正在搜索 {source}…",
-   "no_results_in": "{source} 中没有结果",
-   "sources": {
-    "local": "食材库",
-    "off": "OFF",
-    "usda": "USDA"
-   }
-  },
-  "actions": {
-   "edit": "编辑",
-   "select_multiple": "多选",
-   "delete": "删除",
-   "mark_in_stock": "标记为有货",
-   "mark_out_stock": "标记为无货"
-  },
-  "bulk": {
-   "selected": "已选择 {n} 项",
-   "select_all": "全选",
-   "clear": "清除",
-   "delete": "删除",
-   "confirm_title": "删除 {n} 个食材条目？",
-   "confirm_message": "引用它们的菜谱会保留，这只是将它们从你的食材库中移除。"
-  }
- },
- "pantry_editor": {
-  "title_add": "添加食材条目",
-  "title_edit": "编辑食材条目",
-  "cards": {
-   "photo": "照片",
-   "basic_info": "基本信息",
-   "inventory": "库存",
-   "category": "分类",
-   "notes": "备注",
-   "nutrition": "营养成分",
-   "danger": "危险操作"
-  },
-  "fields": {
-   "name": "名称",
-   "name_placeholder": "普通面粉",
-   "brand": "品牌",
-   "brand_placeholder": "如：King Arthur",
-   "barcode": "条形码",
-   "serving_size": "份量",
-   "serving_unit": "单位",
-   "on_hand": "现有数量",
-   "in_stock": "有货",
-   "in_stock_desc": "决定每个菜谱卡片上“X / Y 有货”徽标的显示。",
-   "category_none": "无",
-   "notes_placeholder": "存放位置、过期时间、其他备注…"
-  },
-  "actions": {
-   "share_to_off": "分享到 OFF",
-   "refresh_off": "从 OFF 刷新",
-   "refresh_usda": "从 USDA 刷新",
-   "uploading": "上传中…",
-   "loading": "加载中…",
-   "submitted": "已提交！",
-   "updated": "已更新！",
-   "show_all_nutrients": "显示全部营养素",
-   "show_less": "收起",
-   "remove": "从食材库移除"
-  },
-  "linked": {
-   "linked": "已关联：修改份量时，所有营养素按比例缩放",
-   "unlinked": "未关联：修改份量时，营养素数值保持不变"
-  },
-  "errors": {
-   "name_required": "请输入名称",
-   "save_failed": "保存失败",
-   "off_lookup_failed": "OFF 查询失败",
-   "off_not_found": "在 Open Food Facts 上未找到",
-   "share_no_barcode": "请先添加条形码再分享",
-   "refresh_no_barcode": "请先添加或扫描条形码"
-  }
- },
- "diary_entry": {
-  "title_add": "添加到烹饪日记",
-  "title_edit": "编辑烹饪日记条目",
-  "save_changes": "保存更改",
-  "submit": "添加到烹饪日记",
-  "fields": {
-   "date": "日期",
-   "notes": "备注",
-   "notes_hint": "（做得怎么样？）",
-   "photos": "照片",
-   "photos_hint": "（可选——想加多少张都行）"
-  },
-  "actions": {
-   "open_recipe": "打开菜谱",
-   "mark_cooked": "标记为已烹饪",
-   "delete": "删除"
-  }
- },
- "accept_invite": {
-  "title": "创建账号",
-  "verifying": "正在验证邀请…",
-  "invalid_link": "此邀请链接无效或已过期。请向你的管理员索取新链接。",
-  "success": "账号已创建！正在跳转…",
-  "intro": "你受邀加入 CookTrace。选择一个用户名和密码即可开始。",
-  "intro_with_email": "你受邀使用的邮箱是 <strong>{email}</strong>。选择一个用户名和密码即可开始。",
-  "username_label": "用户名 *",
-  "username_placeholder": "选择一个用户名",
-  "full_name_label": "姓名（可选）",
-  "full_name_placeholder": "你的姓名",
-  "password_label": "密码 *",
-  "confirm_label": "确认密码 *",
-  "submit": "创建账号",
-  "creating": "正在创建账号…",
-  "errors": {
-   "username_required": "请输入用户名",
-   "failed": "创建账号失败"
-  }
- },
- "two_step": {
-  "errors": {
-   "generic": "出了点问题。请重试。",
-   "copy_failed": "复制失败。请手动选中文本并复制。"
-  },
-  "setup": {
-   "loading": "加载中…",
-   "scan": "使用身份验证器应用（如 Aegis、2FAS、Google Authenticator 或 1Password）扫描此二维码。",
-   "qr_alt": "用于身份验证器应用的二维码",
-   "open_app": "在身份验证器应用中打开",
-   "key_intro": "无法扫描？改为在应用中输入此密钥：",
-   "copy_key": "复制密钥",
-   "key_copied": "密钥已复制",
-   "key_details": "基于时间，6 位数字，每 30 秒更新一次。",
-   "code_label": "应用中的 6 位验证码",
-   "turn_on": "开启",
-   "turning_on": "开启中…"
-  },
-  "codes": {
-   "title": "保存你的恢复码",
-   "explain": "如果手机丢失，每个恢复码可登录一次。请将它们保存在安全的地方，例如密码管理器中。这些恢复码不会再次显示。",
-   "copy": "复制恢复码",
-   "download": "下载",
-   "copied": "恢复码已复制",
-   "saved": "我已保存恢复码"
-  },
-  "signin": {
-   "title": "两步验证",
-   "setup_title": "设置两步验证",
-   "setup_intro": "你的管理员要求启用两步验证。请立即完成设置以继续登录。",
-   "intro": "输入身份验证器应用中的 6 位验证码。",
-   "recovery_intro": "输入你设置两步验证时保存的任一恢复码。",
-   "code_label": "验证码",
-   "recovery_label": "恢复码",
-   "verify": "验证",
-   "verifying": "验证中…",
-   "use_recovery": "使用恢复码",
-   "use_app": "使用应用中的验证码",
-   "back": "返回登录",
-   "lost_phone": "手机和恢复码都丢失了？请让管理员为你重置两步验证。",
-   "recovery_used": "已使用恢复码登录。{count, plural, =0 {You have none left: make new ones in Settings, Profile.} one {# left.} other {# left.}}"
-  },
-  "settings": {
-   "title": "两步验证",
-   "on": "开",
-   "off": "关",
-   "desc": "输入密码后，还需输入手机上身份验证器应用中的验证码。",
-   "sso": "你使用单点登录，两步验证由登录提供商处理。",
-   "load_failed": "无法加载你的两步验证设置。",
-   "required_note": "你的管理员要求启用两步验证，因此下次登录时会要求你进行设置。",
-   "key_problem": "当前无法在此服务器上校验身份验证器应用中的验证码（服务器的两步密钥已更改或缺失）。请使用恢复码登录，或请管理员重置两步验证后再重新设置。",
-   "cant_set_up": "当前无法在此服务器上设置两步验证：服务器无法保存其密钥。请联系管理员。",
-   "set_up": "设置两步验证",
-   "password_label": "你的密码",
-   "continue": "继续",
-   "on_since": "自 {date} 起开启",
-   "codes_left": "{count, plural, one {# recovery code left} other {# recovery codes left}}",
-   "codes_low": "恢复码所剩不多。请生成新的恢复码，以便手机丢失时仍能登录。",
-   "new_codes": "新的恢复码",
-   "codes_explain": "新恢复码会替换你现有的恢复码。请输入你的密码和来自应用的验证码（或一个恢复码）。",
-   "turn_off": "关闭",
-   "off_explain": "之后仅凭密码即可登录。请输入你的密码和来自应用的验证码（或一个恢复码）。",
-   "code_label": "来自应用的验证码或恢复码",
-   "turned_on": "两步验证已开启",
-   "turned_off": "两步验证已关闭"
-  },
-  "admin": {
-   "require": "要求所有人启用两步验证",
-   "require_desc": "使用密码登录且尚未设置的用户，会在下次登录、输入密码后立即完成设置。单点登录账号不受影响。",
-   "required_on": "现已要求启用两步验证",
-   "required_off": "不再要求启用两步验证",
-   "required_failed": "无法保存：{msg}",
-   "reset": "重置两步验证",
-   "reset_title": "重置 {name} 的两步验证？",
-   "reset_message": "其身份验证器应用和恢复码将失效，在重新设置两步验证之前只能凭密码登录。如果服务器配置了邮件功能，会向其发送邮件通知。",
-   "your_password": "你的密码",
-   "your_code": "你的两步验证码",
-   "reset_confirm": "重置",
-   "resetting": "重置中…",
-   "reset_done": "已重置 {name} 的两步验证"
-  },
-  "locked_out": {
-   "title": "重置单个账号的两步验证",
-   "explain": "适用于手机和恢复码都丢失的用户。只有该账号会受影响：在重新设置两步验证之前，它只能凭密码登录。",
-   "username_placeholder": "用户名",
-   "action": "重置两步验证",
-   "resetting": "重置中…",
-   "failed": "无法重置两步验证",
-   "done": "{name} 的两步验证已关闭。请使用密码登录。",
-   "disable_title": "关闭用户管理"
-  },
-  "link": {
-   "title": "关联 {provider}？",
-   "message": "输入你的密码以关联 {provider}。之后你就可以使用它登录。",
-   "message_sso": "你使用单点登录，关联 {provider} 需要最近 15 分钟内有过一次登录。如果已超过，请先退出登录再重新登录。",
-   "password_label": "你的密码",
-   "code_label": "来自应用的验证码或恢复码",
-   "continue": "继续",
-   "checking": "正在检查…"
-  },
-  "email": {
-   "title": "确认你的新邮箱",
-   "explain": "输入你的密码进行确认。在此之前，密码重置仍会发往你的旧邮箱，单点登录也不会通过这个新邮箱关联到你的账号。",
-   "explain_sso": "请在登录后 15 分钟内确认。在此之前，密码重置仍会发往你的旧邮箱，单点登录也不会通过这个新邮箱关联到你的账号。如果已超过，请先退出登录再重新登录。",
-   "confirm": "确认邮箱",
-   "confirmed": "邮箱已确认"
-  },
-  "reset_password_done": "你的密码已更改。此账号已开启两步验证，请使用新密码和验证码登录。"
- },
- "connection_status": {
-  "connected": "已连接",
-  "not_connected": "未连接",
-  "not_connected_error": "未连接：{error}",
-  "test": "测试",
-  "testing": "测试中…",
-  "testing_connection": "正在测试连接…"
- },
- "watch": {
-  "keep_awake_text": "你的手表正通过这部手机工作"
- },
- "password": {
-  "too_short": "至少使用 8 个字符。",
-  "needs_lower": "请添加小写字母。",
-  "needs_upper": "请添加大写字母。",
-  "needs_number": "请添加数字。",
-  "needs_symbol": "请添加符号，如 ! 或 #。",
-  "strength_0": "太弱",
-  "strength_1": "弱",
-  "strength_2": "一般",
-  "strength_3": "强",
-  "strength_4": "很强"
- },
- "connect": {
-  "needs_setup": "此服务器尚未完成设置。请先在浏览器中打开它并创建第一个账号，然后再在此处连接。"
- },
- "plain_http": {
-  "warning_title": "不加密连接？",
-  "warning_body": "此服务器使用纯 HTTP，连接未经加密。同一网络中的任何人都可以读取和篡改传输的内容，包括你的密码。",
-  "warning_advice": "请仅在家庭网络或 VPN 中使用。",
-  "warning_stored": "在你连接之前，不会与此服务器同步任何内容，应用会继续使用这部手机上的数据。下次打开时会再次询问。",
-  "connect_anyway": "仍要连接",
-  "refused_title": "需要 HTTPS",
-  "refused_body": "此服务器使用纯 HTTP，且不在你自己的网络中，因此应用不会连接它。纯 HTTP 仅适用于私有地址（如 192.168.1.20）或本地域名（如 cooktrace.local）的服务器。其他情况请使用 HTTPS。",
-  "refused_stored": "不会与此服务器同步任何内容，应用会继续使用这部手机上的数据。要切换到 HTTPS 地址，请在“设置 > 服务器连接”中断开连接，然后重新连接。",
-  "refused_short": "纯 HTTP 仅适用于你自己网络中的服务器。请为此服务器使用 https:// 地址。",
-  "https_guide": "如何设置 HTTPS",
-  "unreachable": "无法连接 {url}。请检查地址，并确认这部手机与服务器在同一网络或 VPN 中。",
-  "not_encrypted": "未加密",
-  "invalid_address": "请输入以 http:// 或 https:// 开头的地址，例如 https://cooktrace.example.com。",
-  "blocked": "不允许向 {origin} 发送纯 HTTP 请求。请使用 https:// 地址，或使用你自己网络中的服务器。"
- },
- "server_signin": {
-  "web_page": "响应的不是 CookTrace，而是一个网页：通常是登录代理（Authentik、Authelia、Cloudflare Access），或者这不是你服务器的地址。请确保应用可以访问你服务器上的 /api。",
-  "options_failed": "无法加载此服务器的登录选项。请重试；如果服务器允许，也可以使用密码登录。",
-  "token_refused": "无法校验此次登录，因此已将其终止。请更新你的 CookTrace 服务器，或改用密码连接。",
-  "retry": "重试",
-  "checking": "正在检查登录选项…",
-  "unreachable": "目前无法连接你的服务器。请确认它正在运行，然后重试。",
-  "proxy_sign_in": "服务器前面的某个服务要求你登录。请在那里登录，然后重新加载此页面。",
-  "server_error": "你的服务器返回了错误。请稍后重试。"
- },
- "when": {
-  "just_now": "刚刚",
-  "in_moments": "片刻后",
-  "today": "今天",
-  "yesterday": "昨天",
-  "tomorrow": "明天",
-  "minutes_ago": "{n, plural, one {A Minute Ago} other {# Minutes Ago}}",
-  "minutes_ahead": "{n, plural, one {In a Minute} other {In # Minutes}}",
-  "hours_ago": "{n, plural, one {An Hour Ago} other {# Hours Ago}}",
-  "hours_ahead": "{n, plural, one {In an Hour} other {In # Hours}}",
-  "days_ago": "{n, plural, one {# Day Ago} other {# Days Ago}}",
-  "days_ahead": "{n, plural, one {In # Day} other {In # Days}}",
-  "months_ago": "{n, plural, one {A Month Ago} other {# Months Ago}}",
-  "months_ahead": "{n, plural, one {In a Month} other {In # Months}}",
-  "years_ago": "{n, plural, one {A Year Ago} other {# Years Ago}}",
-  "years_ahead": "{n, plural, one {In a Year} other {In # Years}}"
- },
- "confirm": {
-  "title": "确定吗？",
-  "ok": "确定"
- },
- "notify": {
-  "update_title": "CookTrace 更新可用",
-  "update_body": "{version} 已就绪，点击即可安装。"
- },
- "migrate": {
-  "no_recipe": "其菜谱尚未上传，因此已被跳过。"
- },
- "app_ui": {
-  "open_menu": "打开菜单"
- },
- "login_ui": {
-  "biometric_reason": "登录 CookTrace"
- },
- "profile_ui": {
-  "biometric_enable_reason": "启用生物识别登录",
-  "gender_male": "男",
-  "gender_female": "女",
-  "gender_non_binary": "非二元性别",
-  "unlink_confirm": "解除与此提供商的关联？重新关联之前，你将无法使用它登录。",
-  "last_sign_in": "上次登录 {date}",
-  "biometric_desc": "使用指纹或面部解锁代替每次输入密码。首次登录仍需输入密码。默认情况下，登录会话最长可保持一年。管理员可以在",
-  "biometric_setup_prefix": "请先在",
-  "android_security_path": "Android 设置 > 安全",
-  "biometric_setup_suffix": "中设置指纹或面部解锁，然后再回到这里。",
-  "avatar_alt": "头像"
- },
- "sidebar_ui": {
-  "nav_menu": "导航菜单",
-  "tagline": "追溯每一道菜谱，从食材库到餐桌"
- },
- "bottom_nav_ui": {
-  "main_navigation": "主导航"
- },
- "sidebar_ct": {
-  "brand": "CookTrace"
- },
- "profile_ct": {
-  "toast": {
-   "biometric_cancelled": "生物识别验证已取消或失败。"
-  },
-  "biometric_signin": "使用生物识别登录"
- },
- "manage_ct": {
-  "title": "管理"
- }
 }

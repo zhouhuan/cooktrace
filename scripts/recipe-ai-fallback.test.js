@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import http from 'node:http';
 import { aiExtractRecipe, importAiConfig } from '../server/lib/recipe-ai-fallback.js';
+import { logger } from '../server/logger.js';
 
 // The chosen AI without where it came from, to compare with how it was picked before.
 const picked = (cfg) => { if (!cfg) return cfg; const { source: _source, ...rest } = cfg; return rest; };
@@ -12,20 +13,20 @@ const picked = (cfg) => { if (!cfg) return cfg; const { source: _source, ...rest
 function before(user, env) {
   const { provider, apiKey, model, baseUrl } = user;
   if (provider && apiKey) return { provider, apiKey, model: model || '', baseUrl: baseUrl || '' };
-  if (env.AI_API_KEY) return { provider: env.AI_PROVIDER || 'claude', apiKey: env.AI_API_KEY, model: env.AI_MODEL || '', baseUrl: env.AI_BASE_URL || '' };
+  if (env.AI_API_KEY) return { provider: env.AI_PROVIDER || 'deepseek', apiKey: env.AI_API_KEY, model: env.AI_MODEL || '', baseUrl: env.AI_BASE_URL || '' };
   return null;
 }
 
 const users = [
   {},
-  { provider: 'claude', apiKey: 'sk-user' },
+  { provider: 'deepseek', apiKey: 'sk-user' },
   { provider: 'custom', apiKey: 'k', baseUrl: 'http://lan:11434', model: 'llama3' },
   { provider: 'custom', baseUrl: 'http://localhost:11434', model: 'llama3' },
   { provider: 'openai' },
 ];
 const envs = [
   {},
-  { AI_PROVIDER: 'claude', AI_API_KEY: 'sk-env', AI_MODEL: 'm' },
+  { AI_PROVIDER: 'deepseek', AI_API_KEY: 'sk-env', AI_MODEL: 'm' },
   { AI_PROVIDER: 'oai-compat', AI_API_KEY: 'k', AI_BASE_URL: 'http://gw:4000', AI_MODEL: 'm' },
   { AI_PROVIDER: 'oai-compat', AI_BASE_URL: 'http://ollama:11434', AI_MODEL: 'm' },
 ];
@@ -47,7 +48,9 @@ test('keyless OpenAI-compatible endpoints now count', () => {
     { provider: 'oai-compat', apiKey: '', model: 'm', baseUrl: 'http://ollama:11434', source: 'server' });
   assert.deepEqual(importAiConfig({ provider: 'custom', baseUrl: 'http://lan:11434', model: 'llama3' }, {}),
     { provider: 'custom', apiKey: '', model: 'llama3', baseUrl: 'http://lan:11434', source: 'user' });
-  assert.equal(importAiConfig({ provider: 'claude', apiKey: 'k' }, {}).source, 'user');
+  assert.equal(importAiConfig({ provider: 'deepseek', apiKey: 'k' }, {}).source, 'user');
+  assert.equal(importAiConfig({ provider: 'claude', apiKey: 'k' }, {}), null, 'removed providers are not accepted');
+  assert.equal(importAiConfig({}, { AI_PROVIDER: 'gemini', AI_API_KEY: 'k' }), null, 'removed server providers are not accepted');
   assert.equal(importAiConfig({ provider: 'openai' }, {}), null, 'a cloud provider still needs a key');
 });
 
@@ -101,18 +104,26 @@ test("a user's own AI address on the server's network: the owner may, others may
   } finally { ep.close(); }
 });
 
-test("a provider's refusal shows its status and message, never the raw reply", async () => {
+test("a provider's refusal shows its status and safe message, never the raw reply in errors or logs", async () => {
   let body = 'INTERNAL ADMIN DATA: db_password=hunter2';
   const ep = await endpoint((req, res) => { res.writeHead(500, { 'content-type': 'text/plain' }); res.end(body); });
+  const originalWarn = logger.warn;
+  const warnings = [];
+  logger.warn = (...args) => warnings.push(args.join(' '));
   try {
     const cfg = { provider: 'custom', apiKey: '', model: 'm', baseUrl: ep.base, source: 'user', allowPrivate: true };
     await assert.rejects(aiExtractRecipe('<h1>x</h1>', 'https://example.com', cfg), (e) => {
-      assert.equal(e.message, 'OpenAI returned 500');
+      assert.equal(e.message, 'AI 服务返回错误（HTTP 500）');
       return true;
     });
+    assert.match(warnings.join(' '), /HTTP 500/);
+    assert.doesNotMatch(warnings.join(' '), /INTERNAL ADMIN DATA|db_password|hunter2/);
     body = JSON.stringify({ error: { message: 'model "m" not found' } });
-    await assert.rejects(aiExtractRecipe('<h1>x</h1>', 'https://example.com', cfg), /OpenAI returned 500: model "m" not found/);
-  } finally { ep.close(); }
+    await assert.rejects(aiExtractRecipe('<h1>x</h1>', 'https://example.com', cfg), /AI 服务返回错误（HTTP 500）：model "m" not found/);
+  } finally {
+    logger.warn = originalWarn;
+    ep.close();
+  }
 });
 
 test("a user's AI address can't redirect to cloud metadata", async () => {

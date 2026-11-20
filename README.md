@@ -68,7 +68,7 @@ Third app in the Trace family alongside [NutriTrace](https://github.com/traceapp
 - **Manage catalog.** Categories (with color dots), tags, kitchen gear, pantry categories, units, cookbooks; drag-to-reorder with per-row recipe counts.
 
 ### AI + Federation
-- **Trace AI.** Reads your recipes, pantry, diary, and cookbooks; can log a cook, plan a meal, add to shopping, or import a recipe from a URL, all conversationally. 21 tools total. Multi-provider (Claude / OpenAI / Gemini / any OpenAI-compatible endpoint). Smart Log voice, image attach, cook-mode voice control. → [full guide](https://traceapps.github.io/docs/cooktrace/trace/)
+- **Trace AI.** Reads your recipes, pantry, diary, and cookbooks; can log a cook, plan a meal, add to shopping, or import a recipe from a URL, all conversationally. 21 tools total. Supports DeepSeek, Kimi, GLM, Qwen, Doubao, and custom OpenAI-compatible endpoints. Smart Log voice, image attach, cook-mode voice control. → [full guide](https://traceapps.github.io/docs/cooktrace/trace/)
 - **NutriTrace federation.** Pull food data from NutriTrace into your pantry, per user, with a Bearer token. → [full guide](https://traceapps.github.io/docs/cooktrace/nt-federation/)
 - **Model Context Protocol (MCP).** Expose your recipes, pantry, shopping list, and cook diary to external AI agents (Claude Desktop, Cursor, Codex) via the standard MCP Streamable HTTP transport. Off by default; opt in with `MCP_ENABLED=1`. Read, write, and destructive tool tiers, each independently gated by its own env flag and token scope. → [full guide](https://traceapps.github.io/docs/cooktrace/mcp/)
 
