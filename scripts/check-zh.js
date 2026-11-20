@@ -62,19 +62,19 @@ function placeholders(s) {
     for (let i = 0; i < source.length; i++) {
       if (source[i] !== '{') continue;
       const rest = source.slice(i + 1);
-      const header = rest.match(/^\\s*([A-Za-z_][\\w.-]*)\\s*,\\s*(plural|select|selectordinal)\\s*,/);
+      const header = rest.match(/^\s*([A-Za-z_][\w.-]*)\s*,\s*(plural|select|selectordinal)\s*,/);
       if (header) {
         variables.push(header[1]);
-        icu.push(`${header[1]}:${header[2]}`);
+        icu.push(header[1] + ':' + header[2]);
         let pos = i + 1 + header[0].length;
         while (pos < source.length) {
-          while (/\\s/.test(source[pos] || '')) pos++;
+          while (/\s/.test(source[pos] || '')) pos++;
           if (source[pos] === '}') { i = pos; break; }
-          const selector = source.slice(pos).match(/^(?:=\\d+|[A-Za-z_][\\w-]*)/);
+          const selector = source.slice(pos).match(/^(?:=\d+|[A-Za-z_][\w-]*)/);
           if (!selector) break;
           selectors.push(selector[0]);
           pos += selector[0].length;
-          while (/\\s/.test(source[pos] || '')) pos++;
+          while (/\s/.test(source[pos] || '')) pos++;
           if (source[pos] !== '{') break;
           const end = closingBrace(source, pos);
           if (end < 0) break;
@@ -86,7 +86,7 @@ function placeholders(s) {
       }
       // A simple interpolation is a lowercase identifier. Uppercase words
       // such as {Today} are literal branch text in existing ICU messages.
-      const simple = rest.match(/^\\s*([a-z_][\\w.-]*)\\s*\\}/);
+      const simple = rest.match(/^\s*([a-z_][\w.-]*)\s*\}/);
       if (simple) {
         variables.push(simple[1]);
         i += simple[0].length;
