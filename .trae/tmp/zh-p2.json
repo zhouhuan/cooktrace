@@ -16,7 +16,7 @@
       "create_account": "创建 OFF 账号 →"
     },
     "usda": {
-      "section": "美国农业部 FoodData Central",
+      "section": "美国农业部食品数据中心",
       "enable": "启用 USDA 食品数据",
       "enable_desc": "添加食材时搜索 USDA 营养数据库。",
       "get_key": "获取免费 API 密钥 →",
@@ -82,8 +82,8 @@
       "default_servings": "默认份数",
       "show_shared": "在主列表中显示共享菜谱",
       "url_import_engine": "网址导入引擎",
-      "url_engine_desc_standard_html": "<strong>标准</strong>读取网页中的 schema.org/Recipe 数据。免费且快速，适用于大多数主流菜谱网站。",
-      "url_engine_desc_enhanced_html": "<strong>增强</strong>使用 recipe-scrapers，其中包含约 300 个热门网站的专用提取器；其他网站则回退到 schema.org。",
+      "url_engine_desc_standard_html": "<strong>标准</strong>读取网页中的结构化菜谱数据。免费且快速，适用于大多数主流菜谱网站。",
+      "url_engine_desc_enhanced_html": "<strong>增强</strong>使用包含约 300 个热门网站专用提取器的菜谱解析器；其他网站则回退到结构化菜谱数据。",
       "url_engine_desc_smart_html": "<strong>智能</strong>将网页交给 Trace AI 处理。速度较慢且会消耗 AI 额度，但能从屏蔽爬虫或使用非标准标记隐藏内容的网站中提取菜谱。",
       "engine_standard": "标准",
       "engine_enhanced": "增强",
@@ -92,7 +92,7 @@
       "engine_smart_required_suffix": "（需要 Trace AI）",
       "smart_note": "智能模式会将每个网址导入请求发送给 AI，每次粘贴都会消耗服务商额度。标准或增强模式免费且能处理大多数网站；建议仅在备用时启用智能模式。",
       "enhanced_fallback": "增强模式回退",
-      "enhanced_fallback_desc": "服务器无法连接或未安装 recipe-scrapers 时，回退到此模式。",
+      "enhanced_fallback_desc": "服务器无法连接或未安装专用菜谱解析器时，回退到此模式。",
       "shopping_list": "购物清单",
       "default_grouping": "默认分组方式",
       "group_by_aisle": "按货架分组",
@@ -122,7 +122,7 @@
       "off_password_ph": "OFF 密码"
     },
     "usda": {
-      "section": "美国农业部 FoodData Central",
+      "section": "美国农业部食品数据中心",
       "enable": "启用 USDA 食品数据",
       "api_key": "API 密钥",
       "api_key_ph": "在此粘贴 USDA API 密钥"
@@ -245,7 +245,7 @@
     "enable_assistant": "启用 Trace 助手",
     "provider": "服务商",
     "base_url": "基础网址",
-    "base_url_desc": "服务商的接口地址，可包含或不包含 /v1",
+    "base_url_desc": "服务商的接口地址，可包含或不包含 <code>/v1</code>",
     "test_connection": "测试连接",
     "test_connection_desc": "检查 Trace 是否能够连接到你的服务商。测试通过后会显示聊天按钮。",
     "test_connection_desc_locked": "检查 Trace 是否能够连接到服务器配置的 AI 服务商。",
@@ -365,7 +365,7 @@
     "connect_to_nt": "连接到 NutriTrace",
     "instance_url": "实例网址",
     "access_token": "访问令牌",
-    "access_token_ph": "来自 NutriTrace 的 Bearer 令牌"
+    "access_token_ph": "来自 NutriTrace 的访问令牌"
   },
   "settings_nutrition_ct": {
     "visibility": "营养成分显示方式",
@@ -412,7 +412,7 @@
     },
     "empty": {
       "title": "尚无令牌",
-      "desc": "创建令牌后，NutriTrace 即可读取你的菜谱（read:recipes）；MCP 客户端（Claude 桌面端、Cursor、Codex）也可读取或更新你的菜谱、食材库、购物清单和烹饪日记。"
+      "desc": "创建令牌后，NutriTrace 即可读取你的菜谱；MCP 客户端（Claude 桌面端、Cursor、Codex）也可读取或更新你的菜谱、食材库、购物清单和烹饪日记。"
     },
     "row": {
       "scopes_label": "权限范围：",
@@ -429,7 +429,7 @@
     "form": {
       "new_token": "新建令牌",
       "name": "名称",
-      "name_ph": "例如：claude-desktop",
+      "name_ph": "例如：外部客户端",
       "scopes": "权限范围",
       "expiry": "有效期",
       "expiry_30": "30 天后",
@@ -665,7 +665,7 @@
       "copied": "已复制",
       "copy_failed": "复制失败，请手动复制命令。",
       "view_notes": "查看发布说明",
-      "channel_note": "要切换服务器更新渠道，请修改 docker-compose.yml 中的镜像标签（:latest、:dev），然后重新运行 docker-compose pull && docker-compose up -d。"
+      "channel_note": "要切换服务器更新渠道，请修改 <code>docker-compose.yml</code> 中的镜像标签（<code>:latest</code>、<code>:dev</code>），然后重新运行 <code>docker-compose pull && docker-compose up -d</code>。"
     }
   },
   "settings_ui": {
@@ -679,11 +679,11 @@
   "settings_auth_ui": {
     "help_auth0": "Auth0 会在类似 \"https://cooktrace.app/roles\" 的命名空间网址下添加自定义声明。请暂时将管理员声明留空，并联系租户管理员设置规则以公开用户角色信息。",
     "help_authelia": "Authelia 的签发者网址是其服务所在的根网址，不应包含路径后缀。",
-    "help_authentik": "签发者网址是 Authentik 服务商页面上显示的“OpenID Configuration Issuer”。请确保你的应用使用 OAuth2/OIDC 服务商，并已将上方显示的重定向 URI 添加到允许列表。",
+    "help_authentik": "签发者网址是 Authentik 服务商页面上显示的 OIDC 配置签发者地址。请确保你的应用使用 OAuth 服务商，并已将上方显示的重定向地址添加到允许列表。",
     "help_google": "Google 的签发者网址是固定的。标准权限范围不提供群组/角色声明，因此此服务商会隐藏管理员角色映射；用户首次登录后，请手动将 Google 用户提升为管理员。",
-    "help_keycloak": "请在客户端的默认权限范围中添加一个“groups”映射器，以便将群组声明包含在 ID 令牌中。",
+    "help_keycloak": "请在客户端的默认权限范围中添加一个 <code>groups</code> 映射器，以便将群组声明包含在 ID 令牌中。",
     "help_pocket_id": "Pocket ID 使用通行密钥进行主要身份验证，因此用户在身份提供商处也无需使用密码。请将上方显示的重定向 URI 添加到 Pocket ID 管理界面的 OIDC 客户端中。",
-    "help_custom": "任何符合 OpenID Connect 1.0 标准并支持 Authorization Code Flow、PKCE 和 Discovery 的服务商都应可用。",
+    "help_custom": "任何符合 OIDC 1.0 标准并支持授权码流程、PKCE 和服务发现的服务商都应可用。",
     "preset_custom": "自定义 / 通用 OIDC",
     "confirm_delete_provider": "删除服务商“{name}”？已关联的用户将失去此登录方式。",
     "confirm_disable_password": "禁用密码登录？尚未关联 OIDC 的用户将无法登录，直到你重新启用密码登录。RECOVERY_TOKEN 仍可使用。",
@@ -692,7 +692,7 @@
     "providers_title": "OIDC 服务商（单点登录）",
     "providers_desc": "支持 Authentik、Keycloak、Pocket ID、Authelia、Auth0、Google 等。用户可使用已有的身份提供商登录。",
     "add_provider": "+ 添加服务商",
-    "env_badge_title": "通过环境变量配置。请修改 .env 或 docker-compose 文件。",
+    "env_badge_title": "通过环境变量配置。请修改 <code>.env</code> 或 <code>docker-compose</code> 文件。",
     "meta_link_on": "已开启关联",
     "meta_link_off": "已关闭关联",
     "meta_register_on": "已开启注册",
@@ -763,8 +763,8 @@
     "full_backup_local": "完整备份（本地）",
     "preparing": "正在准备…",
     "export_zip": "导出备份 ZIP",
-    "export_zip_desc": "单个 .zip 文件，包含所有菜谱、食材条目、日记记录、购物清单、设置和已上传图片。通过 Android 分享面板保存，可选择云盘、文件、邮件等。",
-    "restore_zip_desc": "从之前导出的 .zip 文件恢复。用快照中的数据替换所有数据表，并将图片重新写入应用存储。",
+    "export_zip_desc": "单个 .ZIP 文件，包含所有菜谱、食材条目、日记记录、购物清单、设置和已上传图片。通过 Android 分享面板保存，可选择云盘、文件、邮件等。",
+    "restore_zip_desc": "从之前导出的 .ZIP 文件恢复。用快照中的数据替换所有数据表，并将图片重新写入应用存储。",
     "export_json_desc": "更轻量的格式：仅包含 JSON，不含图片。适合在账号之间共享数据或快速导出文本。",
     "import_json_desc": "从之前导出的 JSON 文件恢复。与现有数据合并，不会删除已有内容。",
     "clear_data_desc": "永久删除所有菜谱、食材条目、烹饪日记记录和购物清单。设置和凭据会保留。",
@@ -779,7 +779,7 @@
     "env_locked": "通过环境变量配置，无法在此修改。",
     "test_failed_hint": "请检查主机、凭据和发件人地址。",
     "send_test": "发送测试",
-    "host_ph": "例如 smtp.example.com",
+    "host_ph": "例如：<code>smtp.example.com</code>",
     "change_password": "更改密码",
     "change": "更改",
     "show": "显示",
@@ -796,7 +796,7 @@
     "testing": "正在测试…"
   },
   "settings_import_ui": {
-    "not_archive": "请选择 Mealie、Tandoor 或 Paprika 导出文件（.zip 或 .paprikarecipes）。",
+    "not_archive": "请选择 Mealie、Tandoor 或 Paprika 导出文件（.ZIP 或 .paprikarecipes）。",
     "uploading": "正在上传",
     "uploading_pct": "正在上传 {pct}%",
     "source_recipe": "菜谱",
