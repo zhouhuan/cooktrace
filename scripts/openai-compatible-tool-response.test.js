@@ -1,7 +1,7 @@
 /**
  * OpenAI-compatible tool responses used by the Simplified Chinese edition.
- * The historical filename is retained so this suite replaces the former
- * Gemini-only integration coverage without dropping tool-loop coverage.
+ * This suite replaces the former Gemini-only integration coverage while
+ * retaining and broadening tool-loop coverage for the supported providers.
  */
 import assert from 'node:assert/strict';
 import http from 'node:http';
