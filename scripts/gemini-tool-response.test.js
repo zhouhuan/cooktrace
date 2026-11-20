@@ -1,94 +1,107 @@
 /**
- * Trace works with Gemini when a tool answers with a list
- * (TraceApps/lifttrace#147). The same test file in every Trace app.
- *
- * The report: asking Trace for a training plan with a Gemini key ended in
- * "Invalid JSON payload received. Unknown name "response" at
- * 'contents[4].parts[2].function_response': Proto field is not repeating,
- * cannot start list." Gemini's FunctionResponse.response is "the function
- * response in JSON object format" (a protobuf Struct,
- * ai.google.dev/api/generate-content#FunctionResponse), and Trace sent a
- * tool's list as it was. These run the real loop (src/lib/aiChat.js)
- * against a stand-in for Gemini that refuses what Gemini refuses.
+ * OpenAI-compatible tool responses used by the Simplified Chinese edition.
+ * The historical filename is retained so this suite replaces the former
+ * Gemini-only integration coverage without dropping tool-loop coverage.
  */
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
-import { geminiToolResponse } from '../src/lib/gemini-tool-response.js';
 
-const read = (p) => readFileSync(new URL(p, import.meta.url), 'utf8');
-
-test('the copies of gemini-tool-response.js are identical', () => {
-  if (existsSync(new URL('../server/lib/gemini-tool-response.js', import.meta.url))) {
-    assert.equal(read('../server/lib/gemini-tool-response.js'), read('../src/lib/gemini-tool-response.js'));
-  }
-});
-
-test('anything but an object goes in one, under "result"; an object goes as it is', () => {
-  for (const value of [[], [{ id: 1, name: 'Bench Press' }], 'text', '', 0, 42, true, false, null]) {
-    assert.deepEqual(geminiToolResponse(value), { result: value }, JSON.stringify(value));
-  }
-  assert.deepEqual(geminiToolResponse(undefined), { result: null });
-  const object = { count: 1, workouts: [{ id: 1 }] };
-  assert.equal(geminiToolResponse(object), object);
-  const error = { error: 'Workout 9 not found' };
-  assert.equal(geminiToolResponse(error), error, 'a failed tool keeps its "error" key, as the API reference suggests');
-  assert.deepEqual(JSON.parse(JSON.stringify(geminiToolResponse(new Date(0)))), { result: '1970-01-01T00:00:00.000Z' });
-});
-
-// ── A stand-in for Gemini ───────────────────────────────────────────────
-// Refuses a functionResponse.response that isn't a JSON object, with the
-// error the reporter got for a list (the words for a plain value or null
-// are this stand-in's own). The first round asks for one tool,
-// the second for three at once (as for a training plan), then it answers.
-function refusal(contents) {
-  for (const [c, content] of (contents || []).entries()) {
-    for (const [p, part] of (content.parts || []).entries()) {
-      if (!part.functionResponse) continue;
-      const r = part.functionResponse.response;
-      const at = `contents[${c}].parts[${p}].function_response`;
-      if (Array.isArray(r)) return `Invalid JSON payload received. Unknown name "response" at '${at}': Proto field is not repeating, cannot start list.`;
-      if (r === undefined || r === null) return `${at}.response is required.`;
-      if (typeof r !== 'object') return `Invalid value at '${at}.response' (type.googleapis.com/google.protobuf.Struct), ${JSON.stringify(r)}`;
-    }
-  }
-  return null;
-}
 const seen = [];
 const endpoint = http.createServer((req, res) => {
   let raw = '';
-  req.on('data', (c) => { raw += c; });
+  req.on('data', chunk => { raw += chunk; });
   req.on('end', () => {
-    const b = JSON.parse(raw || '{}');
-    seen.push(b);
-    const wrong = refusal(b.contents);
-    if (wrong) return res.writeHead(400, { 'Content-Type': 'application/json' }).end(JSON.stringify({ error: { code: 400, message: wrong, status: 'INVALID_ARGUMENT' } }));
-    const rounds = (b.contents || []).filter((c) => c.parts?.some((p) => p.functionResponse)).length;
-    const calls = [['get_one'], ['get_one', 'get_two', 'get_list']][rounds];
-    const parts = calls ? calls.map((name) => ({ functionCall: { name, args: {} } })) : [{ text: `answer after ${rounds}` }];
-    res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ candidates: [{ content: { role: 'model', parts }, finishReason: 'STOP' }] }));
+    const body = JSON.parse(raw || '{}');
+    seen.push(body);
+    const hasToolResults = (body.messages || []).some(m => m.role === 'tool');
+    const message = hasToolResults
+      ? { role: 'assistant', content: 'answer after tools' }
+      : {
+          role: 'assistant',
+          content: null,
+          tool_calls: ['get_one', 'get_two', 'get_list'].map((name, i) => ({
+            id: `call_${i + 1}`,
+            type: 'function',
+            function: { name, arguments: '{}' },
+          })),
+        };
+    res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({
+      choices: [{ index: 0, finish_reason: hasToolResults ? 'stop' : 'tool_calls', message }],
+    }));
   });
 });
-await new Promise((r) => endpoint.listen(0, '127.0.0.1', r));
+await new Promise(resolve => endpoint.listen(0, '127.0.0.1', resolve));
 test.after(() => endpoint.close());
+
 const ENDPOINT = `http://127.0.0.1:${endpoint.address().port}`;
-const _fetch = globalThis.fetch;
-globalThis.fetch = (url, opts) => (String(url).startsWith('https://generativelanguage.googleapis.com/') ? _fetch(`${ENDPOINT}/gemini`, opts) : _fetch(url, opts));
+const realFetch = globalThis.fetch;
+globalThis.fetch = (url, options) => {
+  const value = String(url);
+  if (value.startsWith('https://dashscope.aliyuncs.com/')) return realFetch(`${ENDPOINT}/qwen`, options);
+  if (value.startsWith(ENDPOINT)) return realFetch(url, options);
+  return realFetch(url, options);
+};
 globalThis.localStorage ??= { getItem: () => null, setItem() {}, removeItem() {} };
 
 const client = await import('../src/lib/aiChat.js');
-let answers = {};
-const handler = async (name) => answers[name];
-// LiftTrace runs tools through onToolCall; the other apps through setToolHandler.
-if (client.setToolHandler) client.setToolHandler(handler);
-const TOOLS = ['get_one', 'get_two', 'get_list'].map((name) => ({ name, description: name, parameters: { type: 'object', properties: {} } }));
-const ask = () => client.callAI({
-  provider: 'gemini', apiKey: 'k', messages: [{ role: 'user', content: 'Make me a training plan.' }],
-  systemPrompt: 'You are Trace.', tools: TOOLS, ...(client.setToolHandler ? {} : { onToolCall: handler }),
+const answers = {};
+client.setToolHandler(async name => answers[name]);
+const tools = ['get_one', 'get_two', 'get_list'].map(name => ({
+  name,
+  description: name,
+  parameters: { type: 'object', properties: {} },
+}));
+
+for (const provider of [
+  { provider: 'qwen', apiKey: 'sk-test', model: 'qwen-plus' },
+  { provider: 'oai-compat', apiKey: '', model: 'qwen3-local', baseUrl: ENDPOINT },
+]) {
+  test(`${provider.provider}: tool results of every JSON type round-trip through Chat Completions`, async () => {
+    const values = [
+      [],
+      [{ id: 1, name: 'Soup' }],
+      'done',
+      '',
+      0,
+      42,
+      true,
+      false,
+      null,
+      undefined,
+      { error: 'Recipe not found' },
+    ];
+    for (const value of values) {
+      answers.get_one = { ok: true };
+      answers.get_two = { active: false };
+      answers.get_list = value;
+      seen.length = 0;
+      const answer = await client.callAI({
+        ...provider,
+        messages: [{ role: 'user', content: 'Import these recipes.' }],
+        systemPrompt: 'You are CookTrace.',
+        tools,
+      });
+      assert.equal(answer, 'answer after tools', JSON.stringify(value));
+      assert.equal(seen.length, 2, 'one tool round, then one final answer');
+      const toolMessages = seen[1].messages.filter(message => message.role === 'tool');
+      assert.equal(toolMessages.length, 3);
+      assert.deepEqual(JSON.parse(toolMessages[0].content), { ok: true });
+      assert.deepEqual(JSON.parse(toolMessages[1].content), { active: false });
+      assert.deepEqual(JSON.parse(toolMessages[2].content), value === undefined ? undefined : value);
+    }
+  });
+}
+
+test('Gemini is rejected before making a request in the Simplified Chinese edition', async () => {
+  seen.length = 0;
+  await assert.rejects(client.callAI({
+    provider: 'gemini',
+    apiKey: 'k',
+    messages: [{ role: 'user', content: 'Hello' }],
+    systemPrompt: 'You are CookTrace.',
+  }), /Unknown AI provider: gemini/);
+  assert.equal(seen.length, 0, 'unsupported providers never receive a request');
 });
 
-test('Gemini is not a built-in provider in the Simplified Chinese edition', async () => {
-  await assert.rejects(ask(), /Unknown AI provider: gemini/);
-  assert.equal(seen.length, 0, 'an unsupported provider must not make a network request');
-});
+test.after(() => { globalThis.fetch = realFetch; });
