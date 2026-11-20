@@ -262,7 +262,7 @@ export function checkCode(user, code, { ip = null, jti = null, req = null } = {}
   if (looksLikeRecoveryCode(given)) {
     if (_useRecoveryCode(user.id, given)) {
       const left = _remaining(user.id);
-      audit('recovery_code_used', user, { req, extra: `剩余 ${left} 个恢复代码` });
+      audit('recovery_code_used', user, { req, extra: `${left} left` });
       return { ok: true, via: 'recovery', recovery_codes_left: left };
     }
     noteWrongCode({ userId: user.id, ip, jti });
@@ -324,7 +324,7 @@ export function confirmSetup(user, code, { ip = null, jti = null, req = null } =
   }
   db.prepare(`UPDATE user_two_step SET enabled = 1, last_step = ?, enabled_at = datetime('now') WHERE user_id = ?`).run(step, user.id);
   const codes = _newRecoveryCodes(user.id);
-  bumpSessionVersion(user.id, '开启两步验证', { req });
+  bumpSessionVersion(user.id, 'two-step sign-in turned on', { req });
   audit('enabled', user, { req });
   return { recovery_codes: codes };
 }
@@ -404,7 +404,7 @@ export function audit(event, user, { req = null, by = null, extra = '' } = {}) {
   if (!n) return;
   const who = `${user.username} (id ${user.id})`;
   const parts = [`[two-step] ${who}: ${n.log}`];
-  if (by) parts.push(`操作人 ${by.username} (id ${by.id})`);
+  if (by) parts.push(`by ${by.username} (id ${by.id})`);
   if (extra) parts.push(`(${extra})`);
   if (req?.ip) parts.push(`from ${req.ip}`);
   logger.info(parts.join(' '));

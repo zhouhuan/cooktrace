@@ -91,7 +91,7 @@ Third app in the Trace family alongside [NutriTrace](https://github.com/traceapp
 
 ## Install
 
-Published to two registries with identical tag sets: `ghcr.io/traceapps/cooktrace` (primary) and `traceapps/cooktrace` on [Docker Hub](https://hub.docker.com/r/traceapps/cooktrace) (mirror). The snippet below uses GHCR; swap in `traceapps/cooktrace:latest` if that suits your setup.
+The upstream TraceApps image is published to `ghcr.io/traceapps/cooktrace` and, when its optional credentials are configured, `traceapps/cooktrace` on [Docker Hub](https://hub.docker.com/r/traceapps/cooktrace). Forks build the image without pushing to the upstream GHCR package; configure their own Docker Hub credentials to publish a mirror. The snippet below uses the upstream GHCR image.
 
 **Unraid:** CookTrace is in Community Applications. Search for CookTrace in the Apps tab; the template sets the port, the appdata folders and the settings. Fill in JWT Secret before the first start.
 

@@ -378,7 +378,7 @@ test('a recovery code signs in once, typed any way; it is logged and counted', {
   const again = await send(S, { path: '/api/auth/two-step/verify', body: { pending_token: (await login('alice', ip)).data.pending_token, code }, ip });
   assert.equal(again.status, 401);
   assert.match(again.data.error, /already used/);
-  assert.match(S.log, /alice \(id \d+\): 使用恢复代码登录 \(剩余 9 个恢复代码\)/);
+  assert.match(S.log, /alice \(id \d+\): signed in with a recovery code \(9 left\)/);
   assert.equal(S.log.includes(code), false, 'the log never has the code');
   assert.equal((await send(S, { method: 'GET', path: '/api/auth/two-step/status', bearer: tok.alice, ip })).data.recovery_codes_left, 9);
 });
@@ -422,7 +422,7 @@ test('admin reset: own password, not themselves, admins only, own code when they
   assert.equal((await reset('admin', ids.jo, { password: PW })).status, 200);
   assert.equal((await reset('admin', ids.jo, { password: PW })).status, 400, 'already off');
   assert.equal((await login('jo', ip)).status, 200);
-  assert.match(S.log, /jo \(id \d+\): 被管理员重置 操作人 admin \(id \d+\)/);
+  assert.match(S.log, /jo \(id \d+\): 被管理员重置 by admin \(id \d+\)/);
 
   // An admin with two-step sign-in on gives their code as well: a session left open isn't enough.
   await enable('admin2');
