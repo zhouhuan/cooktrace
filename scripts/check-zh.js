@@ -25,7 +25,7 @@ const WHITELIST = new Set([
   'OAuth', 'PKCE', 'Apprise', 'Gotify', 'ntfy', 'Weblate', 'sh', 'npm', 'DMS',
   'Cursor', 'Codex', 'Auth0', 'Authelia', 'Authentik', 'Keycloak', 'Google', 'Pocket',
   'Open', 'Food', 'Facts', 'OFF', 'CookTraceAdmins', 'paprikarecipes', 'PDF', 'RTF', 'TXT', 'MD', 'ZIP',
-  'Mifflin', 'St', 'Jeor', 'King', 'Arthur', 'X', 'Y', 'Aegis', 'FAS', 'Authenticator', 'Password',
+  'Mifflin', 'Mifflin-St', 'St', 'Jeor', 'King', 'Arthur', 'X', 'Y', 'MM-DD', 'Omega-3', 'Aegis', 'FAS', 'Authenticator', 'Password',
   'Cloudflare', 'Access', 'zxcvbn', 'MM', 'DD', 'Omega', 'Ctrl', 'B', 'I', 'U', 'Material', 'Symbol', 'Symbols',
   'YouTube', 'Vimeo', 'Chrome', 'iPhone', 'Safari',
   'HTTP', 'MB', 'KB', 'Esc', 'A', 'D', 'E', 'K', 'M', 'B1', 'B2', 'B3', 'B5', 'B6', 'B9', 'B12',
