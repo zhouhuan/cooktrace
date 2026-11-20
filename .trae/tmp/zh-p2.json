@@ -1,0 +1,170 @@
+{
+  "settings_added": {
+    "food_sources": {
+      "section": "食品数据源"
+    },
+    "off": {
+      "section": "Open Food Facts",
+      "enable": "启用 Open Food Facts",
+      "enable_desc": "通过全球社区维护的食品数据库查询条形码。查询无需账号；只有通过“分享至 OFF”上传修改时才需要账号。",
+      "search_language": "搜索语言",
+      "search_country": "搜索国家或地区",
+      "upload_country": "上传国家或地区",
+      "username": "账号用户名",
+      "username_hint": "选填，仅上传修改时需要。",
+      "password": "账号密码",
+      "create_account": "创建 OFF 账号 →"
+    },
+    "usda": {
+      "section": "美国农业部 FoodData Central",
+      "enable": "启用 USDA 食品数据",
+      "enable_desc": "添加食材时搜索 USDA 营养数据库。",
+      "get_key": "获取免费 API 密钥 →",
+      "api_key": "API 密钥"
+    },
+    "barcode_scanner": {
+      "section": "条形码扫描器",
+      "beep": "扫描成功时提示音",
+      "beep_desc": "识别条形码后播放简短提示音。",
+      "flashlight": "自动开启闪光灯",
+      "flashlight_desc": "打开扫描器时自动开启后置摄像头闪光灯（仅网页端；原生应用使用系统相机界面自带的控制）。"
+    },
+    "federation": {
+      "section": "NutriTrace 联邦连接"
+    }
+  },
+  "settings_page": {
+    "toast": {
+      "copy_failed": "复制失败。请选中文本并手动复制。",
+      "no_log_file": "尚无日志文件。请先开启诊断模式并重现问题。"
+    },
+    "profile_hero": {
+      "admin_badge": "管理员",
+      "tap_to_setup": "点击设置个人资料"
+    },
+    "group": {
+      "display": "显示",
+      "integrations": "集成",
+      "admin": "管理"
+    },
+    "appearance": {
+      "theme": "主题",
+      "accent_color": "强调色",
+      "navigation_style": "导航样式",
+      "persistent_sidebar": "固定侧边栏",
+      "persistent_sidebar_desc": "侧边栏保持展开，页面内容会随之移动，而不是覆盖在页面上。",
+      "start_page": "启动页面",
+      "reduce_motion": "减少动态效果",
+      "page_banners": "页面横幅",
+      "page_banners_desc": "每个页面顶部的标题栏样式。“动态”是带有选定动画效果的紧凑强调色渐变条；“渐变”是相同但静止的横幅；“关闭”则使用普通磨砂玻璃标题栏。",
+      "banner_animated": "动态",
+      "banner_gradient": "渐变",
+      "banner_off": "关闭",
+      "animation_style": "动画样式",
+      "animation_style_desc": "微光：柔和的白色扫光；漂移：缓慢的色相旋转；脉冲：轻柔的呼吸效果；极光：带强调色的柔和光云。所有效果均遵循“减少动态效果”设置。",
+      "anim_shimmer": "微光",
+      "anim_drift": "漂移",
+      "anim_pulse": "脉冲",
+      "anim_aurora": "极光"
+    },
+    "regional": {
+      "language": "语言",
+      "language_desc": "界面语言。翻译版本可能比英文版本晚一到两个版本；缺失的文本会回退到英文。",
+      "date_format": "日期格式",
+      "date_natural": "YYYY年M月D日",
+      "time_format": "时间格式",
+      "measurement_system": "计量单位制",
+      "imperial": "英制",
+      "metric": "公制",
+      "energy": "能量"
+    },
+    "cooking": {
+      "default_servings": "默认份数",
+      "show_shared": "在主列表中显示共享菜谱",
+      "url_import_engine": "网址导入引擎",
+      "url_engine_desc_standard_html": "<strong>标准</strong>读取网页中的 schema.org/Recipe 数据。免费且快速，适用于大多数主流菜谱网站。",
+      "url_engine_desc_enhanced_html": "<strong>增强</strong>使用 recipe-scrapers，其中包含约 300 个热门网站的专用提取器；其他网站则回退到 schema.org。",
+      "url_engine_desc_smart_html": "<strong>智能</strong>将网页交给 Trace AI 处理。速度较慢且会消耗 AI 额度，但能从屏蔽爬虫或使用非标准标记隐藏内容的网站中提取菜谱。",
+      "engine_standard": "标准",
+      "engine_enhanced": "增强",
+      "engine_enhanced_server_suffix": "（需要服务器）",
+      "engine_smart": "智能",
+      "engine_smart_required_suffix": "（需要 Trace AI）",
+      "smart_note": "智能模式会将每个网址导入请求发送给 AI，每次粘贴都会消耗服务商额度。标准或增强模式免费且能处理大多数网站；建议仅在备用时启用智能模式。",
+      "enhanced_fallback": "增强模式回退",
+      "enhanced_fallback_desc": "服务器无法连接或未安装 recipe-scrapers 时，回退到此模式。",
+      "shopping_list": "购物清单",
+      "default_grouping": "默认分组方式",
+      "group_by_aisle": "按货架分组",
+      "group_by_recipe": "按菜谱分组",
+      "group_by_flat": "不分组",
+      "checked_items": "已勾选项目",
+      "sink_to_bottom": "移至底部",
+      "hide": "隐藏"
+    },
+    "pantry_search": {
+      "section": "食材库搜索",
+      "default_source": "默认搜索来源",
+      "default_source_desc": "打开食材库页面时默认选中的来源筛选。选择“全部”会搜索所有已启用的数据库；“我的食材库”则从本地库开始搜索。",
+      "source_all": "全部",
+      "source_local": "我的食材库"
+    },
+    "off": {
+      "section": "Open Food Facts",
+      "enable": "启用 Open Food Facts",
+      "search_language": "搜索语言",
+      "search_country": "搜索国家或地区",
+      "upload_country": "上传国家或地区",
+      "auto": "自动",
+      "account_username": "账号用户名",
+      "off_username_ph": "OFF 用户名",
+      "account_password": "账号密码",
+      "off_password_ph": "OFF 密码"
+    },
+    "usda": {
+      "section": "美国农业部 FoodData Central",
+      "enable": "启用 USDA 食品数据",
+      "api_key": "API 密钥",
+      "api_key_ph": "在此粘贴 USDA API 密钥"
+    },
+    "nutritrace": {
+      "section": "NutriTrace"
+    },
+    "scanner": {
+      "section": "条形码扫描器",
+      "beep_on_scan": "扫描成功时提示音"
+    },
+    "diag": {
+      "mode": "诊断模式",
+      "view_logs": "查看诊断日志",
+      "logs_desc_prefix": "应用控制台最近的日志行，可用于提交错误报告；复制或分享至 ",
+      "logs_desc_github": "GitHub 问题反馈",
+      "logs_desc_android": "。在开启诊断模式的 Android 设备上，还可以分享已保存的日志文件或捕获的崩溃报告。",
+      "logs_desc_suffix": "不会自动向任何地方发送数据。",
+      "crash_available": "有可用的崩溃报告"
+    },
+    "about": {
+      "app_name": "CookTrace",
+      "federation_prefix": "可选的联邦连接：",
+      "federation_suffix": "，用于营养追踪",
+      "family_line_prefix": "属于 ",
+      "family_line_suffix": " 产品系列"
+    },
+    "support": {
+      "lead": "CookTrace 永远免费。支持项目完全自愿，不会解锁任何功能。",
+      "other_ways": "其他支持方式",
+      "star": "在 GitHub 上点星",
+      "star_desc": "星标能帮助自托管项目获得更多关注。",
+      "report_bug": "报告问题",
+      "report_bug_desc": "清晰的问题报告能帮助所有遇到同一问题的人。",
+      "translate": "帮助翻译",
+      "translate_desc": "通过 Weblate 帮助 CookTrace 支持你的语言。"
+    },
+    "custom_color": {
+      "saturation": "饱和度",
+      "lightness": "亮度",
+      "hex_code": "十六进制颜色值",
+      "apply": "应用颜色"
+    }
+  }
+}
