@@ -88,7 +88,8 @@ for (const provider of [
       assert.equal(toolMessages.length, 3);
       assert.deepEqual(JSON.parse(toolMessages[0].content), { ok: true });
       assert.deepEqual(JSON.parse(toolMessages[1].content), { active: false });
-      assert.deepEqual(JSON.parse(toolMessages[2].content), value === undefined ? undefined : value);
+      if (value === undefined) assert.equal(toolMessages[2].content, undefined);
+      else assert.deepEqual(JSON.parse(toolMessages[2].content), value);
     }
   });
 }
