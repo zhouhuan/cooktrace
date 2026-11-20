@@ -49,19 +49,11 @@
   const BUILTIN_ABBRS = new Set();
   for (const g of UNIT_GROUPS) for (const u of g.units) BUILTIN_ABBRS.add(u.abbr);
   const CATEGORY_OPTIONS = [...UNIT_GROUPS.map(g => g.label), 'Custom'];
-  // Group labels double as stored category values, so only the shown
-  // text is translated. Keys follow UNIT_GROUPS order.
-  const GROUP_KEYS = [
-    'unit_picker_ui.group_volume_us',
-    'unit_picker_ui.group_volume_metric',
-    'unit_picker_ui.group_weight_us',
-    'unit_picker_ui.group_weight_metric',
-    'unit_picker_ui.group_count',
-  ];
-  function groupName(label, t) {
-    if (label === 'Custom') return t('manage_units.custom_group');
-    const i = UNIT_GROUPS.findIndex(g => g.label === label);
-    return i >= 0 && GROUP_KEYS[i] ? t(GROUP_KEYS[i]) : label;
+  // Built-in group labels are already Chinese (src/lib/units.js) and double
+  // as the stored category values, so they show as-is; only the Custom
+  // bucket needs its display name mapped.
+  function groupName(label) {
+    return label === 'Custom' ? '自定义' : label;
   }
 
   // Filter — one input filters both built-in groups and the custom
@@ -239,7 +231,7 @@
 
     {#each filteredGroups as group (group.label)}
       <section class="grp">
-        <h3 class="grp-title">{groupName(group.label, $_)}</h3>
+        <h3 class="grp-title">{groupName(group.label)}</h3>
         <ul class="row-list">
           {#each group.units as u (u.abbr)}
             {@const isOff = disabled.has(u.abbr)}
@@ -264,7 +256,7 @@
 
     {#if !needle || filteredCustom.length > 0 || custom.length === 0}
     <section class="grp">
-      <h3 class="grp-title">{$_('manage_units.custom_group')}</h3>
+      <h3 class="grp-title">自定义</h3>
       {#if custom.length === 0}
         <p class="empty">{$_('manage_units_ui.empty_custom')}</p>
       {:else}
@@ -276,7 +268,7 @@
                   <input dir="auto" class="input edit-input abbr-input" bind:value={editAbbr} placeholder={$_('manage_units_ui.abbr_ph')} />
                   <input dir="auto" class="input edit-input full-input" bind:value={editFull} placeholder={$_('manage_units_ui.full_name_ph')} />
                   <select class="input edit-input cat-input" bind:value={editCategory}>
-                    {#each CATEGORY_OPTIONS as cat}<option value={cat}>{groupName(cat, $_)}</option>{/each}
+                    {#each CATEGORY_OPTIONS as cat}<option value={cat}>{groupName(cat)}</option>{/each}
                   </select>
                   <div class="row-actions">
                     <button class="btn btn-secondary tiny" on:click={cancelEdit}>{$_('manage_units.cancel')}</button>
@@ -288,7 +280,7 @@
                 <span class="badge custom-badge">{$_('manage_units.custom_badge')}</span>
                 <span class="abbr">{u.abbr}</span>
                 <span class="full">{u.full_name}</span>
-                {#if u.category}<span class="cat-tag">{groupName(u.category, $_)}</span>{/if}
+                {#if u.category}<span class="cat-tag">{groupName(u.category)}</span>{/if}
                 <span class="usage-pill" class:zero={uses === 0}
                   title={uses === 0 ? $_('manage_units_ui.not_used') : $_('manage_units_ui.used_in', { values: { count: uses } })}>
                   {$_('manage_ui.uses', { values: { count: uses } })}
@@ -312,7 +304,7 @@
           on:keydown={(e) => { if (e.key === 'Enter') createCustom(); }} />
         <input dir="auto" class="input full-input" placeholder={$_('manage_units_ui.new_full_name_ph')} bind:value={newFull} />
         <select class="input cat-input" bind:value={newCategory}>
-          {#each CATEGORY_OPTIONS as cat}<option value={cat}>{groupName(cat, $_)}</option>{/each}
+          {#each CATEGORY_OPTIONS as cat}<option value={cat}>{groupName(cat)}</option>{/each}
         </select>
         <button class="btn btn-primary" on:click={createCustom} disabled={creating || !newAbbr.trim()}>
           {creating ? $_('foods.adding') : $_('manage_ui.add')}

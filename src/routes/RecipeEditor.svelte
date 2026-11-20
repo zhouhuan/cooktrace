@@ -1471,7 +1471,7 @@
 
           <label class="field">
             <span class="field-label">{$_('editor.source_url')}</span>
-            <input class="input" type="url" bind:value={sourceUrl} placeholder="https://example.com/the-best-banana-bread" />
+            <input class="input" type="url" bind:value={sourceUrl} placeholder="https://…" />
           </label>
 
           <!-- Video Instructions — three-button row matching the

@@ -88,26 +88,17 @@ const LABEL_PROMPT = [
 ].join('\n');
 
 /**
- * Build the provider-specific multimodal message payload.
- * Each provider has its own image + text convention.
+ * Build the multimodal message payload. 简体中文专属版: every provider
+ * (the built-in Chinese services and custom) speaks OpenAI-compatible
+ * Chat Completions, so the photo goes inline as an image_url. A multimodal
+ * model (GLM-4V, Qwen-VL, etc.) reads it; a text-only model answers with
+ * an error the caller can show.
  */
 function buildLabelMessages(provider, image) {
-  if (provider === 'claude') {
-    return [{ role: 'user', content: [
-      { type: 'image', source: { type: 'base64', media_type: image.mimeType, data: image.base64 } },
-      { type: 'text', text: LABEL_PROMPT },
-    ]}];
-  }
-  if (provider === 'openai' || provider === 'oai-compat') {
-    return [{ role: 'user', content: [
-      { type: 'image_url', image_url: { url: `data:${image.mimeType};base64,${image.base64}` } },
-      { type: 'text', text: LABEL_PROMPT },
-    ]}];
-  }
-  if (provider === 'gemini') {
-    return [{ role: 'user', content: LABEL_PROMPT, _image: image }];
-  }
-  return [{ role: 'user', content: LABEL_PROMPT }];
+  return [{ role: 'user', content: [
+    { type: 'image_url', image_url: { url: `data:${image.mimeType};base64,${image.base64}` } },
+    { type: 'text', text: LABEL_PROMPT },
+  ]}];
 }
 
 /**
@@ -136,7 +127,7 @@ function parseJsonFromReply(text) {
 export async function scanNutritionLabel({ fileInput = null, aiProxy = false } = {}) {
   const image = await captureLabelPhoto(fileInput);
   if (!image || !image.base64) return null;
-  const provider = get(aiProvider) || 'claude';
+  const provider = get(aiProvider) || 'deepseek';
   const messages = buildLabelMessages(provider, image);
   const systemPrompt = 'You are a nutrition label parser. Return JSON only.';
   const reply = aiProxy

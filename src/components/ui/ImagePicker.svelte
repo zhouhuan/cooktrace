@@ -184,7 +184,7 @@
       <input
         class="input"
         type="url"
-        placeholder="https://example.com/recipe.jpg"
+        placeholder="https://…"
         bind:value={urlInput}
         on:keydown={(e) => e.key === 'Enter' && applyUrl()}
         autofocus

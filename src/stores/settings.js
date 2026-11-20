@@ -402,7 +402,7 @@ export const forceMobileLayout = createSettingStore('forceMobileLayout', false);
 
 // ── User prefs (server-synced) ─────────────────────────────────────────────
 // The browser or phone's own language until one is chosen (nutritrace#323).
-export const language    = createSettingStore('language',    pickInitialLocale());
+export const language    = createSettingStore('language',    'zh');
 export const accentColor = createSettingStore('accentColor', 'mint');
 // Page banners — three styles:
 //   'animated' = tall header with the page's illustrated SVG
@@ -441,12 +441,12 @@ export const pageBanners = derived(bannerStyle, $s => $s !== 'off');
 // 'animated'. Four styles: 'shimmer' (default), 'drift', 'pulse', 'aurora'.
 export const bannerAnimation = createSettingStore('bannerAnimation', 'shimmer');
 export const startPage   = createSettingStore('startPage',   '/');
-export const dateFormat  = createSettingStore('dateFormat',  'US');
-export const timeFormat  = createSettingStore('timeFormat',  '12h');
+export const dateFormat  = createSettingStore('dateFormat',  'ISO');
+export const timeFormat  = createSettingStore('timeFormat',  '24h');
 export const timezone    = createSettingStore('timezone',    '');
 
 // Cooking prefs
-export const measurementSystem = createSettingStore('measurementSystem', 'imperial');
+export const measurementSystem = createSettingStore('measurementSystem', 'metric');
 export const defaultServings   = createSettingStore('defaultServings',   2);
 
 // Recipes list sort. Mirrors NutriTrace's per-list sort settings (food /
@@ -511,7 +511,7 @@ export const aiEffectivelyEnabled = derived(
   [aiEnabled, envLocks],
   ([$aiEnabled, $envLocks]) => !!$aiEnabled || (!!$envLocks.ai && !!$envLocks.ai_enabled)
 );
-export const aiProvider      = createSettingStore('aiProvider',      'claude');
+export const aiProvider      = createSettingStore('aiProvider',      'deepseek');
 export const aiApiKey        = createSettingStore('aiApiKey',        '');
 export const aiModel         = createSettingStore('aiModel',         '');
 export const aiBaseUrl       = createSettingStore('aiBaseUrl',       '');

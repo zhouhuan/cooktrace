@@ -50,8 +50,20 @@ export async function estimate(password, userInputs = []) {
 }
 
 /** Map score (0-4) → label for UI display. */
-export const STRENGTH_LABELS = ['Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
+export const STRENGTH_LABELS = ['非常弱', '弱', '一般', '强', '非常强'];
 export const STRENGTH_COLORS = ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#059669'];
+
+/**
+ * zxcvbn's feedback strings (warning/suggestions) come from the English
+ * dictionary pack. For the Chinese edition we replace the whole feedback
+ * with concise Chinese lines keyed by score — the actionable advice is the
+ * same for every user anyway.
+ */
+export function zhFeedback(score) {
+  if (score <= 1) return { warning: '密码太容易猜到', suggestions: ['增加长度，混合大小写字母、数字和符号', '避免使用常见词汇或个人信息'] };
+  if (score === 2) return { warning: '密码强度一般', suggestions: ['再增加几位或混入符号会更安全'] };
+  return { warning: '', suggestions: [] };
+}
 
 /** Server-enforced minimum score when policy='strong'. zxcvbn 3 = "strong". */
 export const STRONG_MIN_SCORE = 3;

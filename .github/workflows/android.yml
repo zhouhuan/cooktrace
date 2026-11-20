@@ -1,0 +1,154 @@
+name: android
+
+# CookTrace 简体中文版 Android 构建流水线。
+#
+# 三个 job：
+#   test         — push 时跑 i18n 完整性检查与单元测试（Node 22）
+#   release      — 打 tag `v*` 或手动触发：构建已签名 APK 并附到 GitHub Release
+#                  （Release 资产同时就是应用内在线升级的下载源，见
+#                   src/lib/updates.js → zhouhuan/cooktrace）
+#   init-signing — 一次性手动触发：生成 release 签名密钥库。把输出的
+#                  base64 与口令存为仓库 secrets（KEYSTORE_BASE64 /
+#                  KEYSTORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD）后，后续
+#                  所有 release 构建将使用同一签名，保证覆盖安装升级可用。
+#                  生成后请同时把 keystore 文件自行备份——丢失后无法再对
+#                  已发布的应用推送更新。
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      keystore_password:
+        description: 'init-signing 用的密钥库口令（留空则自动生成随机口令）'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run i18n:check
+      - run: npm run check:zh
+      - run: npm test
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx cap sync android
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # 签名：secrets 解码出 keystore + 口令文件。android/app/build.gradle
+      # 已按 android/keystore.properties 读取签名（缺省回退 debug 签名，
+      # 无法覆盖升级，仅用于临时验证）。
+      - name: Restore signing keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > android/app/cooktrace-release.keystore
+            cat > android/keystore.properties <<EOF
+          storeFile=cooktrace-release.keystore
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          EOF
+            echo "signing: release keystore"
+          else
+            echo "signing: no KEYSTORE_BASE64 secret — falling back to debug signing (updates will NOT install)"
+          fi
+
+      - name: Build release APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      - name: Collect APK
+        id: apk
+        run: |
+          VER=$(grep -oP 'versionName\s+"[^"]+"' android/app/build.gradle | head -1 | sed 's/.*"\(.*\)"/\1/')
+          cp android/app/build/outputs/apk/release/app-release.apk "cooktrace-v${VER}.apk"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+
+      # Release 资产 = 应用内升级下载源（src/lib/apk-asset.js 挑选不带
+      # wear/watch 字样的 .apk 资产）。
+      - name: Attach APK to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: cooktrace-v*.apk
+          generate_release_notes: true
+
+      - name: Upload APK artifact (manual runs)
+        if: "!startsWith(github.ref, 'refs/tags/v')"
+        uses: actions/upload-artifact@v4
+        with:
+          name: cooktrace-apk-${{ steps.apk.outputs.version }}
+          path: cooktrace-v*.apk
+
+  init-signing:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Generate release keystore
+        env:
+          KEYSTORE_PASSWORD: ${{ github.event.inputs.keystore_password }}
+        run: |
+          PASS="${KEYSTORE_PASSWORD:-$(openssl rand -hex 16)}"
+          keytool -genkeypair -v \
+            -keystore cooktrace-release.keystore \
+            -alias cooktrace \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass "$PASS" -keypass "$PASS" \
+            -dname "CN=CookTrace, OU=Apps, O=zhouhuan, C=CN"
+          echo "=============================================================="
+          echo " 1) 备份以下 base64 到本地文件（例如 cooktrace-release.keystore.b64）"
+          echo "=============================================================="
+          base64 -w 0 cooktrace-release.keystore
+          echo ""
+          echo "=============================================================="
+          echo " 2) 把以下值存为仓库 Settings → Secrets and variables → Actions："
+          echo "      KEYSTORE_BASE64  = 上面的 base64"
+          echo "      KEYSTORE_PASSWORD = $PASS"
+          echo "      KEY_ALIAS         = cooktrace"
+          echo "      KEY_PASSWORD      = $PASS"
+          echo " 3) 手动保存 keystore 文件本身（本产物不落盘到仓库）："
+          echo "=============================================================="
+          ls -la cooktrace-release.keystore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-keystore
+          path: cooktrace-release.keystore
+          retention-days: 1

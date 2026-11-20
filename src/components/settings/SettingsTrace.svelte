@@ -96,14 +96,15 @@
   {
     // A model saved under a name that has since changed shows (and is kept)
     // under its new name. Not for OpenAI Compatible: its names are the
-    // server's own.
+    // server's own. Doubao's model list is empty (the user types their Ark
+    // endpoint ID directly), so the escape hatch doesn't apply to it either.
     if ($aiProvider !== 'custom' && $aiProvider !== 'oai-compat' && $aiModel && renamedModel($aiModel) !== $aiModel) {
       aiModel.set(renamedModel($aiModel));
     }
     const saved = $aiModel;
     const _pm = AI_MODELS[$aiProvider] || [];
     const isPreset = _pm.includes(saved) && saved !== AI_MODEL_CUSTOM;
-    if (saved && !isPreset && $aiProvider !== 'custom') {
+    if (saved && !isPreset && _pm.length > 0 && $aiProvider !== 'custom') {
       aiModelSelectVal = AI_MODEL_CUSTOM;
       aiCustomModelVal = saved;
     } else {
@@ -149,8 +150,9 @@
     if (next !== 'custom' && !valid.includes($aiModel)) {
       aiModel.set(AI_DEFAULT_MODELS[next] || '');
     }
-    // Sync escape-hatch state so the select reflects the new provider
-    if (next !== 'custom') {
+    // Sync escape-hatch state so the select reflects the new provider.
+    // An empty preset list (doubao) has no dropdown to sync.
+    if (next !== 'custom' && valid.length > 0) {
       const saved = $aiModel;
       const isPreset = (AI_MODELS[next] || []).includes(saved) && saved !== AI_MODEL_CUSTOM;
       if (saved && !isPreset) {
@@ -202,8 +204,8 @@
       // The previous version always hit /api/ai/chat which 503'd with
       // "AI not configured on server" whenever AI_API_KEY env var wasn't
       // set, even though the user had pasted a working key in the form.
-      const messages = [{ role: 'user', content: 'Say "hi" in one word.' }];
-      const systemPrompt = 'You are a test bot. Reply with exactly one short word.';
+      const messages = [{ role: 'user', content: '请只回复两个字："你好"。' }];
+      const systemPrompt = '你是一个测试机器人。请只回复一句非常简短的中文问候。';
       let text;
       if (envLocks.ai) {
         text = await callAIProxy({ messages, systemPrompt });
@@ -320,7 +322,7 @@
         </div>
       {:else}
         <input class="input" type="text" style="width:220px" value={$aiModel}
-          placeholder={AI_DEFAULT_MODELS[$aiProvider] || ''}
+          placeholder={$aiProvider === 'doubao' ? 'ep-…（火山方舟推理接入点 ID）' : AI_DEFAULT_MODELS[$aiProvider] || ''}
           disabled={envLocks.ai}
           on:change={e => { aiModel.set(e.target.value); _invalidate(); _autoTest(); }} />
       {/if}
@@ -330,16 +332,18 @@
       <div class="setting-row">
         <span class="setting-label">{$_('settings_trace_ct.custom_model_id')}</span>
         <input class="input" type="text" style="width:220px"
-          placeholder={$aiProvider === 'gemini' ? 'gemini-3.8-flash' : $aiProvider === 'claude' ? 'claude-sonnet-5-5' : 'gpt-5.6-terra'}
+          placeholder={$aiProvider === 'zhipu' ? 'glm-4-flash' : $aiProvider === 'kimi' ? 'moonshot-v1-8k' : $aiProvider === 'qwen' ? 'qwen-plus' : 'deepseek-chat'}
           bind:value={aiCustomModelVal} on:input={_syncModelFromSelect} on:change={_autoTest} />
       </div>
       <div style="padding:8px 16px 12px;display:flex;gap:8px;align-items:flex-start">
         <span class="material-symbols-rounded" style="font-size:16px;color:var(--muted);flex-shrink:0;margin-top:2px">info</span>
         <div class="setting-desc" style="margin:0;line-height:1.5">
           {$_('settings_trace_ui.model_hint_prefix')}
-          {#if $aiProvider === 'gemini'}<a href="https://ai.google.dev/gemini-api/docs/models" target="_blank" rel="noopener" class="about-link">{$_('settings_trace_ui.model_list_google')}</a>
-          {:else if $aiProvider === 'claude'}<a href="https://docs.anthropic.com/en/docs/about-claude/models/overview" target="_blank" rel="noopener" class="about-link">{$_('settings_trace_ui.model_list_anthropic')}</a>
-          {:else}<a href="https://platform.openai.com/docs/models" target="_blank" rel="noopener" class="about-link">{$_('settings_trace_ui.model_list_openai')}</a>{/if}{$_('settings_trace_ui.model_hint_suffix')}
+          {#if $aiProvider === 'kimi'}<a href="https://platform.moonshot.cn/docs/pricing/chat" target="_blank" rel="noopener" class="about-link">Kimi 模型列表</a>
+          {:else if $aiProvider === 'zhipu'}<a href="https://open.bigmodel.cn/dev/howuse/model" target="_blank" rel="noopener" class="about-link">智谱模型列表</a>
+          {:else if $aiProvider === 'qwen'}<a href="https://help.aliyun.com/zh/model-studio/models" target="_blank" rel="noopener" class="about-link">通义千问模型列表</a>
+          {:else if $aiProvider === 'doubao'}<a href="https://www.volcengine.com/docs/82379/1330310" target="_blank" rel="noopener" class="about-link">豆包模型列表</a>
+          {:else}<a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank" rel="noopener" class="about-link">DeepSeek 模型列表</a>{/if}{$_('settings_trace_ui.model_hint_suffix')}
         </div>
       </div>
     {/if}

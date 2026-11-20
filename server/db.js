@@ -453,19 +453,19 @@ if (!columnExists('recipes', 'video_url')) {
 // runs for users who don't already have a category set.
 {
   const DEFAULTS = [
-    ['Breakfast',  'breakfast',  '#f59e0b'],
-    ['Lunch',      'lunch',      '#84cc16'],
-    ['Dinner',     'dinner',     '#ef4444'],
-    ['Appetizer',  'appetizer',  '#a855f7'],
-    ['Side',       'side',       '#06b6d4'],
-    ['Soup',       'soup',       '#f97316'],
-    ['Salad',      'salad',      '#22c55e'],
-    ['Bread',      'bread',      '#d97706'],
-    ['Dessert',    'dessert',    '#ec4899'],
-    ['Drink',      'drink',      '#3b82f6'],
-    ['Snack',      'snack',      '#14b8a6'],
-    ['Sauce',      'sauce',      '#6366f1'],
-    ['Preserves',  'preserves',  '#9f1239'],
+    ['早餐',  'breakfast',  '#f59e0b'],
+    ['午餐',  'lunch',      '#84cc16'],
+    ['晚餐',  'dinner',     '#ef4444'],
+    ['开胃菜', 'appetizer', '#a855f7'],
+    ['配菜',  'side',       '#06b6d4'],
+    ['汤品',  'soup',       '#f97316'],
+    ['沙拉',  'salad',      '#22c55e'],
+    ['烘焙',  'bread',      '#d97706'],
+    ['甜点',  'dessert',    '#ec4899'],
+    ['饮品',  'drink',      '#3b82f6'],
+    ['小吃',  'snack',      '#14b8a6'],
+    ['酱料',  'sauce',      '#6366f1'],
+    ['腌渍',  'preserves',  '#9f1239'],
   ];
   const userIds = db.prepare(`SELECT id FROM users`).all().map(r => r.id);
   // Single-user mode (no users table rows): seed under user_id NULL too.
@@ -662,7 +662,7 @@ db.exec(`
 `);
 
 // ── Custom + disabled units ────────────────────────────────────────────────
-// The 37 built-in cooking units live in `src/lib/units.js`. Users get to:
+// The 39 built-in cooking units live in `src/lib/units.js`. Users get to:
 //   - hide built-ins they don't use (per-user, no data loss)
 //   - add their own custom units (e.g. "head" for garlic)
 //

@@ -85,7 +85,7 @@ async function _pushGotify(userId, title, message, priority) {
   const res = await _send(`${serviceBase(url) ?? url}/message?token=${encodeURIComponent(token)}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title: `CookTrace — ${title}`, message, priority }),
+    body: JSON.stringify({ title: `CookTrace · ${title}`, message, priority }),
   });
   if (!res.ok) throw new Error(`Gotify ${res.status}`);
   logger.debug?.(`[push] gotify: "${title}" → user ${userId}`);
@@ -96,7 +96,7 @@ async function _pushNtfy(userId, title, message, priority) {
   const topic = _getUserSetting(userId, 'ntfyTopic');
   const token = _getUserSetting(userId, 'ntfyToken');
   if (!topic) return;
-  const headers = { 'Title': _encodeHeaderValue(`CookTrace — ${title}`), 'Priority': String(Math.min(5, priority)) };
+  const headers = { 'Title': _encodeHeaderValue(`CookTrace · ${title}`), 'Priority': String(Math.min(5, priority)) };
   if (token) headers['Authorization'] = `Bearer ${token}`;
   const res = await _send(`${serviceBase(url) ?? url}/${encodeURIComponent(topic)}`, {
     method: 'POST', headers, body: message,
@@ -109,7 +109,7 @@ async function _pushApprise(userId, title, message, priority) {
   const url = _getUserSetting(userId, 'appriseUrl');
   const tag = _getUserSetting(userId, 'appriseTag');
   if (!url) return;
-  const body = { title: `CookTrace — ${title}`, body: message, type: priority >= 7 ? 'warning' : 'info' };
+  const body = { title: `CookTrace · ${title}`, body: message, type: priority >= 7 ? 'warning' : 'info' };
   if (tag) body.tag = tag;
   const res = await _send(`${serviceBase(url) ?? url}/notify`, {
     method: 'POST',
@@ -145,20 +145,20 @@ function _firedToday(userId, key) {
 // ── CookTrace-specific helpers ───────────────────────────────────────────
 export function notifyCookDay(userId, recipeName, date) {
   if (_firedToday(userId, `cookday_${date}`)) return;
-  return pushNotify(userId, 'notifCookDayReminder', '🍳 Cook day',
-    `You planned to cook ${recipeName} today.`, 5);
+  return pushNotify(userId, 'notifCookDayReminder', '🍳 做饭日提醒',
+    `你今天计划做 ${recipeName}，别忘了哦。`, 5);
 }
 
 export function notifyThaw(userId, recipeName) {
   if (_firedToday(userId, `thaw_${recipeName}`)) return;
-  return pushNotify(userId, 'notifThawAlert', '🥩 Thaw alert',
-    `Pull ${recipeName} ingredients out to thaw — you're cooking it tomorrow.`, 5);
+  return pushNotify(userId, 'notifThawAlert', '🥩 解冻提醒',
+    `明天要做 ${recipeName}，记得提前把食材拿出来解冻。`, 5);
 }
 
 export function notifyShoppingNudge(userId, count) {
   if (_firedToday(userId, 'shopping_nudge')) return;
-  return pushNotify(userId, 'notifShoppingNudge', '🛒 Shopping list waiting',
-    `You have ${count} unchecked item${count === 1 ? '' : 's'} on your shopping list.`, 4);
+  return pushNotify(userId, 'notifShoppingNudge', '🛒 购物清单待办',
+    `你的购物清单里还有 ${count} 项待购。`, 4);
 }
 
 /**
@@ -174,11 +174,11 @@ export function notifyExpiryDigest(userId, items) {
     const label = it.brand ? `${it.name} (${it.brand})` : it.name;
     return `• ${label} — ${it.expires_on}`;
   });
-  if (items.length > 6) lines.push(`…and ${items.length - 6} more`);
+  if (items.length > 6) lines.push(`…还有 ${items.length - 6} 项`);
   const body = lines.join('\n');
   const title = items.length === 1
-    ? '🕒 1 pantry item expiring'
-    : `🕒 ${items.length} pantry items expiring`;
+    ? '🕒 1 项食材过期提醒'
+    : `🕒 ${items.length} 项食材过期提醒`;
   return pushNotify(userId, 'notifExpiryEnabled', title, body, 4);
 }
 
@@ -186,13 +186,13 @@ export function notifyExpiryDigest(userId, items) {
 // comment. NOT deduped per day — comments are real-time signals
 // users actually want to hear about. Fire-and-forget at the call site.
 export function notifyCommentReply(userId, recipeName, commenterName) {
-  const safeName   = commenterName || 'Someone';
-  const safeRecipe = recipeName    || 'your recipe';
+  const safeName   = commenterName || '有人';
+  const safeRecipe = recipeName    || '你的菜谱';
   return pushNotify(
     userId,
     'notifRecipeComments',
-    '💬 New comment',
-    `${safeName} commented on ${safeRecipe}`,
+    '💬 收到新评论',
+    `${safeName} 评论了「${safeRecipe}」`,
     4,
   );
 }

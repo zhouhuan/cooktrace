@@ -12,7 +12,7 @@
 -->
 <script>
   import { _ } from 'svelte-i18n';
-  import { estimate, STRENGTH_COLORS } from '../../lib/password-strength.js';
+  import { estimate, STRENGTH_COLORS, zhFeedback } from '../../lib/password-strength.js';
 
   const STRENGTH_KEYS = [
     'password.strength_0', 'password.strength_1', 'password.strength_2',
@@ -44,8 +44,11 @@
   $: _label    = password ? $_(STRENGTH_KEYS[_score]) : '';
   $: _color    = STRENGTH_COLORS[_score];
   $: _belowMin = password && _score < minScore;
-  $: _warning  = _result?.feedback?.warning || '';
-  $: _suggest  = _result?.feedback?.suggestions || [];
+  // zxcvbn's own feedback strings are English (dictionary pack); the Chinese
+  // edition swaps in score-based Chinese advice instead.
+  $: _fb       = password ? zhFeedback(_score) : { warning: '', suggestions: [] };
+  $: _warning  = _fb.warning;
+  $: _suggest  = _fb.suggestions;
 </script>
 
 {#if password}

@@ -2836,7 +2836,7 @@ router.post('/:id/comments', wrap((req, res) => {
   // way. Skipped in single-user mode (recipe.user_id == null).
   try {
     if (recipe.user_id != null && recipe.user_id !== u) {
-      notifyCommentReply(recipe.user_id, recipe.name, username || 'Someone')
+      notifyCommentReply(recipe.user_id, recipe.name, username || '有人')
         .catch(() => {});
     }
   } catch {}

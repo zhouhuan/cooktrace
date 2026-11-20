@@ -547,7 +547,7 @@
                       <span>{$_('settings_user_management_ui.email')}</span>
                       <input class="input um-edit-input" type="email"
                         bind:value={editUserForm.email}
-                        placeholder="name@example.com"
+                        placeholder="请输入邮箱"
                         autocomplete="off" />
                     </label>
                     <div class="um-edit-actions">

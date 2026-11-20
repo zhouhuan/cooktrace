@@ -34,7 +34,7 @@ import { isNative } from './platform.js';
 import { pickApkAsset } from './apk-asset.js';
 import { DB } from './db.js';
 
-const GH_OWNER = 'TraceApps';
+const GH_OWNER = 'zhouhuan';
 const GH_REPO  = 'cooktrace';
 const APP_NAME = 'CookTrace';
 const CSRF_KEY = 'ct:csrf';   // this app's CSRF token in localStorage

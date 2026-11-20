@@ -40,7 +40,7 @@ const CACHE_KEYS = {
   },
 };
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
-const GH_REPO_URL  = 'https://api.github.com/repos/TraceApps/cooktrace';
+const GH_REPO_URL  = 'https://api.github.com/repos/zhouhuan/cooktrace';
 const DEV_TAG_RE   = /^v\d+\.\d+\.\d+-dev\.?\d+$/;
 const UA = `TraceApps-CookTrace-Server/${APP_VERSION}`;
 

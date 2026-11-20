@@ -2,9 +2,11 @@
  * AI Chat — multi-provider Trace assistant with tool use (function calling).
  *
  * Mirrors the NutriTrace + LiftTrace pattern so users get a consistent
- * Trace experience across all three apps. Supports Anthropic Claude,
- * OpenAI, Google Gemini, and OpenAI-compatible endpoints (Ollama, LM
- * Studio, vLLM, DeepSeek, Groq, etc.).
+ * Trace experience across all three apps. 简体中文专属版: the built-in
+ * providers are the major Chinese model services — DeepSeek, Kimi
+ * (Moonshot), Zhipu GLM, Tongyi Qwen and Doubao (Volcano Ark) — plus a
+ * free-form OpenAI-compatible entry (custom, for Ollama, LM Studio,
+ * vLLM, etc.). Every provider speaks Chat Completions.
  *
  * Tool use flow:
  *   1. Send messages + tool definitions to the model
@@ -20,9 +22,8 @@
  */
 import { get } from 'svelte/store';
 import { _ } from 'svelte-i18n';
-import { getOpenAIChatParams, openAIBase } from './openai-chat-params.js';
+import { getOpenAIChatParams, openAIBase, openAIChatUrl } from './openai-chat-params.js';
 import { createToolSupportMemory, sendWithToolFallback, isToolsUnsupported } from './tool-support.js';
-import { geminiToolResponse } from './gemini-tool-response.js';
 import { REPLY_MAX_TOKENS, sendForReply, sendWithLengthFallback, stoppedShort, stoppedShortError, createRepeatGuard, toolStuckNote, TOOL_REPEATED } from './trace-reply.js';
 
 // An import (toolsRequired) that already saved something isn't asked again
@@ -77,20 +78,39 @@ function _finalAnswer(text, stuck) {
 }
 
 // ── Provider catalog (kept in CookTrace's `id`-keyed shape so the
-//    existing SettingsTrace dropdown keeps working). ───────────────────────
+//    existing SettingsTrace dropdown keeps working). All built-in
+//    providers are OpenAI-compatible; labels show in the UI. ────────────
 export const AI_PROVIDERS = [
-  { id: 'claude',  label: 'Anthropic Claude' },
-  { id: 'openai',  label: 'OpenAI' },
-  { id: 'gemini',  label: 'Google Gemini' },
-  { id: 'custom',  label: 'OpenAI Compatible' },
+  { id: 'deepseek', label: 'DeepSeek（深度求索）' },
+  { id: 'kimi',     label: 'Kimi（月之暗面）' },
+  { id: 'zhipu',    label: '智谱 GLM' },
+  { id: 'qwen',     label: '通义千问' },
+  { id: 'doubao',   label: '豆包（火山方舟）' },
+  { id: 'custom',   label: '自定义（OpenAI 兼容）' },
 ];
 
+// The official OpenAI-compatible API address of each built-in provider.
+// Doubao (Volcano Ark) takes an inference endpoint ID (ep-…) as the
+// model, which the user fills in. Kept identical to
+// server/lib/ai-models.js (scripts/ai-models.test.js checks).
+export const AI_PROVIDER_BASE_URLS = {
+  deepseek: 'https://api.deepseek.com',
+  kimi:     'https://api.moonshot.cn/v1',
+  zhipu:    'https://open.bigmodel.cn/api/paas/v4',
+  qwen:     'https://dashscope.aliyuncs.com/compatible-mode/v1',
+  doubao:   'https://ark.cn-beijing.volces.com/api/v3',
+};
+
 // Used when no model is chosen. Someone who picked a model keeps it.
+// Doubao's model is the user's Ark inference endpoint ID, so it has no
+// default here — the picker shows a free-text input instead.
 export const AI_DEFAULT_MODELS = {
-  claude:  'claude-haiku-5-5',
-  openai:  'gpt-5.6-luna',
-  gemini:  'gemini-3.8-flash',
-  custom:  '',
+  deepseek: 'deepseek-chat',
+  kimi:     'moonshot-v1-32k',
+  zhipu:    'glm-4-flash',
+  qwen:     'qwen-plus',
+  doubao:   '',
+  custom:   '',
 };
 
 // Sentinel appended to each branded provider's model list. When the select
@@ -98,52 +118,39 @@ export const AI_DEFAULT_MODELS = {
 // enter a model ID we haven't hardcoded (e.g. after a vendor renames).
 export const AI_MODEL_CUSTOM = '__custom__';
 
-// Checked against the vendors' model and deprecation pages on 2026-10-09
-// (again on 2026-10-16: platform.claude.com, developers.openai.com,
-// ai.google.dev), the same lists as NutriTrace, LiftTrace and NoteTrace. A
-// saved model that is no longer listed (Gemini 2.5 is open to existing users
-// only) keeps working: the picker shows it as a custom model.
-// GPT-6.1 Sol and GPT-6 Astra are left out: Trace calls tools through Chat
-// Completions, which those two don't support (only the Responses API does).
+// Checked against the vendors' model and pricing pages on 2026-11-20
+// (api-docs.deepseek.com, platform.moonshot.cn, open.bigmodel.cn,
+// help.aliyun.com, volcengine.com). A saved model that is no longer
+// listed keeps working: the picker shows it as a custom model.
 export const AI_MODELS = {
-  claude:  ['claude-haiku-5-5', 'claude-sonnet-5-5', 'claude-opus-5-5', 'claude-fable-5-1', 'claude-sonnet-5', 'claude-opus-5', 'claude-fable-5', 'claude-opus-4-8', AI_MODEL_CUSTOM],
-  openai:  ['gpt-6-luna', 'gpt-5.6-terra', 'gpt-5.6-sol', 'gpt-5.6-luna', 'gpt-4o-mini', 'gpt-4o', AI_MODEL_CUSTOM],
-  gemini:  ['gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.1-pro-preview', 'gemini-3.6-flash', AI_MODEL_CUSTOM],
-  custom:  [],
+  deepseek: ['deepseek-chat', 'deepseek-reasoner', AI_MODEL_CUSTOM],
+  kimi:     ['moonshot-v1-8k', 'moonshot-v1-32k', 'moonshot-v1-128k', 'kimi-k2-0711-preview', 'kimi-k2-turbo-preview', AI_MODEL_CUSTOM],
+  zhipu:    ['glm-4-flash', 'glm-4-air', 'glm-4-plus', AI_MODEL_CUSTOM],
+  qwen:     ['qwen-turbo', 'qwen-plus', 'qwen-max', AI_MODEL_CUSTOM],
+  doubao:   [],
+  custom:   [],
 };
 
-/** What a model is called in the picker. Same wording as the other Trace apps. */
+/** What a model is called in the picker. */
 export const AI_MODEL_LABELS = {
-  'claude-haiku-5-5':          'Claude Haiku 5.5 (fast, cheapest)',
-  'claude-sonnet-5-5':         'Claude Sonnet 5.5 (balanced)',
-  'claude-opus-5-5':           'Claude Opus 5.5 (smarter)',
-  'claude-fable-5-1':          'Claude Fable 5.1 (most capable)',
-  'claude-sonnet-5':           'Claude Sonnet 5 (previous)',
-  'claude-opus-5':             'Claude Opus 5 (previous)',
-  'claude-fable-5':            'Claude Fable 5 (previous)',
-  'claude-opus-4-8':           'Claude Opus 4.8 (previous)',
-  'gpt-6-luna':                'GPT-6 Luna (fast, cheapest)',
-  'gpt-5.6-terra':             'GPT-5.6 Terra (balanced)',
-  'gpt-5.6-sol':               'GPT-5.6 Sol (most capable)',
-  'gpt-5.6-luna':              'GPT-5.6 Luna (previous)',
-  'gpt-4o-mini':               'GPT-4o mini (previous)',
-  'gpt-4o':                    'GPT-4o (previous)',
-  'gemini-3.1-flash-lite':     'Gemini 3.1 Flash Lite (cheapest)',
-  'gemini-3.5-flash-lite':     'Gemini 3.5 Flash Lite (cheap)',
-  'gemini-3.8-flash':          'Gemini 3.8 Flash (fast)',
-  'gemini-3.1-pro-preview':    'Gemini 3.1 Pro Preview (most capable)',
-  'gemini-3.6-flash':          'Gemini 3.6 Flash (previous)',
+  'deepseek-chat':         'DeepSeek Chat（V3，均衡，最便宜）',
+  'deepseek-reasoner':     'DeepSeek Reasoner（R1，深度思考，最强）',
+  'moonshot-v1-8k':        'Moonshot V1 8K（短上下文，最便宜）',
+  'moonshot-v1-32k':       'Moonshot V1 32K（均衡）',
+  'moonshot-v1-128k':      'Moonshot V1 128K（长上下文）',
+  'kimi-k2-0711-preview':  'Kimi K2（旗舰，最强）',
+  'kimi-k2-turbo-preview': 'Kimi K2 Turbo（高速）',
+  'glm-4-flash':           'GLM-4-Flash（免费，最快，最便宜）',
+  'glm-4-air':             'GLM-4-Air（高性价比）',
+  'glm-4-plus':            'GLM-4-Plus（旗舰，最强）',
+  'qwen-turbo':            '通义千问 Turbo（快速，最便宜）',
+  'qwen-plus':             '通义千问 Plus（均衡）',
+  'qwen-max':              '通义千问 Max（最强）',
 };
 
 // Model IDs that changed name: a saved old name is sent as the new one.
-// gemini-3.1-pro never existed (only the preview does), and Google points
-// the shut-down gemini-3-pro-preview at it. gpt-5.6 is the alias of
-// gpt-5.6-sol, which the picker now names.
-export const AI_MODEL_RENAMES = {
-  'gemini-3.1-pro': 'gemini-3.1-pro-preview',
-  'gemini-3-pro-preview': 'gemini-3.1-pro-preview',
-  'gpt-5.6': 'gpt-5.6-sol',
-};
+// None so far in the Chinese-provider edition.
+export const AI_MODEL_RENAMES = {};
 export const renamedModel = (model) => AI_MODEL_RENAMES[model] || model;
 
 // ── Tool definitions (cooking-domain) ────────────────────────────────────────
@@ -459,7 +466,7 @@ export async function fetchProvider(url, init) {
     try { host = new URL(url).host; } catch { /* not a URL */ }
     host = host || String(url);
     const page = typeof location !== 'undefined' ? location : null;
-    const official = /(^|\.)(openai\.com|anthropic\.com|googleapis\.com)$/i.test(host);
+    const official = /(^|\.)(openai\.com|anthropic\.com|googleapis\.com|deepseek\.com|moonshot\.cn|bigmodel\.cn|aliyuncs\.com|volces\.com)$/i.test(host);
     // An https page can't call a plain-http address (localhost aside). The
     // Android app can (allowMixedContent), so there it's the usual advice.
     const native = !!globalThis.Capacitor?.isNativePlatform?.();
@@ -481,15 +488,27 @@ export async function fetchProvider(url, init) {
 
 export async function callAI({ provider, apiKey, model, messages, systemPrompt, tools, onToolCall, onToolResult, onToolsUnsupported, toolsRequired = false, baseUrl }) {
   // 'custom' is the legacy CookTrace name for the same OpenAI-compatible
-  // path that NutriTrace calls 'oai-compat'. Both are accepted.
+  // path that NutriTrace calls 'oai-compat'. Both are accepted; the
+  // built-in Chinese providers carry their own base URL and also go
+  // through that same Chat Completions path.
   if (!apiKey && provider !== 'custom' && provider !== 'oai-compat') {
     throw new Error('No API key configured. Add one in Settings → Trace Assistant.');
   }
   const cb = { onToolCall, onToolResult, onToolsUnsupported, toolsRequired };
   switch (provider) {
-    case 'claude':     return _callClaudeWithTools(apiKey, model, messages, systemPrompt, tools, cb);
-    case 'openai':     return _callOpenAIWithTools(apiKey, renamedModel(model), messages, systemPrompt, tools, cb, 'https://api.openai.com');
-    case 'gemini':     return _callGeminiWithTools(apiKey, model, messages, systemPrompt, tools, cb);
+    case 'deepseek':
+    case 'kimi':
+    case 'zhipu':
+    case 'qwen': {
+      // No model chosen: the provider's own default, like the picker shows.
+      return _callOpenAIWithTools(apiKey, model || AI_DEFAULT_MODELS[provider], messages, systemPrompt, tools, cb, AI_PROVIDER_BASE_URLS[provider]);
+    }
+    case 'doubao': {
+      // Volcano Ark serves each deployment behind an inference endpoint
+      // ID (ep-…), so there is no preset list to fall back to.
+      if (!model) throw new Error('豆包（火山方舟）需要先填写模型（推理接入点 ID，形如 ep-2024…），请在 设置 → Trace 助手 中填写。');
+      return _callOpenAIWithTools(apiKey, model, messages, systemPrompt, tools, cb, AI_PROVIDER_BASE_URLS.doubao);
+    }
     case 'oai-compat':
     case 'custom': {
       const base = openAIBase(baseUrl);
@@ -530,7 +549,7 @@ export async function callAIProxy({ messages, systemPrompt }) {
   return data.text || data.content || data.message || (data.choices?.[0]?.message?.content) || '';
 }
 
-// ── Anthropic Claude (with tool use) ────────────────────────────────────────
+// ── Tool-use engine (Chat Completions, every provider in this edition) ──────
 // Rounds of tool calls in one answer. Going through a whole library (a page
 // of recipes, a batch read, the next page...) needs more than a handful
 // (TraceApps/notetrace#34); a model that loops forever still stops.
@@ -578,80 +597,11 @@ async function _runTool(name, args, room, guard) {
   return result;
 }
 
-async function _callClaudeWithTools(apiKey, model, messages, systemPrompt, tools, cb) {
-  const { onToolCall, onToolResult } = cb || {};
-  const claudeTools = (tools || []).map(t => ({
-    name: t.name,
-    description: t.description,
-    input_schema: t.parameters,
-  }));
-  let currentMessages = [...messages];
-  const startBytes = _bytes(currentMessages);
-
-  const guard = _repeatGuard(tools);
-  for (let round = 0; round <= TOOL_ROUNDS; round++) {
-    const last = _lastRound(round, currentMessages, startBytes) || !!guard.stuck;
-    if (last && cb?.toolsRequired) throw _outOfRounds();
-    const body = {
-      model: model || AI_DEFAULT_MODELS.claude,
-      max_tokens: REPLY_MAX_TOKENS,
-      // Out of rounds: told to answer in the system prompt, so the
-      // conversation itself stays in the order the provider expects.
-      system: last ? `${systemPrompt}\n\n${_lastNote(guard)}` : systemPrompt,
-      messages: currentMessages,
-    };
-    if (claudeTools.length) body.tools = claudeTools;
-    // The tools stay declared (the history has tool calls in it), but can't be called.
-    if (last && claudeTools.length) body.tool_choice = { type: 'none' };
-    // A model that can't write that many is asked again as before, and an
-    // empty reply once more (trace-reply.js).
-    const res = await _sendForReply('claude', body, async (b) => {
-      const r = await fetchProvider('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify(b),
-      });
-      return { ok: r.ok, status: r.status, data: await r.json() };
-    }, cb, round);
-    const data = res.data;
-    if (!res.ok) throw new Error(data.error?.message || `Claude API error ${res.status}`);
-    const short = stoppedShort('claude', data);
-    // Out of rounds, nothing at all is said as before (_finalAnswer), after it was asked for once more.
-    if (short && !(last && short === 'empty')) throw _stoppedShort(short);
-
-    const toolUses = (data.content || []).filter(b => b.type === 'tool_use');
-    const textBlocks = (data.content || []).filter(b => b.type === 'text');
-    if (last) return _finalAnswer(textBlocks.map(b => b.text).join('\n'), guard.stuck);
-    if (toolUses.length === 0 || data.stop_reason !== 'tool_use') {
-      return textBlocks.map(b => b.text).join('\n') || '';
-    }
-    // Measured before the model's own message: only what the tools answer
-    // counts, so calls whose arguments are already sent (a recipe it wrote)
-    // aren't skipped for nothing.
-    const room = _room(currentMessages, startBytes);
-    currentMessages.push({ role: 'assistant', content: data.content });
-    const toolResults = [];
-    for (const tu of toolUses) {
-      if (onToolCall) onToolCall(tu.name, tu.input);
-      const result = await _runTool(tu.name, tu.input, room, guard);
-      if (onToolResult) onToolResult(tu.name, result);
-      toolResults.push({ type: 'tool_result', tool_use_id: tu.id, content: JSON.stringify(result) });
-    }
-    currentMessages.push({ role: 'user', content: toolResults });
-  }
-  return _finalAnswer(''); // not reached: the last round always answers
-}
-
-// ── OpenAI / OpenAI-compatible ─────────────────────────────────────────────
+// ── OpenAI-compatible (every provider in this edition) ──────────────────────
 // Models found unable to use tools, by base URL and model (TraceApps/nutritrace#259).
 const toolSupport = createToolSupportMemory();
 
-async function _callOpenAIWithTools(apiKey, model, messages, systemPrompt, tools, cb, baseUrl = 'https://api.openai.com') {
+async function _callOpenAIWithTools(apiKey, model, messages, systemPrompt, tools, cb, baseUrl = 'https://api.deepseek.com') {
   const { onToolCall, onToolResult, onToolsUnsupported, toolsRequired } = cb || {};
   const openaiTools = (tools || []).map(t => ({
     type: 'function',
@@ -667,10 +617,12 @@ async function _callOpenAIWithTools(apiKey, model, messages, systemPrompt, tools
   for (let round = 0; round <= TOOL_ROUNDS; round++) {
     const last = _lastRound(round, currentMessages, startBytes) || !!guard.stuck;
     if (last && toolsRequired) throw _outOfRounds();
-    const selectedModel = model || AI_DEFAULT_MODELS.openai;
+    // The model is chosen at the callAI() entry (a built-in provider's
+    // default, or a value the user set); nothing to fall back to here.
+    const selectedModel = model;
     const body = {
       model: selectedModel,
-      // Out of rounds: told to answer in the system prompt (see Claude above).
+      // Out of rounds: told to answer in the system prompt (see above).
       messages: last ? [{ role: 'system', content: `${systemPrompt}\n\n${_lastNote(guard)}` }, ...currentMessages.slice(1)] : currentMessages,
       ...getOpenAIChatParams({
         baseUrl,
@@ -686,7 +638,9 @@ async function _callOpenAIWithTools(apiKey, model, messages, systemPrompt, tools
     // A server that won't take the longer reply is asked again as before,
     // and an empty reply once more (trace-reply.js).
     const send = (body) => _sendForReply('openai', body, async (b) => {
-      const res = await fetchProvider(`${baseUrl}/v1/chat/completions`, {
+      // A base ending in a versioned path (/v1, Ark's /v3, Zhipu's /v4)
+      // keeps it; a bare origin gets /v1 (openai-chat-params.js).
+      const res = await fetchProvider(openAIChatUrl(baseUrl), {
         method: 'POST',
         headers,
         body: JSON.stringify(b),
@@ -723,7 +677,7 @@ async function _callOpenAIWithTools(apiKey, model, messages, systemPrompt, tools
     if (!msg.tool_calls || msg.tool_calls.length === 0) {
       return msg.content || '';
     }
-    const room = _room(currentMessages, startBytes); // before the model's message (see Claude above)
+    const room = _room(currentMessages, startBytes); // before the model's message: only the tools' answers count
     currentMessages.push(msg);
     for (const tc of msg.tool_calls) {
       if (onToolCall) onToolCall(tc.function.name, JSON.parse(tc.function.arguments || '{}'));
@@ -732,94 +686,6 @@ async function _callOpenAIWithTools(apiKey, model, messages, systemPrompt, tools
       if (onToolResult) onToolResult(tc.function.name, result);
       currentMessages.push({ role: 'tool', tool_call_id: tc.id, content: JSON.stringify(result) });
     }
-  }
-  return _finalAnswer(''); // not reached: the last round always answers
-}
-
-// ── Google Gemini ──────────────────────────────────────────────────────────
-// Models Google has shut down. Saved selections pointing at any of these are
-// quietly remapped to the current default so users who never opened Settings
-// after a bump don't suddenly hit 404s.
-// Shut down per ai.google.dev/gemini-api/docs/deprecations (2026-10-09).
-export const GEMINI_RETIRED = new Set([
-  'gemini-1.5-flash', 'gemini-1.5-pro',
-  'gemini-2.0-flash', 'gemini-2.0-flash-001', 'gemini-2.0-flash-lite', 'gemini-2.0-flash-lite-001',
-  'gemini-2.0-flash-lite-preview', 'gemini-2.0-flash-lite-preview-02-05',
-  'gemini-2.5-pro-preview-03-25', 'gemini-2.5-pro-preview-05-06', 'gemini-2.5-pro-preview-06-05',
-  'gemini-2.5-flash-preview-05-20', 'gemini-2.5-flash-preview-09-25', 'gemini-2.5-flash-lite-preview-09-2025',
-  'gemini-3.1-flash-lite-preview',
-]);
-/** The Gemini model to call for a saved one: renamed ones by their new name, shut-down ones by the default. */
-export function geminiModelFor(model) {
-  const m = renamedModel(model || AI_DEFAULT_MODELS.gemini);
-  return GEMINI_RETIRED.has(m) ? AI_DEFAULT_MODELS.gemini : m;
-}
-
-async function _callGeminiWithTools(apiKey, model, messages, systemPrompt, tools, cb) {
-  const { onToolCall, onToolResult } = cb || {};
-  const m = geminiModelFor(model);
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`;
-  const geminiTools = (tools || []).length ? [{
-    functionDeclarations: tools.map(t => ({
-      name: t.name,
-      description: t.description,
-      parameters: t.parameters,
-    })),
-  }] : undefined;
-
-  let contents = messages.map(msg => {
-    const parts = [];
-    if (msg._image) {
-      parts.push({ inlineData: { mimeType: msg._image.mimeType, data: msg._image.base64 } });
-    }
-    parts.push({ text: typeof msg.content === 'string' ? msg.content : (msg.content || '') });
-    return { role: msg.role === 'assistant' ? 'model' : 'user', parts };
-  });
-  const startBytes = _bytes(contents);
-
-  const guard = _repeatGuard(tools);
-  for (let round = 0; round <= TOOL_ROUNDS; round++) {
-    const last = _lastRound(round, contents, startBytes) || !!guard.stuck;
-    if (last && cb?.toolsRequired) throw _outOfRounds();
-    const body = {
-      // Out of rounds: told to answer in the system prompt (see Claude above).
-      systemInstruction: { parts: [{ text: last ? `${systemPrompt}\n\n${_lastNote(guard)}` : systemPrompt }] },
-      contents,
-    };
-    if (geminiTools) body.tools = geminiTools;
-    if (last && geminiTools) body.toolConfig = { functionCallingConfig: { mode: 'NONE' } };
-    // An empty reply is asked for once more (trace-reply.js).
-    const sent = await _sendForReply('gemini', body, async (b) => {
-      const r = await fetchProvider(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(b),
-      });
-      return { ok: r.ok, status: r.status, data: await r.json() };
-    }, cb, round);
-    const data = sent.data;
-    if (!sent.ok) throw new Error(data.error?.message || `Gemini API error ${sent.status}`);
-    const short = stoppedShort('gemini', data);
-    // Out of rounds, nothing at all is said as before (_finalAnswer), after it was asked for once more.
-    if (short && !(last && short === 'empty')) throw _stoppedShort(short);
-    const candidate = data.candidates?.[0];
-    const parts = candidate?.content?.parts || [];
-    const functionCalls = parts.filter(p => p.functionCall);
-    const textParts = parts.filter(p => p.text);
-    if (last) return _finalAnswer(textParts.map(p => p.text).join('\n'), guard.stuck);
-    if (functionCalls.length === 0) {
-      return textParts.map(p => p.text).join('\n') || '';
-    }
-    const room = _room(contents, startBytes); // before the model's message (see Claude above)
-    contents.push({ role: 'model', parts });
-    const responseParts = [];
-    for (const fc of functionCalls) {
-      if (onToolCall) onToolCall(fc.functionCall.name, fc.functionCall.args || {});
-      const result = await _runTool(fc.functionCall.name, fc.functionCall.args || {}, room, guard);
-      if (onToolResult) onToolResult(fc.functionCall.name, result);
-      responseParts.push({ functionResponse: { name: fc.functionCall.name, response: geminiToolResponse(result) } });
-    }
-    contents.push({ role: 'user', parts: responseParts });
   }
   return _finalAnswer(''); // not reached: the last round always answers
 }

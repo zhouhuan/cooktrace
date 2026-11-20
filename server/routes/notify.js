@@ -21,12 +21,12 @@ router.post('/test', async (req, res) => {
   try {
     await pushTest(
       u,
-      req.body?.title || 'Test notification',
-      req.body?.message || 'CookTrace is connected to your push service.',
+      req.body?.title || '测试通知',
+      req.body?.message || 'CookTrace 已连接到您的推送服务。',
     );
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ error: e.message || 'Push failed' });
+    res.status(500).json({ error: e.message || '推送失败' });
   }
 });
 

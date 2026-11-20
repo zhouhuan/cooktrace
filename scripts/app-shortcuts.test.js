@@ -55,8 +55,8 @@ test('the installed web app lists the two shortcuts, in order', () => {
   const block = vite.slice(start, vite.indexOf('],', start));
   const items = [...block.matchAll(/\{ name: '([^']+)', short_name: '([^']+)', url: '([^']+)', icons: \[\{ src: '([^']+)'/g)];
   assert.deepEqual(items.map(m => [m[1], m[2], m[3]]), [
-    ['Shopping List', 'Shopping List', './#/?new=shopping'],
-    ['Scan to Pantry', 'Scan to Pantry', './#/?new=scan'],
+    ['购物清单', '购物清单', './#/?new=shopping'],
+    ['扫码入库', '扫码入库', './#/?new=scan'],
   ]);
   for (const m of items) {
     assert.equal(shortcutFromQuery(m[3].split('?')[1]), m[3].split('=')[1]);
@@ -86,7 +86,7 @@ test('Android\'s shortcuts.xml: ids, labels, icons and explicit intents', () => 
     assert.equal(shortcutFromAppLink(parseAppLink(attr('data'))), attr('shortcutId'));
   }
   assert.deepEqual(ids, SHORTCUT_KINDS);
-  assert.deepEqual(labels, ['Shopping List', 'Scan to Pantry']);
+  assert.deepEqual(labels, ['购物清单', '扫码入库']);
   const manifest = read('../android/app/src/main/AndroidManifest.xml');
   assert.match(manifest, /<category android:name="android.intent.category.LAUNCHER" \/>\s*<\/intent-filter>\s*<meta-data android:name="android.app.shortcuts" android:resource="@xml\/shortcuts" \/>/);
   const browsable = manifest.match(/<intent-filter[^>]*>(?:(?!<\/intent-filter>)[\s\S])*BROWSABLE(?:(?!<\/intent-filter>)[\s\S])*<\/intent-filter>/g) || [];

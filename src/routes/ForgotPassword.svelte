@@ -56,7 +56,7 @@
         <input class="input" type="email" autocomplete="email"
           bind:value={email}
           on:keydown={e => e.key === 'Enter' && submit()}
-          placeholder="you@example.com" autofocus />
+          placeholder="请输入邮箱" autofocus />
       </div>
 
       {#if error}

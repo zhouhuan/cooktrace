@@ -4,6 +4,6 @@
     <string name="title_activity_main">CookTrace</string>
     <string name="package_name">com.cooktrace.app</string>
     <string name="custom_url_scheme">com.cooktrace.app</string>
-    <string name="shortcut_shopping">Shopping List</string>
-    <string name="shortcut_scan">Scan to Pantry</string>
+    <string name="shortcut_shopping">购物清单</string>
+    <string name="shortcut_scan">扫码入库</string>
 </resources>

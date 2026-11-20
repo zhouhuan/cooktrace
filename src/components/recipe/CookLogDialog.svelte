@@ -331,7 +331,7 @@
           </div>
           {#if urlEntryOpen}
             <div class="url-entry-row">
-              <input class="input" type="url" placeholder="https://example.com/dish.jpg"
+              <input class="input" type="url" placeholder="https://…"
                 bind:value={urlEntry}
                 on:keydown={e => e.key === 'Enter' && applyUrlEntry()}
                 autofocus />

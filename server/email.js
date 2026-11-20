@@ -82,9 +82,9 @@ export async function testSmtp({ overrides, to, origin, recipientName } = {}) {
   await transport.sendMail({
     from,
     to: recipient,
-    subject: 'CookTrace SMTP Test',
-    html: emailWrapper(origin || '', body, null, 'SMTP test from your CookTrace instance'),
-    text: `Hi${recipientName ? ' ' + recipientName : ''},\n\nThis is a test email from your CookTrace instance. If you're reading this, your SMTP settings work end-to-end. Password resets, invites, and recipe-share notifications will be delivered through this config.\n\nSafe to delete this email.`,
+    subject: 'CookTrace SMTP 测试',
+    html: emailWrapper(origin || '', body, null, '来自你的 CookTrace 实例的 SMTP 测试'),
+    text: `你好${recipientName ? '，' + recipientName : ''}：\n\n这是一封来自你的 CookTrace 实例的测试邮件。如果你能读到这封邮件，说明 SMTP 设置已端到端连通。密码重置、用户邀请和菜谱分享通知都将通过此配置发送。\n\n可以放心删除这封邮件。`,
   });
   return { to: recipient };
 }
@@ -96,18 +96,17 @@ function _testEmailBody(name) {
   return `
     ${greeting(name)}
     <p class="nt-heading" style="margin:0 0 10px;font-size:20px;font-weight:700;color:#FFFFFF;line-height:1.3;">
-      SMTP Test Successful
+      SMTP 测试成功
     </p>
     <p class="nt-body-txt" style="margin:0 0 16px;font-size:15px;color:#8A93A8;line-height:1.7;">
-      This is a test email from your <strong style="color:#FFFFFF;">CookTrace</strong> instance. If you&rsquo;re reading this,
-      your SMTP settings work end-to-end.
+      这是一封来自你的 <strong style="color:#FFFFFF;">CookTrace</strong> 实例的测试邮件。如果你正在阅读这封邮件，
+      说明你的 SMTP 设置已端到端连通。
     </p>
     <p class="nt-body-txt" style="margin:0 0 24px;font-size:15px;color:#8A93A8;line-height:1.7;">
-      Password resets, user invites, and recipe-share notifications will be
-      delivered through this SMTP config.
+      密码重置、用户邀请和菜谱分享通知都将通过此 SMTP 配置发送。
     </p>
     <p class="nt-expiry" style="margin:24px 0 0;font-size:13px;color:#5A6278;text-align:center;line-height:1.6;">
-      Safe to delete this email.
+      可以放心删除这封邮件。
     </p>`;
 }
 
@@ -137,7 +136,7 @@ function emailWrapper(origin, bodyHtml, footerNote, preheaderText) {
     ? `<div style="display:none;font-size:1px;color:#0A0B0F;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${preheaderText}</div>`
     : '';
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -180,7 +179,7 @@ ${preheader}
               CookTrace
             </div>
             <div style="font-family:${_FONT};font-size:11px;font-weight:600;color:#00C47A;letter-spacing:0.22em;text-transform:uppercase;margin-top:8px;">
-              Trace Every Bite
+              记录每一餐
             </div>
           </td>
         </tr>
@@ -202,7 +201,7 @@ ${preheader}
           <td class="nt-footer" style="background-color:#0D0F14;padding:22px 40px 28px;border-radius:0 0 16px 16px;border:1px solid #1A1F2E;border-top:1px solid #252D3D;">
             ${footerNote ? `<p class="nt-muted" style="margin:0 0 10px;font-family:${_FONT};font-size:12px;color:#4A5268;text-align:center;line-height:1.6;">${footerNote}</p>` : ''}
             <p class="nt-muted" style="margin:0;font-family:${_FONT};font-size:11px;color:#323850;text-align:center;">
-              &copy; ${year} CookTrace &nbsp;&middot;&nbsp; Self-hosted &nbsp;&middot;&nbsp; Your data, your rules
+              &copy; ${year} CookTrace &nbsp;&middot;&nbsp; 自托管 &nbsp;&middot;&nbsp; 数据归你所有
             </p>
           </td>
         </tr>
@@ -217,7 +216,7 @@ ${preheader}
 
 function greeting(name) {
   return `<p class="nt-body-txt" style="margin:0 0 20px;font-size:15px;color:#8A93A8;line-height:1.7;">
-    Hi${name ? ' <strong style="color:#FFFFFF;">' + _escapeHtml(name) + '</strong>' : ''},
+    你好${name ? '，<strong style="color:#FFFFFF;">' + _escapeHtml(name) + '</strong>' : ''}：
   </p>`;
 }
 
@@ -237,7 +236,7 @@ function ctaButton(href, label) {
 
 function fallbackUrl(url) {
   return `<p class="nt-expiry" style="margin:24px 0 0;font-family:${_FONT};font-size:12px;color:#4A5268;text-align:center;line-height:1.6;">
-    Button not working? Copy this link into your browser:<br/>
+    按钮点不了？请把下面的链接复制到浏览器打开：<br/>
     <a class="nt-fb-url" href="${_escapeHtml(url)}" style="color:#00C47A;word-break:break-all;font-size:11px;">${_escapeHtml(url)}</a>
   </p>`;
 }
@@ -249,58 +248,58 @@ export async function sendPasswordReset(email, resetUrl) {
   const body = `
     ${greeting(null)}
     <p class="nt-heading" style="margin:0 0 10px;font-size:20px;font-weight:700;color:#FFFFFF;line-height:1.3;">
-      Password Reset Requested
+      密码重置请求
     </p>
     <p class="nt-body-txt" style="margin:0 0 28px;font-size:15px;color:#8A93A8;line-height:1.7;">
-      We received a request to reset the password for your CookTrace account.
-      Click the button below to choose a new password.
+      我们收到了重置你的 CookTrace 账户密码的请求。
+      点击下方按钮即可设置新密码。
     </p>
-    ${ctaButton(resetUrl, 'Reset My Password')}
+    ${ctaButton(resetUrl, '重置密码')}
     <p class="nt-expiry" style="margin:24px 0 0;font-size:13px;color:#5A6278;text-align:center;line-height:1.6;">
-      This link expires in <strong style="color:#8A93A8;">1 hour</strong>.
-      If you didn&rsquo;t request this, you can safely ignore this email.
+      此链接将在 <strong style="color:#8A93A8;">1 小时</strong>后失效。
+      如果这不是你本人的操作，可以直接忽略这封邮件。
     </p>
     ${fallbackUrl(resetUrl)}`;
 
   await sendMail({
     to: email,
-    subject: 'Reset your CookTrace password',
-    html: emailWrapper(origin, body, null, 'Reset your CookTrace password — this link expires in 1 hour.'),
-    text: `Reset your CookTrace password:\n${resetUrl}\n\nThis link expires in 1 hour. If you didn't request this, ignore this email.`,
+    subject: '重置你的 CookTrace 密码',
+    html: emailWrapper(origin, body, null, '重置你的 CookTrace 密码——此链接 1 小时内有效。'),
+    text: `重置你的 CookTrace 密码：\n${resetUrl}\n\n此链接 1 小时内有效。如果这不是你本人的操作，请忽略这封邮件。`,
   });
 }
 
 export async function sendInvite(email, inviteUrl, inviterName) {
   const origin  = new URL(inviteUrl).origin;
   const sender  = inviterName
-    ? `<strong style="color:#FFFFFF;">${_escapeHtml(inviterName)}</strong> has invited you to join`
-    : `You&rsquo;ve been invited to join`;
+    ? `<strong style="color:#FFFFFF;">${_escapeHtml(inviterName)}</strong> 邀请你加入`
+    : `你收到了加入`;
 
   const body = `
     ${greeting(null)}
     <p class="nt-heading" style="margin:0 0 10px;font-size:20px;font-weight:700;color:#FFFFFF;line-height:1.3;">
-      You&rsquo;re Invited
+      你收到邀请了
     </p>
     <p class="nt-body-txt" style="margin:0 0 16px;font-size:15px;color:#8A93A8;line-height:1.7;">
-      ${sender} <strong style="color:#FFFFFF;">CookTrace</strong> &mdash; a self-hosted recipe
-      box, pantry tracker, and meal planner where your kitchen lives on your own server
-      and nowhere else.
+      ${sender} <strong style="color:#FFFFFF;">CookTrace</strong>——一款自托管的菜谱收藏、
+      食材库存管理与饮食计划工具，你的厨房数据只存放在你自己的服务器上，
+      别无他处。
     </p>
     <p class="nt-body-txt" style="margin:0 0 32px;font-size:15px;color:#8A93A8;line-height:1.7;">
-      Save your recipes, track your pantry, plan your week, and share with your household
-      &mdash; beautifully and privately.
+      保存菜谱、管理食材库存、规划一周饮食，并与家人共享
+      ——优雅且私密。
     </p>
-    ${ctaButton(inviteUrl, 'Accept Invitation')}
+    ${ctaButton(inviteUrl, '接受邀请')}
     <p class="nt-expiry" style="margin:24px 0 0;font-size:13px;color:#5A6278;text-align:center;line-height:1.6;">
-      This invitation expires in <strong style="color:#8A93A8;">7 days</strong>.
+      此邀请将在 <strong style="color:#8A93A8;">7 天</strong>后失效。
     </p>
     ${fallbackUrl(inviteUrl)}`;
 
   await sendMail({
     to: email,
-    subject: `You've been invited to CookTrace`,
-    html: emailWrapper(origin, body, null, `${_escapeHtml(inviterName || 'Someone')} invited you to CookTrace — accept within 7 days.`),
-    text: `${inviterName ? inviterName + ' has invited you' : "You've been invited"} to join CookTrace.\n\nAccept your invitation:\n${inviteUrl}\n\nThis invite expires in 7 days.`,
+    subject: `你收到了 CookTrace 邀请`,
+    html: emailWrapper(origin, body, null, `${_escapeHtml(inviterName || '有人')} 邀请你加入 CookTrace——请在 7 天内接受。`),
+    text: `${inviterName ? inviterName + ' 邀请你' : '你收到了邀请'}加入 CookTrace。\n\n接受邀请：\n${inviteUrl}\n\n此邀请 7 天内有效。`,
   });
 }
 
@@ -320,14 +319,14 @@ export async function sendTwoStepNotice(email, { title, message, appUrl }) {
       ${_escapeHtml(message)}
     </p>
     <p class="nt-body-txt" style="margin:0 0 28px;font-size:15px;color:#8A93A8;line-height:1.7;">
-      If this wasn&rsquo;t you, change your password and tell your CookTrace admin.
+      如果这不是你本人的操作，请更改密码并告知你的 CookTrace 管理员。
     </p>
-    ${appUrl ? ctaButton(appUrl, 'Open CookTrace') : ''}`;
+    ${appUrl ? ctaButton(appUrl, '打开 CookTrace') : ''}`;
   await sendMail({
     to: email,
-    subject: `CookTrace: ${title}`,
+    subject: `CookTrace：${title}`,
     html: emailWrapper(origin, body, null, message),
-    text: `${message}\n\nIf this wasn't you, change your password and tell your CookTrace admin.${appUrl ? `\n\n${appUrl}` : ''}`,
+    text: `${message}\n\n如果这不是你本人的操作，请更改密码并告知你的 CookTrace 管理员。${appUrl ? `\n\n${appUrl}` : ''}`,
   });
 }
 
@@ -338,27 +337,27 @@ export async function sendTwoStepNotice(email, { title, message, appUrl }) {
 export async function sendRecipeShared(email, viewUrl, recipeName, sharerName) {
   if (!email) return;
   const origin = new URL(viewUrl).origin;
-  const recipeText = String(recipeName || 'a recipe');
-  const sharerText = String(sharerName || 'Someone');
+  const recipeText = String(recipeName || '一道菜谱');
+  const sharerText = String(sharerName || '有人');
   const safeRecipe = _escapeHtml(recipeText);
   const safeSharer = _escapeHtml(sharerText);
   const body = `
     ${greeting(null)}
     <p class="nt-heading" style="margin:0 0 10px;font-size:20px;font-weight:700;color:#FFFFFF;line-height:1.3;">
-      ${safeSharer} shared a recipe with you
+      ${safeSharer} 与你分享了一道菜谱
     </p>
     <p class="nt-body-txt" style="margin:0 0 16px;font-size:15px;color:#8A93A8;line-height:1.7;">
-      <strong style="color:#FFFFFF;">${safeRecipe}</strong> just landed in your "Shared" tab.
-      Open it to view the ingredients, steps, and nutrition.
+      <strong style="color:#FFFFFF;">${safeRecipe}</strong> 已出现在你的「分享」标签页中。
+      打开即可查看食材、步骤和营养信息。
     </p>
-    ${ctaButton(viewUrl, 'View Recipe')}
+    ${ctaButton(viewUrl, '查看菜谱')}
     ${fallbackUrl(viewUrl)}`;
 
   await sendMail({
     to: email,
-    subject: `${sharerText} shared "${recipeText}" with you`,
-    html: emailWrapper(origin, body, null, `${safeSharer} shared "${safeRecipe}" with you on CookTrace.`),
-    text: `${sharerText} shared "${recipeText}" with you on CookTrace.\n\nOpen it: ${viewUrl}`,
+    subject: `${sharerText} 与你分享了「${recipeText}」`,
+    html: emailWrapper(origin, body, null, `${safeSharer} 在 CookTrace 上与你分享了「${safeRecipe}」。`),
+    text: `${sharerText} 在 CookTrace 上与你分享了「${recipeText}」。\n\n打开查看：${viewUrl}`,
   });
 }
 
@@ -387,7 +386,7 @@ export async function sendWeeklySummaryEmail(userId, origin) {
     if (!user?.email) return;
 
     const toEmail = user.email;
-    const name    = user.full_name || user.username || 'there';
+    const name    = user.full_name || user.username || '朋友';
 
     // Date ranges. "Last 7 days" for cook history; "next 7 days" for plan.
     const now = new Date();
@@ -446,19 +445,19 @@ export async function sendWeeklySummaryEmail(userId, origin) {
       return;
     }
 
-    const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const fmtDate = (d) => `${DAYS[d.getDay()]} ${d.toLocaleDateString('en-US', { month:'short', day:'numeric' })}`;
+    const DAYS = ['周日','周一','周二','周三','周四','周五','周六'];
+    const fmtDate = (d) => `${DAYS[d.getDay()]} ${d.toLocaleDateString('zh-CN', { month:'short', day:'numeric' })}`;
     const weekRange = `${fmtDate(fromDate)} – ${fmtDate(now)}`;
 
     // Section: Cooks this week
     let cooksSection = '';
     if (cooksThisWeek > 0 || topRow) {
       cooksSection = `
-        ${_sectionHeader('This Week in the Kitchen')}
+        ${_sectionHeader('本周厨房动态')}
         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-          ${_statRow('Cooks logged', cooksThisWeek)}
-          ${newRecipes > 0 ? _statRow('New recipes added', newRecipes) : ''}
-          ${topRow ? _statRow('All-time favorite', `${topRow.name} (×${topRow.cook_count})`) : ''}
+          ${_statRow('本周下厨次数', cooksThisWeek)}
+          ${newRecipes > 0 ? _statRow('新增菜谱', newRecipes) : ''}
+          ${topRow ? _statRow('最常做的菜', `${topRow.name} (×${topRow.cook_count})`) : ''}
         </table>`;
     }
 
@@ -475,12 +474,12 @@ export async function sendWeeklySummaryEmail(userId, origin) {
       }
       const items = planNext.slice(0, 5).map(p => {
         const d = new Date(p.date + 'T00:00:00');
-        const label = `${DAYS[d.getDay()]} ${d.toLocaleDateString('en-US', { month:'short', day:'numeric' })}`;
-        const recipeName = nameMap.get(p.recipe_id) || 'Recipe';
+        const label = `${DAYS[d.getDay()]} ${d.toLocaleDateString('zh-CN', { month:'short', day:'numeric' })}`;
+        const recipeName = nameMap.get(p.recipe_id) || '菜谱';
         return _statRow(label, recipeName);
       }).join('');
       planSection = `
-        ${_sectionHeader('Up Next')}
+        ${_sectionHeader('即将下厨')}
         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
           ${items}
         </table>`;
@@ -490,10 +489,10 @@ export async function sendWeeklySummaryEmail(userId, origin) {
     let stockSection = '';
     if (pantryOut > 0 || shoppingPending > 0) {
       stockSection = `
-        ${_sectionHeader('Pantry & Shopping')}
+        ${_sectionHeader('食材库与购物清单')}
         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-          ${pantryOut > 0       ? _statRow('Pantry items out of stock', pantryOut) : ''}
-          ${shoppingPending > 0 ? _statRow('Shopping list items pending', shoppingPending) : ''}
+          ${pantryOut > 0       ? _statRow('食材库缺货项', pantryOut) : ''}
+          ${shoppingPending > 0 ? _statRow('购物清单待购项', shoppingPending) : ''}
         </table>`;
     }
 
@@ -501,30 +500,30 @@ export async function sendWeeklySummaryEmail(userId, origin) {
     const body = `
       ${greeting(name)}
       <p class="nt-heading" style="margin:0 0 4px;font-size:20px;font-weight:700;color:#FFFFFF;line-height:1.3;">
-        Your Weekly Summary
+        你的每周总结
       </p>
       <p class="nt-body-txt" style="margin:0 0 24px;font-size:14px;color:#5A6278;">${weekRange}</p>
       ${cooksSection}
       ${planSection}
       ${stockSection}
       <div style="margin:28px 0 0;text-align:center;">
-        ${ctaButton(appUrl, 'Open CookTrace')}
+        ${ctaButton(appUrl, '打开 CookTrace')}
       </div>`;
 
     await sendMail({
       to: toEmail,
-      subject: `CookTrace Weekly Summary — ${weekRange}`,
+      subject: `CookTrace 每周总结 — ${weekRange}`,
       html: emailWrapper(origin, body,
-        'To stop receiving these emails, turn off Weekly Summary in Settings &rarr; Notifications.',
-        `${cooksThisWeek} cook${cooksThisWeek === 1 ? '' : 's'} logged this week.`),
+        '如不想再收到此类邮件，请在「设置 &rarr; 通知」中关闭每周总结。',
+        `本周下厨 ${cooksThisWeek} 次。`),
       text:
-        `CookTrace Weekly Summary (${weekRange})\n\n` +
-        `Cooks logged: ${cooksThisWeek}\n` +
-        (newRecipes > 0 ? `New recipes added: ${newRecipes}\n` : '') +
-        (topRow ? `All-time favorite: ${topRow.name} (×${topRow.cook_count})\n` : '') +
-        (planNext.length > 0 ? `Planned next 7 days: ${planNext.length}\n` : '') +
-        (pantryOut > 0 ? `Pantry items out: ${pantryOut}\n` : '') +
-        (shoppingPending > 0 ? `Shopping list pending: ${shoppingPending}\n` : ''),
+        `CookTrace 每周总结（${weekRange}）\n\n` +
+        `本周下厨次数：${cooksThisWeek}\n` +
+        (newRecipes > 0 ? `新增菜谱：${newRecipes}\n` : '') +
+        (topRow ? `最常做的菜：${topRow.name}（×${topRow.cook_count}）\n` : '') +
+        (planNext.length > 0 ? `未来 7 天计划：${planNext.length} 顿\n` : '') +
+        (pantryOut > 0 ? `食材库缺货：${pantryOut} 项\n` : '') +
+        (shoppingPending > 0 ? `购物清单待购：${shoppingPending} 项\n` : ''),
     });
 
     logger.info(`[email] weekly summary sent to user ${userId} (${toEmail})`);
@@ -540,7 +539,7 @@ async function _sendWeeklySummaryEmail_TEMPLATE(userId, origin) {
     if (!user?.email) return;
 
     const toEmail  = user.email;
-    const name     = user.full_name || user.username || 'there';
+    const name     = user.full_name || user.username || '朋友';
 
     // Date range: last 7 days
     const toDate   = new Date();
@@ -629,39 +628,39 @@ async function _sendWeeklySummaryEmail_TEMPLATE(userId, origin) {
     const weightDiff = (firstWeight != null && lastWeight != null) ? lastWeight - firstWeight : null;
 
     // ── Build email ───────────────────────────────────────────────────────
-    const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const fmtDate = (d) => `${DAYS[d.getDay()]} ${d.toLocaleDateString('en-US', { month:'short', day:'numeric' })}`;
+    const DAYS = ['周日','周一','周二','周三','周四','周五','周六'];
+    const fmtDate = (d) => `${DAYS[d.getDay()]} ${d.toLocaleDateString('zh-CN', { month:'short', day:'numeric' })}`;
     const weekRange = `${fmtDate(fromDate)} – ${fmtDate(toDate)}`;
 
     const nutritionSection = daysLogged > 0 ? `
-      ${_sectionHeader(`Nutrition (${daysLogged}/7 days logged)`)}
+      ${_sectionHeader(`营养摄入（已记录 ${daysLogged}/7 天）`)}
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-        ${_statRow('Avg Daily Calories', avgCal, 'kcal')}
-        ${calGoal != null ? _statRow('vs Goal', `${avgCal >= calGoal ? '+' : ''}${avgCal - calGoal}`, 'kcal') : ''}
-        ${goalHitPct != null ? _statRow('Goal Hit Rate', goalHitPct, '%') : ''}
-        ${_statRow('Avg Protein', avgProt, 'g')}
-        ${_statRow('Avg Carbs', avgCarb, 'g')}
-        ${_statRow('Avg Fat', avgFat, 'g')}
-        ${_statRow('Avg Water', avgWaterL, 'L')}
+        ${_statRow('日均热量', avgCal, 'kcal')}
+        ${calGoal != null ? _statRow('与目标相比', `${avgCal >= calGoal ? '+' : ''}${avgCal - calGoal}`, 'kcal') : ''}
+        ${goalHitPct != null ? _statRow('目标达标率', goalHitPct, '%') : ''}
+        ${_statRow('日均蛋白质', avgProt, 'g')}
+        ${_statRow('日均碳水', avgCarb, 'g')}
+        ${_statRow('日均脂肪', avgFat, 'g')}
+        ${_statRow('日均饮水', avgWaterL, 'L')}
       </table>` : '';
 
     const avgSteps = w.steps ? Math.round(w.steps).toLocaleString() : null;
-    const avgSleep = w.sleep_duration_min ? (() => { const h = Math.floor(w.sleep_duration_min/60); return `${h}h ${Math.round(w.sleep_duration_min%60)}m`; })() : null;
+    const avgSleep = w.sleep_duration_min ? (() => { const h = Math.floor(w.sleep_duration_min/60); return `${h} 小时 ${Math.round(w.sleep_duration_min%60)} 分`; })() : null;
     const wellnessSection = (avgSteps || avgSleep || w.resting_hr || w.readiness_score) ? `
-      ${_sectionHeader('Activity & Wellness')}
+      ${_sectionHeader('活动与健康')}
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-        ${_statRow('Avg Daily Steps', avgSteps)}
-        ${w.calories_out ? _statRow('Avg Calories Burned', Math.round(w.calories_out), 'kcal') : ''}
-        ${_statRow('Avg Sleep', avgSleep)}
-        ${w.resting_hr ? _statRow('Avg Resting HR', Math.round(w.resting_hr), 'bpm') : ''}
-        ${w.readiness_score ? _statRow('Avg Readiness', Math.round(w.readiness_score), '/ 100') : ''}
-        ${w.stress_score ? _statRow('Avg Stress Mgmt', Math.round(w.stress_score), '/ 100') : ''}
+        ${_statRow('日均步数', avgSteps)}
+        ${w.calories_out ? _statRow('日均消耗', Math.round(w.calories_out), 'kcal') : ''}
+        ${_statRow('平均睡眠', avgSleep)}
+        ${w.resting_hr ? _statRow('平均静息心率', Math.round(w.resting_hr), 'bpm') : ''}
+        ${w.readiness_score ? _statRow('平均准备度', Math.round(w.readiness_score), '/ 100') : ''}
+        ${w.stress_score ? _statRow('平均压力管理', Math.round(w.stress_score), '/ 100') : ''}
       </table>` : '';
 
     const weightSection = (weightDiff != null) ? `
-      ${_sectionHeader('Weight')}
+      ${_sectionHeader('体重')}
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-        ${_statRow('Change this week', `${weightDiff >= 0 ? '+' : ''}${weightDiff.toFixed(1)}`, 'kg')}
+        ${_statRow('本周变化', `${weightDiff >= 0 ? '+' : ''}${weightDiff.toFixed(1)}`, 'kg')}
       </table>` : '';
 
     if (!nutritionSection && !wellnessSection) {
@@ -672,7 +671,7 @@ async function _sendWeeklySummaryEmail_TEMPLATE(userId, origin) {
     const body = `
       ${greeting(name)}
       <p class="nt-heading" style="margin:0 0 4px;font-size:20px;font-weight:700;color:#FFFFFF;line-height:1.3;">
-        Your Weekly Summary
+        你的每周总结
       </p>
       <p class="nt-body-txt" style="margin:0 0 24px;font-size:14px;color:#5A6278;">${weekRange}</p>
       ${nutritionSection}
@@ -681,15 +680,15 @@ async function _sendWeeklySummaryEmail_TEMPLATE(userId, origin) {
 
     await sendMail({
       to: toEmail,
-      subject: `CookTrace Weekly Summary — ${weekRange}`,
-      html: emailWrapper(origin, body, 'To stop receiving these emails, turn off Weekly Summary in Settings &rarr; Notifications.', `Your CookTrace week: ${avgCal ? avgCal + ' avg kcal' : ''}${avgSteps ? ', ' + avgSteps + ' avg steps' : ''}`),
-      text: `Weekly Summary (${weekRange})\n\n` +
-        (avgCal   ? `Avg calories: ${avgCal} kcal\n` : '') +
-        (avgProt  ? `Avg protein: ${avgProt}g\n` : '') +
-        (avgSteps ? `Avg steps: ${avgSteps}\n` : '') +
-        (avgSleep ? `Avg sleep: ${avgSleep}\n` : '') +
-        (goalHitPct != null ? `Goal hit rate: ${goalHitPct}%\n` : '') +
-        (weightDiff != null ? `Weight change: ${weightDiff >= 0 ? '+' : ''}${weightDiff.toFixed(1)} kg\n` : ''),
+      subject: `CookTrace 每周总结 — ${weekRange}`,
+      html: emailWrapper(origin, body, '如不想再收到此类邮件，请在「设置 &rarr; 通知」中关闭每周总结。', `你的 CookTrace 一周：${avgCal ? '日均热量 ' + avgCal + ' kcal' : ''}${avgSteps ? '，日均步数 ' + avgSteps : ''}`),
+      text: `每周总结（${weekRange}）\n\n` +
+        (avgCal   ? `日均热量：${avgCal} kcal\n` : '') +
+        (avgProt  ? `日均蛋白质：${avgProt}g\n` : '') +
+        (avgSteps ? `日均步数：${avgSteps}\n` : '') +
+        (avgSleep ? `平均睡眠：${avgSleep}\n` : '') +
+        (goalHitPct != null ? `目标达标率：${goalHitPct}%\n` : '') +
+        (weightDiff != null ? `体重变化：${weightDiff >= 0 ? '+' : ''}${weightDiff.toFixed(1)} kg\n` : ''),
     });
 
     logger.info(`[email] weekly summary sent to user ${userId} (${toEmail})`);

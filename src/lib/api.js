@@ -9,6 +9,7 @@
 
 import { isNative, getServerUrl, getAuthToken, resolveAssetUrl, apiUrl } from './platform.js';
 import { fetchWithDeadline } from './request-deadline.js';
+import { zhErrorMessage } from './error-zh.js';
 
 // Build the auth-related headers a mutating request needs. Callers
 // that bypass NtApi._fetch (multipart FormData uploads via a raw
@@ -54,7 +55,10 @@ const _CtApiHttp = {
     }, deadlineMs);
     if (!res.ok) {
       const e = await res.json().catch(() => ({}));
-      const err = new Error(e.error || `API error ${res.status}`);
+      // The Chinese edition never surfaces the server's English error text;
+      // error-zh.js maps it (raw kept for diagnostics).
+      const err = new Error(zhErrorMessage(e.error, res.status));
+      err.raw = e.error || `API error ${res.status}`;
       // The status matters to anything deciding whether to try again: a 503
       // is worth repeating, a 400 never will be (lib/offline-edits.js).
       err.status = res.status;
@@ -105,7 +109,7 @@ const _CtApiHttp = {
         if (uploadDone) return;
         stallTimer = setTimeout(() => {
           try { xhr.abort(); } catch {}
-          reject(new Error(`Upload stalled — no progress in ${Math.round(STALL_TIMEOUT_MS / 1000)}s. A reverse proxy may have cut the connection (check Nginx client_max_body_size or your CDN body limits).`));
+          reject(new Error(`上传停滞（${Math.round(STALL_TIMEOUT_MS / 1000)} 秒无进展），可能是代理服务器中断了连接，请检查反向代理的请求体大小限制后重试。`));
         }, STALL_TIMEOUT_MS);
       };
       resetStall();
@@ -131,25 +135,30 @@ const _CtApiHttp = {
           try { body = JSON.parse(xhr.responseText); } catch {}
         }
         if (xhr.status >= 200 && xhr.status < 300) return resolve(body ?? {});
-        // Translate common proxy + server statuses into actionable messages.
+        // Translate common proxy + server statuses into actionable messages
+        // (zh edition: error-zh.js keeps the UI Chinese; raw kept for logs).
         let msg = body?.error;
-        if (!msg) {
-          if (xhr.status === 413) msg = 'File too large for the server. The default cap is 512 MB; bump IMPORT_ZIP_MAX_MB or check your reverse-proxy body limits (Nginx client_max_body_size, Cloudflare upload cap, etc.).';
-          else if (xhr.status === 502) msg = 'Server returned 502 Bad Gateway. Likely the upstream timed out reading the upload; try a smaller archive or raise proxy timeouts.';
-          else if (xhr.status === 504) msg = 'Server returned 504 Gateway Timeout. The proxy gave up waiting for the upload to finish; try a smaller archive or raise proxy timeouts.';
-          else if (xhr.status === 0)  msg = 'Connection closed by the network. Likely a proxy / CDN / firewall issue.';
-          else msg = `API error ${xhr.status}`;
+        if (msg) {
+          const err = new Error(zhErrorMessage(msg, xhr.status));
+          err.raw = msg;
+          reject(err);
+          return;
         }
+        if (xhr.status === 413) msg = '文件过大，服务器无法接收，请压缩后再试';
+        else if (xhr.status === 502) msg = '服务器网关错误，请稍后重试或减小文件体积';
+        else if (xhr.status === 504) msg = '服务器响应超时，请稍后重试或减小文件体积';
+        else if (xhr.status === 0)  msg = '网络连接中断，请检查网络后重试';
+        else msg = zhErrorMessage(null, xhr.status);
         reject(new Error(msg));
       };
       xhr.onerror = () => {
         if (stallTimer) { clearTimeout(stallTimer); stallTimer = null; }
-        reject(new Error('Network error during upload (connection dropped or blocked).'));
+        reject(new Error('网络出错，上传已中断'));
       };
       xhr.onabort = () => {
         if (stallTimer) { clearTimeout(stallTimer); stallTimer = null; }
         // If we already rejected via stall, this is a no-op.
-        reject(new Error('Upload aborted'));
+        reject(new Error('上传已取消'));
       };
       xhr.send(formData);
     });

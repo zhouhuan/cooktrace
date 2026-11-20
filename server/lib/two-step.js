@@ -384,18 +384,18 @@ export function checkRecoveryToken(provided, { ip = null } = {}) {
  */
 export function logAfterRestore() {
   const on = db.prepare('SELECT u.username FROM user_two_step t JOIN users u ON u.id = t.user_id WHERE t.enabled = 1 ORDER BY u.username').all().map((r) => r.username);
-  logger.info(`[two-step] after the restore, two-step sign-in is on for ${on.length ? on.join(', ') : 'nobody'}`);
+  logger.info(`[two-step] 恢复后，已开启两步验证的账号：${on.length ? on.join(', ') : '无'}`);
 }
 
 // ── Log and email ─────────────────────────────────────────────────────────
 const NOTICES = {
-  enabled:                 { log: 'turned on',                                       title: 'Two-Step Sign-In Turned On',      say: 'Two-step sign-in was turned on for your CookTrace account.' },
-  disabled:                { log: 'turned off by its owner',                         title: 'Two-Step Sign-In Turned Off',     say: 'Two-step sign-in was turned off for your CookTrace account.' },
-  recovery_codes_replaced: { log: 'got new recovery codes (the old ones stopped working)', title: 'New Recovery Codes',          say: 'New recovery codes were made for your CookTrace account. The old ones no longer work.' },
-  recovery_code_used:      { log: 'signed in with a recovery code',                  title: 'Recovery Code Used',              say: 'Someone signed in to your CookTrace account with one of your recovery codes.' },
-  reset_by_admin:          { log: 'reset by an admin',                               title: 'Two-Step Sign-In Reset',          say: 'An admin reset two-step sign-in for your CookTrace account. You can sign in with your password alone until you set it up again.' },
-  reset_by_owner:          { log: 'reset with the RECOVERY_TOKEN',                   title: 'Two-Step Sign-In Reset',          say: "Two-step sign-in for your CookTrace account was reset with the server's recovery token. You can sign in with your password alone until you set it up again." },
-  reset_by_command:        { log: 'reset from the command line (npm run reset-2fa)', title: 'Two-Step Sign-In Reset',          say: "Two-step sign-in for your CookTrace account was reset on the server. You can sign in with your password alone until you set it up again." },
+  enabled:                 { log: '已开启',                                       title: '两步验证已开启',      say: '您的 CookTrace 账号已开启两步验证。' },
+  disabled:                { log: '被账号所有者关闭',                         title: '两步验证已关闭',     say: '您的 CookTrace 账号已关闭两步验证。' },
+  recovery_codes_replaced: { log: '获取了新的恢复代码（旧代码已失效）', title: '新的恢复代码',          say: '已为您的 CookTrace 账号生成新的恢复代码，旧代码不再有效。' },
+  recovery_code_used:      { log: '使用恢复代码登录',                  title: '恢复代码已被使用',              say: '有人使用您的恢复代码之一登录了您的 CookTrace 账号。' },
+  reset_by_admin:          { log: '被管理员重置',                               title: '两步验证已重置',          say: '管理员重置了您 CookTrace 账号的两步验证。在您重新设置之前，可以直接使用密码登录。' },
+  reset_by_owner:          { log: '使用 RECOVERY_TOKEN 重置',                   title: '两步验证已重置',          say: '您的 CookTrace 账号的两步验证已通过服务器恢复令牌重置。在您重新设置之前，可以直接使用密码登录。' },
+  reset_by_command:        { log: '通过命令行重置（npm run reset-2fa）', title: '两步验证已重置',          say: '您的 CookTrace 账号的两步验证已在服务器上重置。在您重新设置之前，可以直接使用密码登录。' },
 };
 
 /** Logs the event (no secrets, no codes) and emails the person when the server sends email. */

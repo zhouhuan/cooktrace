@@ -2,13 +2,13 @@
  * The AI model picker and the IDs the app sends, in the browser/app
  * (src/lib/aiChat.js), in the server's proxy (server/routes/ai.js) and in
  * recipe imports (server/lib/recipe-ai-fallback.js), both through
- * server/lib/ai-models.js. The same lists as NutriTrace, LiftTrace and
- * NoteTrace.
+ * server/lib/ai-models.js.
  *
- * The lists were checked against the vendors' model and deprecation pages on
- * 2026-10-09 (again on 2026-10-16). These tests keep the copies identical,
- * keep shut-down and renamed IDs working for anyone who saved them, and keep
- * the picker to models a new user can actually use.
+ * 简体中文专属版: the built-in providers are the Chinese model services
+ * (DeepSeek, Kimi, Zhipu GLM, Tongyi Qwen, Doubao), all on OpenAI-compatible
+ * Chat Completions endpoints. These tests keep the copies identical, keep
+ * saved model IDs working for anyone who saved them, and keep the picker to
+ * models a new user can actually use.
  */
 import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync, readFileSync } from 'node:fs';
@@ -45,39 +45,30 @@ test.after(() => { app?.close(); try { db?.close(); } catch {} if (dir) rmSync(d
 const ids = provider => client.AI_MODELS[provider].filter(v => v !== client.AI_MODEL_CUSTOM);
 
 test('the picker lists the current models', () => {
-  assert.deepEqual(ids('claude'), ['claude-haiku-5-5', 'claude-sonnet-5-5', 'claude-opus-5-5', 'claude-fable-5-1',
-    'claude-sonnet-5', 'claude-opus-5', 'claude-fable-5', 'claude-opus-4-8']);
-  assert.deepEqual(ids('openai'), ['gpt-6-luna', 'gpt-5.6-terra', 'gpt-5.6-sol', 'gpt-5.6-luna', 'gpt-4o-mini', 'gpt-4o']);
-  // Trace needs tool calls over Chat Completions, which GPT-6.1 Sol and GPT-6 Astra don't do.
-  assert.ok(!ids('openai').includes('gpt-6.1-sol') && !ids('openai').includes('gpt-6-astra'));
-  assert.deepEqual(ids('gemini'), ['gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.8-flash',
-    'gemini-3.1-pro-preview', 'gemini-3.6-flash']);
-  for (const p of ['claude', 'openai', 'gemini']) assert.equal(client.AI_MODELS[p].at(-1), client.AI_MODEL_CUSTOM);
+  assert.deepEqual(ids('deepseek'), ['deepseek-chat', 'deepseek-reasoner']);
+  assert.deepEqual(ids('kimi'), ['moonshot-v1-8k', 'moonshot-v1-32k', 'moonshot-v1-128k', 'kimi-k2-0711-preview', 'kimi-k2-turbo-preview']);
+  assert.deepEqual(ids('zhipu'), ['glm-4-flash', 'glm-4-air', 'glm-4-plus']);
+  assert.deepEqual(ids('qwen'), ['qwen-turbo', 'qwen-plus', 'qwen-max']);
+  // Doubao (Volcano Ark) serves each deployment behind an inference
+  // endpoint ID (ep-…): no preset models, the user types it in instead.
+  assert.deepEqual(client.AI_MODELS.doubao, []);
+  for (const p of ['deepseek', 'kimi', 'zhipu', 'qwen']) assert.equal(client.AI_MODELS[p].at(-1), client.AI_MODEL_CUSTOM);
   assert.deepEqual(client.AI_MODELS.custom, []);
-  // Gemini 2.5 is open to existing users only, gemini-3.1-pro never existed,
-  // and gpt-5.6 is an alias the picker now names.
-  assert.ok(!ids('gemini').some(v => v.startsWith('gemini-2.5')));
-  assert.ok(!ids('gemini').includes('gemini-3.1-pro'));
-  assert.ok(!ids('openai').includes('gpt-5.6'));
 });
 
-test('the picker is the same as the other Trace apps\' (NoteTrace has the same shape)', () => {
-  // Kept literally so a change here is a change made on purpose in all four.
-  assert.equal(JSON.stringify(client.AI_MODELS),
-    '{"claude":["claude-haiku-5-5","claude-sonnet-5-5","claude-opus-5-5","claude-fable-5-1","claude-sonnet-5","claude-opus-5","claude-fable-5","claude-opus-4-8","__custom__"],' +
-    '"openai":["gpt-6-luna","gpt-5.6-terra","gpt-5.6-sol","gpt-5.6-luna","gpt-4o-mini","gpt-4o","__custom__"],' +
-    '"gemini":["gemini-3.1-flash-lite","gemini-3.5-flash-lite","gemini-3.8-flash","gemini-3.1-pro-preview","gemini-3.6-flash","__custom__"],"custom":[]}');
+test('no foreign provider is left in the picker', () => {
+  assert.deepEqual(client.AI_PROVIDERS.map(p => p.id), ['deepseek', 'kimi', 'zhipu', 'qwen', 'doubao', 'custom']);
 });
 
-test('the picker names each model as the other Trace apps do, not by its ID', () => {
-  for (const p of ['claude', 'openai', 'gemini']) {
+test('the picker names each model in Chinese, not by its ID', () => {
+  for (const p of ['deepseek', 'kimi', 'zhipu', 'qwen']) {
     const labels = ids(p).map(m => client.AI_MODEL_LABELS[m]);
     assert.ok(labels.every(Boolean), `${p}: every model has a label`);
-    assert.equal(labels.filter(l => /cheapest/.test(l)).length, 1, `${p}: one cheapest`);
-    assert.equal(labels.filter(l => /most capable/.test(l)).length, 1, `${p}: one most capable`);
+    assert.equal(labels.filter(l => /最便宜/.test(l)).length, 1, `${p}: one cheapest`);
+    assert.equal(labels.filter(l => /最强/.test(l)).length, 1, `${p}: one most capable`);
   }
-  assert.equal(client.AI_MODEL_LABELS['claude-haiku-5-5'], 'Claude Haiku 5.5 (fast, cheapest)');
-  assert.equal(client.AI_MODEL_LABELS['gemini-3.1-pro-preview'], 'Gemini 3.1 Pro Preview (most capable)');
+  assert.equal(client.AI_MODEL_LABELS['deepseek-chat'], 'DeepSeek Chat（V3，均衡，最便宜）');
+  assert.equal(client.AI_MODEL_LABELS['qwen-max'], '通义千问 Max（最强）');
   // Settings > Trace shows them, a model the server sets too; a custom one by its ID.
   const ui = readFileSync(new URL('../src/components/settings/SettingsTrace.svelte', import.meta.url), 'utf8');
   assert.match(ui, /AI_MODEL_LABELS\[m\] \|\| m/);
@@ -85,104 +76,105 @@ test('the picker names each model as the other Trace apps do, not by its ID', ()
   assert.match(ui, /envLocks\.ai_model \? _modelLabel\(envLocks\.ai_model\)/);
 });
 
-test('defaults: Claude Haiku 5.5 when none is chosen; a chosen model is kept', () => {
-  const { custom, ...defaults } = client.AI_DEFAULT_MODELS;
-  assert.deepEqual(defaults, { claude: 'claude-haiku-5-5', openai: 'gpt-5.6-luna', gemini: 'gemini-3.8-flash' });
-  assert.equal(custom, '');
-  for (const p of ['claude', 'openai', 'gemini']) assert.ok(ids(p).includes(client.AI_DEFAULT_MODELS[p]), `${p} default is in the picker`);
-  // Settings shows a saved model that isn't listed as a custom one, so it keeps working,
-  // and shows a renamed one under its new name (not for OpenAI Compatible).
+test("defaults: the provider's first-choice model when none is chosen; a chosen model is kept", () => {
+  const { custom: _custom, doubao, ...defaults } = client.AI_DEFAULT_MODELS;
+  assert.deepEqual(defaults, { deepseek: 'deepseek-chat', kimi: 'moonshot-v1-32k', zhipu: 'glm-4-flash', qwen: 'qwen-plus' });
+  // Doubao's model is the user's Ark inference endpoint ID, so there is
+  // no default: the Settings UI shows a free-text input for it.
+  assert.equal(doubao, '');
+  for (const p of ['deepseek', 'kimi', 'zhipu', 'qwen']) assert.ok(ids(p).includes(client.AI_DEFAULT_MODELS[p]), `${p} default is in the picker`);
+  // Settings shows a saved model that isn't listed as a custom one, so it
+  // keeps working; an empty preset list (doubao) means the free-text input
+  // instead, so the escape hatch doesn't apply to it.
   const trace = readFileSync(new URL('../src/components/settings/SettingsTrace.svelte', import.meta.url), 'utf8');
-  assert.match(trace, /if \(saved && !isPreset && \$aiProvider !== 'custom'\) \{\s*aiModelSelectVal = AI_MODEL_CUSTOM;\s*aiCustomModelVal = saved;/);
+  assert.match(trace, /if \(saved && !isPreset && _pm\.length > 0 && \$aiProvider !== 'custom'\) \{\s*aiModelSelectVal = AI_MODEL_CUSTOM;\s*aiCustomModelVal = saved;/);
   assert.match(trace, /if \(\$aiProvider !== 'custom' && \$aiProvider !== 'oai-compat' && \$aiModel && renamedModel\(\$aiModel\) !== \$aiModel\) \{\s*aiModel\.set\(renamedModel\(\$aiModel\)\);\s*\}\s*const saved = \$aiModel;/);
+  assert.match(trace, /placeholder=\{\$aiProvider === 'doubao' \? 'ep-…（火山方舟推理接入点 ID）' : AI_DEFAULT_MODELS\[\$aiProvider\] \|\| ''\}/);
 });
 
-test('saved models: renamed ones go out under the new name, shut-down Gemini ones as the default, 2.5 as saved', () => {
-  for (const g of [client.geminiModelFor, server.geminiModelFor]) {
-    assert.equal(g('gemini-3.1-pro'), 'gemini-3.1-pro-preview');
-    assert.equal(g('gemini-3-pro-preview'), 'gemini-3.1-pro-preview');
-    for (const dead of ['gemini-2.0-flash', 'gemini-2.0-flash-001', 'gemini-2.0-flash-lite-001', 'gemini-3.1-flash-lite-preview',
-      'gemini-2.5-pro-preview-03-25', 'gemini-2.5-pro-preview-05-06', 'gemini-2.5-pro-preview-06-05',
-      'gemini-2.5-flash-preview-09-25', 'gemini-2.5-flash-lite-preview-09-2025', 'gemini-1.5-pro']) {
-      assert.equal(g(dead), 'gemini-3.8-flash', dead);
-    }
-    for (const kept of ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.6-flash']) assert.equal(g(kept), kept);
-    assert.equal(g(''), 'gemini-3.8-flash');
-  }
-  assert.equal(client.renamedModel('gpt-5.6'), 'gpt-5.6-sol');
-  assert.equal(client.renamedModel('claude-opus-5'), 'claude-opus-5');
-  // OpenAI-compatible endpoints name their own models: never renamed there.
-  assert.equal(server.modelFor('oai-compat', 'gpt-5.6'), 'gpt-5.6');
-  assert.equal(server.modelFor('custom', 'gemini-3.1-pro'), 'gemini-3.1-pro');
-  assert.equal(server.modelFor('openai', 'gpt-5.6'), 'gpt-5.6-sol');
-  assert.equal(server.modelFor('gemini', 'gemini-2.0-flash'), 'gemini-3.8-flash');
-  assert.equal(server.modelFor('claude', 'claude-opus-5'), 'claude-opus-5');
+test('saved models: every provider keeps IDs exactly as saved (no renames in this edition)', () => {
+  assert.deepEqual(client.AI_MODEL_RENAMES, {});
+  // OpenAI-compatible endpoints (custom, oai-compat) name their own
+  // models — and an Ark endpoint ID is one — so nothing is ever renamed.
+  assert.equal(server.modelFor('deepseek', 'deepseek-chat'), 'deepseek-chat');
+  assert.equal(server.modelFor('custom', 'ep-20240903-12345678-abcde'), 'ep-20240903-12345678-abcde');
+  assert.equal(server.modelFor('oai-compat', 'my-model'), 'my-model');
+  // The built-in providers go through the shared OpenAI-compatible path
+  // with their own official base URL; custom keeps requiring what it did.
   const src = readFileSync(new URL('../src/lib/aiChat.js', import.meta.url), 'utf8');
-  assert.match(src, /case 'openai':\s+return _callOpenAIWithTools\(apiKey, renamedModel\(model\)/);
+  assert.match(src, /return _callOpenAIWithTools\(apiKey, model \|\| AI_DEFAULT_MODELS\[provider\], messages, systemPrompt, tools, cb, AI_PROVIDER_BASE_URLS\[provider\]\);/);
   assert.match(src, /_callOpenAIWithTools\(apiKey \|\| 'no-key', model,/);
 });
 
-test("the server's copy (proxy and recipe imports) uses the same defaults, renames and shut-down list", () => {
-  const { custom: _custom, ...clientDefaults } = client.AI_DEFAULT_MODELS;
-  assert.deepEqual(server.AI_DEFAULT_MODELS, clientDefaults);
+test("the server's copy (proxy and recipe imports) uses the same defaults, renames and addresses", () => {
+  const { custom: _custom, doubao, ...clientDefaults } = client.AI_DEFAULT_MODELS;
+  assert.deepEqual(server.AI_DEFAULT_MODELS, { ...clientDefaults, doubao });
   assert.deepEqual(server.AI_MODEL_RENAMES, client.AI_MODEL_RENAMES);
-  assert.deepEqual([...server.GEMINI_RETIRED].sort(), [...client.GEMINI_RETIRED].sort());
+  assert.deepEqual(server.AI_PROVIDER_BASE_URLS, client.AI_PROVIDER_BASE_URLS);
   const src = readFileSync(new URL('../server/routes/ai.js', import.meta.url), 'utf8');
   assert.match(src, /const model\s+= modelFor\(provider, cfg\.ai_model \|\| AI_DEFAULT_MODELS\[provider\] \|\| ''\);/);
-  assert.doesNotMatch(src, /claude-haiku|gemini-\d/, 'no second list in the proxy');
+  assert.doesNotMatch(src, /claude-haiku|gemini-\d|anthropic\.com|generativelanguage|api\.openai\.com/, 'no foreign provider left in the proxy');
   const fallback = readFileSync(new URL('../server/lib/recipe-ai-fallback.js', import.meta.url), 'utf8');
   assert.match(fallback, /const model\s+= modelFor\(provider, cfg\.model \|\| _defaultModel\(provider\)\);/);
-  assert.doesNotMatch(fallback, /claude-haiku|gemini-\d/, 'no second list in recipe imports');
+  assert.doesNotMatch(fallback, /claude-haiku|gemini-\d|anthropic\.com|generativelanguage|api\.openai\.com/, 'no foreign provider left in recipe imports');
 });
 
-// Every model CookTrace's picker offered before this change, a shut-down one,
-// and none at all, as the vendor is asked for it now: kept as saved unless
-// it was renamed or shut down.
+test('the Chat Completions address keeps a versioned base path (Ark /v3, Zhipu /v4); a bare origin gets /v1', async () => {
+  const { openAIChatUrl } = await import('../src/lib/openai-chat-params.js');
+  assert.equal(openAIChatUrl(client.AI_PROVIDER_BASE_URLS.deepseek), 'https://api.deepseek.com/v1/chat/completions');
+  assert.equal(openAIChatUrl(client.AI_PROVIDER_BASE_URLS.kimi), 'https://api.moonshot.cn/v1/chat/completions');
+  assert.equal(openAIChatUrl(client.AI_PROVIDER_BASE_URLS.zhipu), 'https://open.bigmodel.cn/api/paas/v4/chat/completions');
+  assert.equal(openAIChatUrl(client.AI_PROVIDER_BASE_URLS.qwen), 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions');
+  assert.equal(openAIChatUrl(client.AI_PROVIDER_BASE_URLS.doubao), 'https://ark.cn-beijing.volces.com/api/v3/chat/completions');
+  // A custom base a user typed gets the same treatment.
+  assert.equal(openAIChatUrl('https://example.com/'), 'https://example.com/v1/chat/completions');
+  assert.equal(openAIChatUrl('https://example.com/v1/chat/completions'), 'https://example.com/v1/chat/completions');
+});
+
+// Every model CookTrace's picker offers, and none at all, as the vendor is
+// asked for it now: kept as saved, the provider's default filling in for
+// none. Doubao always has its endpoint ID saved (it has no default).
 const SAVED_BEFORE = [
-  ['claude', 'claude-haiku-4-5-20251001', 'claude-haiku-4-5-20251001'],
-  ['claude', 'claude-sonnet-5', 'claude-sonnet-5'],
-  ['claude', 'claude-opus-5', 'claude-opus-5'],
-  ['claude', 'claude-fable-5-1', 'claude-fable-5-1'],
-  ['claude', 'claude-fable-5', 'claude-fable-5'],
-  ['claude', 'claude-opus-4-8', 'claude-opus-4-8'],
-  ['openai', 'gpt-5.6-luna', 'gpt-5.6-luna'],
-  ['openai', 'gpt-5.6-terra', 'gpt-5.6-terra'],
-  ['openai', 'gpt-5.6', 'gpt-5.6-sol'],
-  ['openai', 'gpt-4o-mini', 'gpt-4o-mini'],
-  ['openai', 'gpt-4o', 'gpt-4o'],
-  ['gemini', 'gemini-3.5-flash-lite', 'gemini-3.5-flash-lite'],
-  ['gemini', 'gemini-3.6-flash', 'gemini-3.6-flash'],
-  ['gemini', 'gemini-3.1-pro', 'gemini-3.1-pro-preview'],
-  ['gemini', 'gemini-2.5-flash-lite', 'gemini-2.5-flash-lite'],
-  ['gemini', 'gemini-2.5-flash', 'gemini-2.5-flash'],
-  ['gemini', 'gemini-2.5-pro', 'gemini-2.5-pro'],
-  ['gemini', 'gemini-2.0-flash', 'gemini-3.8-flash'],
-  ['gemini', '', 'gemini-3.8-flash'],
-  ['claude', '', 'claude-haiku-5-5'],
-  ['openai', '', 'gpt-5.6-luna'],
+  ['deepseek', 'deepseek-chat', 'deepseek-chat'],
+  ['deepseek', 'deepseek-reasoner', 'deepseek-reasoner'],
+  ['deepseek', '', 'deepseek-chat'],
+  ['kimi', 'moonshot-v1-8k', 'moonshot-v1-8k'],
+  ['kimi', 'moonshot-v1-32k', 'moonshot-v1-32k'],
+  ['kimi', 'moonshot-v1-128k', 'moonshot-v1-128k'],
+  ['kimi', 'kimi-k2-0711-preview', 'kimi-k2-0711-preview'],
+  ['kimi', 'kimi-k2-turbo-preview', 'kimi-k2-turbo-preview'],
+  ['kimi', '', 'moonshot-v1-32k'],
+  ['zhipu', 'glm-4-flash', 'glm-4-flash'],
+  ['zhipu', 'glm-4-air', 'glm-4-air'],
+  ['zhipu', 'glm-4-plus', 'glm-4-plus'],
+  ['zhipu', '', 'glm-4-flash'],
+  ['qwen', 'qwen-turbo', 'qwen-turbo'],
+  ['qwen', 'qwen-plus', 'qwen-plus'],
+  ['qwen', 'qwen-max', 'qwen-max'],
+  ['qwen', '', 'qwen-plus'],
+  ['doubao', 'ep-20240903-12345678-abcde', 'ep-20240903-12345678-abcde'],
 ];
-const VENDOR = /^https:\/\/(api\.anthropic\.com|api\.openai\.com|generativelanguage\.googleapis\.com)\//;
-// Answers the vendors' APIs in-process and notes the model each was asked for;
-// anything else (the test's own server) goes out for real.
+const VENDOR = /^https:\/\/(api\.deepseek\.com|api\.moonshot\.cn|open\.bigmodel\.cn|dashscope\.aliyuncs\.com|ark\.cn-beijing\.volces\.com)\//;
+// Answers the vendors' APIs in-process and notes the model each was asked
+// for; anything else (the test's own server) goes out for real.
 function stubVendors(t, text = 'ok') {
-  const asked = [];
+  const asked = [], urls = [];
   const real = globalThis.fetch;
   globalThis.fetch = async (url, init = {}) => {
     const u = String(url);
+    urls.push(u);
     if (!VENDOR.test(u)) return real(url, init);
     const body = JSON.parse(init.body || '{}');
-    let data;
-    if (u.includes('anthropic')) { asked.push(body.model); data = { content: [{ type: 'text', text }], stop_reason: 'end_turn' }; }
-    else if (u.includes('openai')) { asked.push(body.model); data = { choices: [{ message: { role: 'assistant', content: text }, finish_reason: 'stop' }] }; }
-    else { asked.push(decodeURIComponent(u.match(/\/models\/([^:]+):/)[1])); data = { candidates: [{ content: { parts: [{ text }] }, finishReason: 'STOP' }] }; }
-    return new Response(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    asked.push(body.model);
+    return new Response(JSON.stringify({ choices: [{ message: { role: 'assistant', content: text }, finish_reason: 'stop' }] }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } });
   };
   t.after(() => { globalThis.fetch = real; });
-  return asked;
+  return { asked, urls };
 }
 
-test('the app: a model saved before this change reaches the vendor under its current name', async (t) => {
-  const asked = stubVendors(t);
+test('the app: a model saved is the model sent', async (t) => {
+  const { asked, urls } = stubVendors(t);
   for (const [provider, saved, sent] of SAVED_BEFORE) {
     // Trace, imports and label scans pass the saved model, or the default when none is saved.
     const model = saved || client.AI_DEFAULT_MODELS[provider];
@@ -190,20 +182,30 @@ test('the app: a model saved before this change reaches the vendor under its cur
     assert.equal(reply, 'ok', `${provider} ${saved}`);
     assert.equal(asked.at(-1), sent, `${provider} ${saved || '(none)'}`);
   }
+  // Each provider went to its own official address, version path intact.
+  assert.ok(urls.includes('https://open.bigmodel.cn/api/paas/v4/chat/completions'), 'zhipu keeps its /v4 path');
+  assert.ok(urls.includes('https://ark.cn-beijing.volces.com/api/v3/chat/completions'), 'doubao keeps its /v3 path');
   // An OpenAI-compatible server is asked for exactly what was saved.
-  await client.callAI({ provider: 'custom', model: 'gpt-5.6', baseUrl: 'https://api.openai.com/v1', messages: [{ role: 'user', content: 'hi' }], systemPrompt: 'x' });
-  assert.equal(asked.at(-1), 'gpt-5.6');
+  await client.callAI({ provider: 'custom', apiKey: 'k', model: 'my-model', baseUrl: 'https://api.deepseek.com/v1', messages: [{ role: 'user', content: 'hi' }], systemPrompt: 'x' });
+  assert.equal(asked.at(-1), 'my-model');
+  assert.equal(urls.at(-1), 'https://api.deepseek.com/v1/chat/completions');
 });
 
-test("the server's proxy: a model an admin set before this change reaches the vendor under its current name", async (t) => {
+test('the app: doubao without a model says so instead of calling', async (t) => {
+  const { asked } = stubVendors(t);
+  await assert.rejects(() => client.callAI({ provider: 'doubao', apiKey: 'k', model: '', messages: [{ role: 'user', content: 'hi' }], systemPrompt: 'x' }), /豆包/);
+  assert.equal(asked.length, 0);
+});
+
+test("the server's proxy: a model an admin set is the model sent", async (t) => {
   if (!db) { t.skip('better-sqlite3 is not built for this Node'); return; }
-  const asked = stubVendors(t);
+  const { asked, urls } = stubVendors(t);
   const set = db.prepare('INSERT INTO app_config (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
   const drop = db.prepare('DELETE FROM app_config WHERE key = ?');
   const post = () => fetch(`${base}/api/ai/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages: [{ role: 'user', content: 'hi' }], systemPrompt: 'You are Trace.' }) });
-  // One request per row, plus one: keep the list under the proxy's 30 a minute.
-  assert.ok(SAVED_BEFORE.length + 1 <= 30);
+  // One request per row, plus two: keep the list under the proxy's 30 a minute.
+  assert.ok(SAVED_BEFORE.length + 2 <= 30);
   for (const [provider, saved, sent] of SAVED_BEFORE) {
     set.run('ai_provider', provider); set.run('ai_api_key', 'k'); set.run('ai_env_locked', 'true');
     if (saved) set.run('ai_model', saved); else drop.run('ai_model');
@@ -211,14 +213,18 @@ test("the server's proxy: a model an admin set before this change reaches the ve
     assert.deepEqual(await r.json(), { text: 'ok' }, `${provider} ${saved}`);
     assert.equal(asked.at(-1), sent, `${provider} ${saved || '(none)'}`);
   }
+  // Doubao without a model (no default: the endpoint ID) says so.
+  set.run('ai_provider', 'doubao'); drop.run('ai_model');
+  assert.equal((await post()).status, 503, 'doubao without a model');
   // An OpenAI-compatible server (AI_PROVIDER=oai-compat) is asked for exactly what was set.
-  set.run('ai_provider', 'oai-compat'); set.run('ai_base_url', 'https://api.openai.com'); set.run('ai_model', 'gpt-5.6');
+  set.run('ai_provider', 'oai-compat'); set.run('ai_base_url', 'https://api.deepseek.com'); set.run('ai_model', 'my-model');
   assert.deepEqual(await (await post()).json(), { text: 'ok' });
-  assert.equal(asked.at(-1), 'gpt-5.6');
+  assert.equal(asked.at(-1), 'my-model');
+  assert.equal(urls.at(-1), 'https://api.deepseek.com/v1/chat/completions');
 });
 
-test('recipe imports: a saved model reaches the vendor under its current name', async (t) => {
-  const asked = stubVendors(t, JSON.stringify({ name: 'Soup', ingredients: [], steps: [] }));
+test('recipe imports: a saved model is the model sent', async (t) => {
+  const { asked } = stubVendors(t, JSON.stringify({ name: 'Soup', ingredients: [], steps: [] }));
   for (const source of ['user', 'server']) {
     for (const [provider, saved, sent] of SAVED_BEFORE) {
       const recipe = await aiExtractRecipe('<h1>Soup</h1>', 'https://example.com/soup', { provider, apiKey: 'k', model: saved, baseUrl: '', source });
@@ -231,5 +237,6 @@ test('recipe imports: a saved model reaches the vendor under its current name', 
 test('Settings search finds the Trace section by the new model names', () => {
   const settings = readFileSync(new URL('../src/routes/Settings.svelte', import.meta.url), 'utf8');
   const ai = settings.match(/^\s*ai:\s*\[([^\]]*)\]/m)[1];
-  for (const kw of ['fable', 'luna', 'sol', 'terra', 'flash']) assert.match(ai, new RegExp(`'${kw}'`), kw);
+  for (const kw of ['deepseek', 'kimi', 'moonshot', 'glm', 'zhipu', 'qwen', 'doubao', '豆包', '智谱']) assert.match(ai, new RegExp(`'${kw}'`), kw);
+  for (const gone of ['claude', 'sonnet', 'opus', 'gpt-6', 'gemini 3', 'fable']) assert.doesNotMatch(ai, new RegExp(`'${gone}'`), `stale keyword ${gone}`);
 });

@@ -5,7 +5,7 @@
   import { placeAnchoredMenu } from '../../lib/fold-core.js';
   import { fade } from 'svelte/transition';
   import { _ } from 'svelte-i18n';
-  import { unitGroupsMerged, UNIT_GROUPS } from '../../lib/units.js';
+  import { unitGroupsMerged } from '../../lib/units.js';
   import { measurementSystem } from '../../stores/settings.js';
   import { unitsOverlay, refreshUnitsOverlay } from '../../stores/unitsOverlay.js';
   import { portal } from '../../lib/portal.js';
@@ -17,19 +17,11 @@
   export let placeholder = '';
   $: shownPlaceholder = placeholder || $_('unit_picker_ui.placeholder');
 
-  // Group labels are also the stored category values, so only the shown
-  // text is translated. Keys follow UNIT_GROUPS order.
-  const GROUP_KEYS = [
-    'unit_picker_ui.group_volume_us',
-    'unit_picker_ui.group_volume_metric',
-    'unit_picker_ui.group_weight_us',
-    'unit_picker_ui.group_weight_metric',
-    'unit_picker_ui.group_count',
-  ];
-  function groupName(label, t) {
-    if (label === 'Custom') return t('manage_units.custom_group');
-    const i = UNIT_GROUPS.findIndex(g => g.label === label);
-    return i >= 0 && GROUP_KEYS[i] ? t(GROUP_KEYS[i]) : label;
+  // Built-in group labels are already Chinese (src/lib/units.js) and double
+  // as the stored category values, so they show as-is; only the Custom
+  // bucket needs its display name mapped.
+  function groupName(label) {
+    return label === 'Custom' ? '自定义' : label;
   }
 
   const dispatch = createEventDispatcher();
@@ -51,15 +43,17 @@
 
   // Server-backed catalog. The overlay store caches { disabled, custom }
   // and exposes refresh() so Manage edits propagate without a reload.
-  // Built-in 37 + custom additions, minus user-disabled built-ins.
+  // Built-in 39 + custom additions, minus user-disabled built-ins.
   $: orderedGroups = (() => {
     const merged = unitGroupsMerged($unitsOverlay);
     if ($measurementSystem !== 'metric') return merged;
-    // Move metric ahead of US; keep Custom group at the top if present.
+    // Move metric and Chinese market groups ahead of US; keep Custom group
+    // at the top if present.
     const head = merged[0]?.label === 'Custom' ? [merged[0]] : [];
     const rest = (head.length ? merged.slice(1) : merged).slice();
+    const preferred = s => s.includes('公制') || s.includes('市制');
     rest.sort((a, b) => {
-      const am = a.label.includes('Metric'), bm = b.label.includes('Metric');
+      const am = preferred(a.label), bm = preferred(b.label);
       if (am && !bm) return -1;
       if (!am && bm) return 1;
       return 0;
@@ -189,7 +183,7 @@
       <p class="empty-line">{$_('unit_picker_ui.no_matches')}</p>
     {:else}
       {#each filteredGroups as group}
-        <p class="group-label">{groupName(group.label, $_)}</p>
+        <p class="group-label">{groupName(group.label)}</p>
         {#each group.units as u}
           {@const idx = flatList.findIndex(f => f.abbr === u.abbr && f.groupLabel === group.label)}
           <button

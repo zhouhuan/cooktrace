@@ -87,6 +87,9 @@ test.after(() => endpoint.close());
 const _fetch = globalThis.fetch;
 globalThis.fetch = (url, opts) => {
   const u = String(url);
+  // 简体中文专属版: the built-in providers all speak Chat Completions, so
+  // one of them (DeepSeek) stands in for the vendor's own address.
+  if (u.startsWith('https://api.deepseek.com')) return _fetch(ENDPOINT, opts);
   if (u.startsWith('https://api.anthropic.com')) return _fetch(`${ENDPOINT}/claude`, opts);
   if (u.startsWith('https://generativelanguage.googleapis.com')) return _fetch(`${ENDPOINT}/gemini`, opts);
   return _fetch(url, opts);
@@ -97,11 +100,11 @@ client.setToolHandler(async () => { calls++; return toolResult; });
 const TOOLS = [client.TOOLS.find((t) => t.name === 'get_recipes')];
 const fresh = (o = {}) => { seen.length = 0; calls = 0; stopAfter = o.stopAfter ?? Infinity; rejectChoice = !!o.rejectChoice; rejectStatus = o.rejectStatus ?? 400; ignoreChoice = !!o.ignoreChoice; toolResult = o.toolResult ?? []; multi = o.multi ?? 1; argPad = o.argPad ?? ''; plan = o.plan ?? null; };
 const ask = (provider, extra = {}) => client.callAI({
-  provider, apiKey: 'k', model: provider === 'custom' ? 'local' : undefined, baseUrl: provider === 'custom' ? ENDPOINT : undefined,
+  provider, apiKey: 'k', model: provider === 'deepseek' ? undefined : 'local', baseUrl: provider === 'deepseek' ? undefined : ENDPOINT,
   messages: [{ role: 'user', content: 'Which of my recipes use cilantro?' }], systemPrompt: 'You are Trace.', tools: TOOLS, ...extra,
 });
-const PROVIDERS = ['custom', 'claude', 'gemini'];
-const systemOf = (provider, body) => (provider === 'custom' ? body.messages[0].content : provider === 'claude' ? body.system : body.systemInstruction.parts[0].text);
+const PROVIDERS = ['deepseek', 'custom', 'oai-compat'];
+const systemOf = (provider, body) => body.messages[0].content;
 
 test('12 rounds of tool calls: a scan that needs 8 finishes', async () => {
   for (const provider of PROVIDERS) {
@@ -124,13 +127,9 @@ test('out of rounds, a last request with the tools off answers from what was fou
     assert.ok(system.startsWith('You are Trace.') && system.endsWith(client.OUT_OF_ROUNDS), `${provider}: told to answer in the system prompt`);
     // Only the last request is: the rounds before go as they always did.
     assert.equal(systemOf(provider, before), 'You are Trace.');
-    if (provider === 'custom') { assert.equal(last.tool_choice, 'none'); assert.ok(last.tools?.length); assert.equal(before.tool_choice, undefined); }
-    if (provider === 'claude') { assert.deepEqual(last.tool_choice, { type: 'none' }); assert.ok(last.tools?.length); assert.equal(before.tool_choice, undefined); }
-    if (provider === 'gemini') { assert.deepEqual(last.toolConfig, { functionCallingConfig: { mode: 'NONE' } }); assert.equal(before.toolConfig, undefined); }
+    assert.equal(last.tool_choice, 'none'); assert.ok(last.tools?.length); assert.equal(before.tool_choice, undefined);
     // The conversation itself isn't changed: the last message is the tool results.
-    if (provider === 'custom') assert.equal(last.messages.at(-1).role, 'tool');
-    if (provider === 'claude') assert.equal(last.messages.at(-1).content[0].type, 'tool_result');
-    if (provider === 'gemini') assert.ok(last.contents.at(-1).parts[0].functionResponse);
+    assert.equal(last.messages.at(-1).role, 'tool');
   }
 });
 
@@ -172,7 +171,7 @@ test('an import that needs its tools hears that it stopped early, with what it s
   }
   // The same when the room runs out first.
   fresh({ toolResult: [{ text: 'x'.repeat(200000) }] });
-  await assert.rejects(ask('claude', { toolsRequired: true }), { code: client.OUT_OF_ROUNDS_CODE });
+  await assert.rejects(ask('deepseek', { toolsRequired: true }), { code: client.OUT_OF_ROUNDS_CODE });
   assert.equal(calls, 2);
   assert.match(JSON.parse(read('../src/i18n/en.json')).trace_reply.out_of_rounds_import, /more steps than one request allows/);
   // The dialogs: the cookbook import says "stopped after N recipes" with it (its catch);
@@ -193,17 +192,16 @@ test('one round of many big answers stops at the room left: the rest are skipped
     const last = seen[1].body;
     const said = JSON.stringify(last).split(client.TOOL_SKIPPED.replace(/"/g, '\\"')).length - 1;
     assert.equal(said, 3, `${provider}: three told they weren't run`);
-    if (provider === 'gemini') assert.deepEqual(last.toolConfig, { functionCallingConfig: { mode: 'NONE' } });
-    else assert.ok(last.tool_choice, provider);
+    assert.ok(last.tool_choice, provider);
     assert.ok(Buffer.byteLength(JSON.stringify(last)) < 1_000_000, `${provider}: ${Buffer.byteLength(JSON.stringify(last))} bytes`);
   }
   // Small answers all run, as before.
   fresh({ multi: 4, stopAfter: 1 });
-  await ask('claude');
+  await ask('deepseek');
   assert.equal(calls, 4);
   // Big arguments (a recipe the model wrote) aren't the tools' answers: all of them run.
   for (const provider of PROVIDERS) {
-    fresh({ multi: 4, argPad: 'a'.repeat(100000), stopAfter: provider === 'custom' ? 4 : 1 });
+    fresh({ multi: 4, argPad: 'a'.repeat(100000), stopAfter: 4 });
     await ask(provider);
     assert.equal(calls, 4, `${provider}: all four ran`);
     assert.ok(!JSON.stringify(seen.map((s) => s.body)).includes('Not run: this answer'), `${provider}: none skipped`);
@@ -213,7 +211,7 @@ test('one round of many big answers stops at the room left: the rest are skipped
 test('a big cookbook import saves every recipe the model writes', async () => {
   // 30 recipes, 10 a round, each 12 kB: the arguments pass 300 kB, the answers are small.
   for (const provider of PROVIDERS) {
-    fresh({ multi: 10, argPad: 'r'.repeat(12000), stopAfter: provider === 'custom' ? 30 : 3, toolResult: { ok: true, recipe: { id: 1 } } });
+    fresh({ multi: 10, argPad: 'r'.repeat(12000), stopAfter: 30, toolResult: { ok: true, recipe: { id: 1 } } });
     let saved = 0;
     await ask(provider, { toolsRequired: true, onToolResult: (_n, r) => { if (r?.ok) saved++; } }).catch(() => {});
     assert.equal(saved, 30, `${provider}: every recipe saved`);
@@ -229,22 +227,24 @@ test('a conversation that gets too big wraps up early the same way', async () =>
     assert.equal(calls, 2, provider);
     assert.equal(seen.length, 3, provider);
     const [, second, last] = seen.map((s) => s.body);
-    if (provider === 'gemini') assert.deepEqual(last.toolConfig, { functionCallingConfig: { mode: 'NONE' } });
-    else assert.ok(last.tool_choice, provider);
-    assert.equal(second.tool_choice ?? second.toolConfig, undefined, provider);
+    assert.ok(last.tool_choice, provider);
+    assert.equal(second.tool_choice, undefined, provider);
   }
   // A photo the user attached (a cookbook page, say) doesn't count: only what the tools add does.
   for (const provider of PROVIDERS) {
     fresh({ stopAfter: 4 });
     const photo = { base64: 'A'.repeat(2_000_000), mimeType: 'image/jpeg' };
-    const r = await ask(provider, { messages: [{ role: 'user', content: 'Add what this page needs to my shopping list.', _image: photo, ...(provider === 'gemini' ? {} : { content: [{ type: 'text', text: 'Add what this page needs.' }, { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: photo.base64 } }] }) }] });
+    const r = await ask(provider, { messages: [{ role: 'user', content: [
+      { type: 'text', text: 'Add what this page needs.' },
+      { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${photo.base64}` } },
+    ] }] });
     assert.ok(Buffer.byteLength(JSON.stringify(seen[0].body)) > 2_000_000, `${provider}: the photo went with the question`);
     assert.equal(r, 'answer after 4', provider);
     assert.equal(calls, 4, `${provider}: every round the answer needed`);
   }
   // Japanese counts by its bytes, not its characters.
   fresh({ toolResult: [{ text: 'あ'.repeat(70000) }] });
-  await ask('claude');
+  await ask('deepseek');
   assert.equal(calls, 2, '70,000 characters of Japanese are 210 kB');
 });
 
@@ -359,7 +359,8 @@ test('Trace offers the tools and is told how to go through a whole library', () 
   const trace = read('../src/components/ai/Trace.svelte');
   assert.match(trace, /case 'get_recipes':[\s\S]{0,200}listRecipes\(/);
   assert.match(trace, /case 'read_recipes':[\s\S]{0,200}readRecipes\(/);
-  assert.match(trace, /page through get_recipes with offset until complete is true/);
+  // 简体中文专属版: the system prompt is in Chinese; the paging advice stays in it.
+  assert.match(trace, /用 get_recipes 配合 offset 翻页直到 complete 为 true/);
 });
 
 // ── MCP lists page too ──────────────────────────────────────────────────
@@ -424,7 +425,7 @@ const reply = await import('../src/lib/trace-reply.js');
 // The same call every time, its arguments' keys in another order every other round.
 const sameCall = (name = 'get_recipes') => (n) => ({ name, args: n % 2 ? { search: 'cilantro', category: 'Mains' } : { category: 'Mains', search: 'cilantro' } });
 const repeated = (s) => (reply.TOOL_REPEATED ? JSON.stringify(s.body).split(reply.TOOL_REPEATED).length - 1 : 0);
-const toolsOff = (provider, body) => (provider === 'custom' ? body.tool_choice === 'none' : provider === 'claude' ? body.tool_choice?.type === 'none' : body.toolConfig?.functionCallingConfig?.mode === 'NONE');
+const toolsOff = (provider, body) => body.tool_choice === 'none';
 
 test('#287: the same call a second time isn\'t run again: the model hears it has that answer already', async () => {
   for (const provider of PROVIDERS) {
@@ -458,7 +459,7 @@ test('#287: a third time, the next request is the last, with the tools off, and 
   assert.match(JSON.parse(read('../src/i18n/en.json')).trace_reply.stuck_on_tool ?? '', /^Trace kept asking for the same information/);
   // An import stuck on a read stops the way it does out of rounds: nothing to ignore.
   fresh({ plan: sameCall() });
-  await assert.rejects(ask('claude', { toolsRequired: true }), { code: client.OUT_OF_ROUNDS_CODE });
+  await assert.rejects(ask('deepseek', { toolsRequired: true }), { code: client.OUT_OF_ROUNDS_CODE });
   assert.deepEqual([calls, seen.length], [1, 3]);
 });
 
@@ -497,7 +498,7 @@ test('#287: a tool that writes runs every time it is asked, and is never said to
     assert.equal(calls, 3, provider);
     assert.ok(seen.every((s) => repeated(s) === 0 && !systemOf(provider, s.body).includes('stuck')), provider);
     // An import that writes the same recipe twice saves it twice, and hears each was saved.
-    fresh({ multi: 2, stopAfter: provider === 'custom' ? 2 : 1, toolResult: { ok: true, recipe: { id: 1 } }, plan: () => ({ name: 'create_recipe', args: { title: 'Salsa', ingredients: ['lime'] } }) });
+    fresh({ multi: 2, stopAfter: 2, toolResult: { ok: true, recipe: { id: 1 } }, plan: () => ({ name: 'create_recipe', args: { title: 'Salsa', ingredients: ['lime'] } }) });
     let saved = 0;
     await ask(provider, { toolsRequired: true, onToolResult: (_n, r) => { if (r?.ok) saved++; } }).catch(() => {});
     assert.deepEqual([calls, saved], [2, 2], provider);

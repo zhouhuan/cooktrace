@@ -41,17 +41,17 @@ function _getOffSearchCountry() {
 
 // Read the user's saved OFF language preference. Barcode lookups send
 // it as `lc=<code>`; name search sends it as `langs=` (offSearchLangs
-// below). Defaults to 'en'.
+// below). Defaults to 'zh' — the Simplified Chinese edition's locale.
 function _getOffSearchLanguage() {
   try {
-    if (typeof localStorage === 'undefined') return 'en';
+    if (typeof localStorage === 'undefined') return 'zh';
     const setKey = settingPrefix() + 'offSearchLanguage';
     const raw = localStorage.getItem(setKey);
-    if (!raw) return 'en';
+    if (!raw) return 'zh';
     const lang = JSON.parse(raw);
-    if (!lang || typeof lang !== 'string') return 'en';
+    if (!lang || typeof lang !== 'string') return 'zh';
     return lang.slice(0, 2).toLowerCase();
-  } catch { return 'en'; }
+  } catch { return 'zh'; }
 }
 
 // The `langs=` value for a name search (nutritrace#320). search-a-licious
@@ -60,7 +60,7 @@ function _getOffSearchLanguage() {
 // product named only in English is still found, and langs=uk alone
 // returned nothing on OFF's production index in 2026-11.
 export function offSearchLangs(lang) {
-  const l = typeof lang === 'string' && lang ? lang.slice(0, 2).toLowerCase() : 'en';
+  const l = typeof lang === 'string' && lang ? lang.slice(0, 2).toLowerCase() : 'zh';
   return l === 'en' ? 'en' : `${l},en`;
 }
 

@@ -224,7 +224,7 @@ Rules:
 
   async function importImage() {
     if (!rawImage) return;
-    const userMsg = _buildImageMessage($aiProvider, 'Please import this recipe.', rawImage);
+    const userMsg = _buildImageMessage($aiProvider, '请导入这道菜谱。', rawImage);
     await _runAi({ userMsg, label: $_('file_import_dialog_ui.reading_photo') });
   }
 
@@ -319,7 +319,7 @@ Rules:
     let base64;
     try { base64 = await _fileToBase64(scannedPdfFile); }
     catch (e) { phase = 'error'; errorMessage = e.message; return; }
-    const userMsg = _buildPdfMessage(provider, 'Please import this recipe from the attached PDF.', base64);
+    const userMsg = _buildPdfMessage(provider, '请从附带的 PDF 中导入这道菜谱。', base64);
     if (!userMsg) {
       phase = 'error';
       errorMessage = $_('file_import_dialog_ui.pdf_needs_provider');
@@ -362,7 +362,7 @@ Rules:
     const provider = $aiProvider;
     const userMsg = {
       role: 'user',
-      content: `Please import the recipe below.
+      content: `请导入下面的菜谱。
 
 ----- BEGIN RECIPE TEXT -----
 ${parseResult.text}

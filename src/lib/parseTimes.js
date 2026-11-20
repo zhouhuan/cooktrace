@@ -38,8 +38,11 @@ const MIN = _any('minute');
 const SEC = _any('second');
 const ONE = _any('one');
 // A unit ends where its word does. An abbreviation's dot ("Std.") stays
-// with the sentence, which it may also be ending.
-const END = '(?!\\p{L})';
+// with the sentence, which it may also be ending. The lookahead only
+// rejects a following Latin letter: CJK text (zh: "煮10分钟，翻面") runs
+// words together without spaces, so a Chinese character after a unit is
+// normal and must not end the match.
+const END = '(?![A-Za-z\u00C0-\u024F])';
 // Joining an hour and its minutes: "1 hour 30 min", "1 hora y 30 minutos",
 // "1h30min".
 const AND = `(?:\\s*(?:,|${_any('and')}(?!\\p{L}))\\s*|\\s*)`;
@@ -48,7 +51,7 @@ const HOUR_OF = `(?:${HOUR}${END}|${HOUR_ABBR}\\.)`;
 const TO = `\\s*(?:-|\\u2013|\\u2014|${_any('to')}(?!\\p{L}))\\s*`;
 const AND_HALF = `\\s*${_any('and_half')}(?!\\p{L})`;
 const PHRASE = PHRASES.size
-  ? `(?:${[...PHRASES.keys()].sort((a, b) => b.length - a.length).map(_esc).join('|')})(?!\\p{L})`
+  ? `(?:${[...PHRASES.keys()].sort((a, b) => b.length - a.length).map(_esc).join('|')})(?![A-Za-z\u00C0-\u024F])`
   : '(?!)';
 
 const PATTERN = new RegExp(
@@ -113,8 +116,10 @@ export function findTimes(text) {
   let m;
   while ((m = PATTERN.exec(text)) !== null) {
     // A time starts its own word: not the "0 min" inside "20 min", nor the
-    // "en h" at the end of a longer word.
-    if (m.index > 0 && /[\p{L}\p{N}.,/]/u.test(text[m.index - 1])) {
+    // "en h" at the end of a longer word. Only Latin letters count as
+    // "inside a word" here — CJK text has no spaces, so a Chinese
+    // character before a time ("再煮10分钟") starts it, not splits it.
+    if (m.index > 0 && /[A-Za-z\u00C0-\u024F\p{N}.,/]/u.test(text[m.index - 1])) {
       PATTERN.lastIndex = m.index + 1;
       continue;
     }

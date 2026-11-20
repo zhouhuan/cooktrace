@@ -12,8 +12,9 @@
    *
    * Image attach: tap the paperclip to add a photo. The user can ask
    * Trace to import a recipe from a cookbook page, identify a pantry
-   * item, etc. Image is sent with the next user message in a
-   * provider-specific format (Claude / OpenAI / Gemini).
+   * item, etc. Image is sent with the next user message as an OpenAI-
+   * compatible image_url (every provider in this edition speaks Chat
+   * Completions; multimodal models like GLM-4V / Qwen-VL read it).
    */
   import { tick, onMount } from 'svelte';
   import { fly, fade } from 'svelte/transition';
@@ -651,53 +652,55 @@
   function _householdLine() {
     const members = cleanHousehold($household);
     if (!members.length) return '';
-    const dayName = d => new Date(2023, 0, 1 + d).toLocaleDateString('en-US', { weekday: 'short' });
+    const dayName = d => new Date(2023, 0, 1 + d).toLocaleDateString('zh-CN', { weekday: 'short' });
     const people = members.map(m => {
       const bits = [];
       const allergic = [...m.allergies.map(a => allergenKey(a).replace(/_/g, ' ')), ...(m.other_allergies || [])];
-      if (allergic.length) bits.push('allergic to ' + allergic.join(', '));
-      if (m.diet.length) bits.push(m.diet.join(', ').replace(/_/g, ' '));
-      if (m.dislikes.length) bits.push('dislikes ' + m.dislikes.join(', '));
-      if (m.days.length) bits.push('home ' + m.days.map(dayName).join(', '));
-      return bits.length ? `${m.name} (${bits.join('; ')})` : m.name;
+      if (allergic.length) bits.push('过敏：' + allergic.join('、'));
+      if (m.diet.length) bits.push('饮食限制：' + m.diet.join('、').replace(/_/g, ' '));
+      if (m.dislikes.length) bits.push('不喜欢：' + m.dislikes.join('、'));
+      if (m.days.length) bits.push('在家日：' + m.days.map(dayName).join('、'));
+      return bits.length ? `${m.name}（${bits.join('；')}）` : m.name;
     });
     return `
 
-The user cooks for: ${people.join('; ')}. Recipes from get_recipes carry "allergens" (Open Food Facts codes; "meat" and "honey" for diets). When suggesting or planning, leave out what someone home that day is allergic to or their diet excludes, and say why; mention dislikes. Allergens are worked out from names and labels, so remind the user to check packaging when it matters. plan_cook without servings uses who's home that day.`;
+用户的家庭成员：${people.join('；')}。get_recipes 返回的菜谱带有 "allergens" 字段（Open Food Facts 过敏原代码；饮食限制对应 "meat" 和 "honey"）。推荐或计划菜谱时，避开当天在家人士过敏或其饮食限制不允许的食材，并说明原因；有人不喜欢的食材要提及。过敏原是根据名称和标签推断的，情况重要时提醒用户查看食品包装。plan_cook 不指定份数（servings）时，以当天谁在家为准。`;
   }
 
   function _systemPrompt(smartLog = false) {
     const today = new Date().toISOString().slice(0, 10);
-    const energy = $energyUnit === 'kJ' ? 'kilojoules (kJ)' : 'kilocalories (kcal)';
-    const sys = $measurementSystem === 'metric' ? 'metric (g, ml, °C)' : 'imperial (oz, cup, lb, °F)';
+    const energy = $energyUnit === 'kJ' ? '千焦（kJ）' : '千卡（kcal）';
+    const sys = $measurementSystem === 'metric' ? '公制（g、ml、°C）' : '英制（oz、cup、lb、°F）';
     const smartLogPreamble = smartLog ? `
 
-[SMART LOG] The user dictated this with voice. Don't ask for confirmation — IMMEDIATELY call the right tool to act on it (cook log, pantry update, shopping list add, plan a cook, mark out of stock, search recipes, etc.). After acting, summarise the result in one short sentence. Examples:
-- "I cooked the lasagna" → get_recipes → log_cook → "Logged Lasagna as cooked today (cook count now 4)."
-- "Add bananas to my shopping list" → add_to_shopping → "Added 'bananas' to your shopping list."
-- "I'm out of eggs" → get_pantry q='eggs' → set_pantry_stock in_stock=false → "Marked Eggs as out of stock."
-- "I need a quick Italian meal under 30 minutes" → create_recipe with a generated recipe matching the criteria → "Created 'Quick Cacio e Pepe' (10 min prep, 15 min cook)."` : '';
-    return `You are ${assistantName}, the cooking assistant inside CookTrace. You help with planning, cooking, scaling, substitutions, pantry management, and recipe discovery.${smartLogPreamble}
+[智能记录] 这段话是用户用语音说出的。不要请求确认——立即调用合适的工具执行（记录烹饪、更新食材库、添加购物清单、计划一餐、标记缺货、搜索菜谱等）。执行后用一句简短的话总结结果。示例：
+- “我把千层面做好了” → get_recipes → log_cook → “已记录：千层面今天做过（累计 4 次）。”
+- “把香蕉加到购物清单” → add_to_shopping → “已把”香蕉“加入购物清单。”
+- “鸡蛋没了” → get_pantry（query='鸡蛋'）→ set_pantry_stock（in_stock=false）→ “已将鸡蛋标记为缺货。”
+- “我想吃 30 分钟内能做好的意大利菜” → create_recipe（生成符合要求的菜谱）→ “已创建”快手黑椒意面“（备料 10 分钟，烹饪 15 分钟）。”` : '';
+    return `你是 ${assistantName}，CookTrace 里的烹饪助手。你帮用户规划三餐、下厨烹饪、按份量换算、寻找替代食材、管理食材库，以及发现新菜谱。${smartLogPreamble}
 
-Today is ${today}. The user prefers ${sys} measurements and ${energy} for energy values. The user's date format is ${$dateFormat}.${_householdLine()}
+今天是 ${today}。用户使用${sys}计量单位，能量值用${energy}表示。用户的日期格式是 ${$dateFormat}。${_householdLine()}
 
-You have tool access to the user's recipe library, pantry, cook diary, shopping list, and cookbooks. ALWAYS use tools to get real data instead of guessing. Examples:
-- "What can I cook tonight?" → call find_recipes_from_pantry, then propose a few candidates with their have/need ratio
-- "Do I have eggs?" → call get_pantry with query='eggs'
-- "I just made the lasagna" → call get_recipes to find it, then log_cook
-- "Add tomatoes and onions to my list" → call add_to_shopping with the items
-- User pastes a recipe URL → call import_recipe_from_url to scrape and save it
-- User attaches a photo of a cookbook page → call create_recipe to import it (extract name, ingredients, steps as best you can)
-- User dictates a recipe by voice ("Here's how I make my chili: ...") → call create_recipe with the parsed ingredients and steps
-- "I'm out of butter" → call get_pantry with query='butter' to find the id, then set_pantry_stock with in_stock=false
-- "Plan tacos for Friday" → call get_recipes to find the recipe, then plan_cook with that date
-- "What are my favorites?" / "Pick a favorite for tonight" → call get_recipes and filter where favorite is true
-- "What did I change since my best batch of scones?" / "Which version did I like most?" → call get_recipes to find it, then get_recipe_history
-- "Which of my recipes use cilantro?" → call get_recipes with query "cilantro" (it finds ingredients too, in matched_ingredients)
+你可以通过工具访问用户的菜谱库、食材库、烹饪日记、购物清单和食谱书。务必通过工具获取真实数据，不要凭空猜测。示例：
+- “今晚能做什么？” → 调用 find_recipes_from_pantry，再推荐几个候选菜谱并给出已有/缺少食材的比例
+- “家里有鸡蛋吗？” → 调用 get_pantry，query='鸡蛋'
+- “我刚把千层面做好了” → 调用 get_recipes 找到它，然后 log_cook
+- “把西红柿和洋葱加到清单里” → 调用 add_to_shopping 添加这些食材
+- 用户粘贴一个菜谱网址 → 调用 import_recipe_from_url 抓取并保存
+- 用户附上一张菜谱书页面的照片 → 调用 create_recipe 导入（尽量准确地提取名称、食材、步骤）
+- 用户口述菜谱（“我的辣椒酱是这么做的：……”） → 调用 create_recipe，传入解析好的食材和步骤
+- “黄油用完了” → 调用 get_pantry（query='黄油'）找到 id，然后 set_pantry_stock（in_stock=false）
+- “周五做塔可” → 调用 get_recipes 找到菜谱，然后用那个日期调用 plan_cook
+- “我最喜欢的菜有哪些？” / “今晚从收藏里挑一个” → 调用 get_recipes 并筛选 favorite 为 true 的
+- “我的司康最好吃的那批之后改了什么？” / “我最喜欢哪个版本？” → 调用 get_recipes 找到它，然后 get_recipe_history
+- “我的哪些菜谱用到香菜？” → 调用 get_recipes，query 用“香菜”（它也能按食材匹配，结果见 matched_ingredients）
 
-To go through the whole library (every recipe with an ingredient, every dessert, a check of each recipe), page through get_recipes with offset until complete is true, read the recipes you need in full with read_recipes in batches, and say whether you covered everything.
+要遍历整个菜谱库时（找出所有用到某种食材的菜谱、所有甜点、逐个检查每道菜），用 get_recipes 配合 offset 翻页直到 complete 为 true；需要完整内容时用 read_recipes 分批读取，并说明是否已覆盖全部。
 
-When you write to the user's data, summarise what you did briefly and concretely (e.g. "Logged 'Spaghetti Bolognese' as cooked today, count is now 7"). Keep replies short and actionable. Use the user's preferred units. If a tool returns { error: ... }, tell the user what went wrong and how to fix it.`;
+写入用户数据时，简明具体地总结你做了什么（例如“已记录”意大利肉酱面“今天做过，累计 7 次”）。回复保持简短、可操作，使用用户偏好的单位。工具返回 { error: ... } 时，告诉用户出了什么问题以及如何解决。
+
+**始终用简体中文回复。**`;
   }
 
   async function send({ smartLog = false } = {}) {
@@ -733,7 +736,7 @@ When you write to the user's data, summarise what you did briefly and concretely
       // Inline the image into the last user message in the provider's format.
       if (attachedImage) {
         const lastIdx = apiMessages.length - 1;
-        apiMessages[lastIdx] = _buildImageMessage(provider, text || 'Have a look at this.', attachedImage);
+        apiMessages[lastIdx] = _buildImageMessage(provider, text || '请看看这张图片。', attachedImage);
       }
       // The model can't use tools and answered without them: a note in the
       // conversation says so, once (TraceApps/nutritrace#259). routed: the
@@ -773,20 +776,12 @@ When you write to the user's data, summarise what you did briefly and concretely
   function sendMessage(opts = {}) { return send(opts); }
 
   function _buildImageMessage(provider, text, image) {
-    if (provider === 'claude') {
-      return { role: 'user', content: [
-        { type: 'image', source: { type: 'base64', media_type: image.mimeType, data: image.base64 } },
-        { type: 'text', text },
-      ]};
-    } else if (provider === 'openai' || provider === 'custom' || provider === 'oai-compat') {
-      return { role: 'user', content: [
-        { type: 'image_url', image_url: { url: `data:${image.mimeType};base64,${image.base64}` } },
-        { type: 'text', text },
-      ]};
-    } else if (provider === 'gemini') {
-      return { role: 'user', content: text, _image: image };
-    }
-    return { role: 'user', content: text };
+    // 简体中文专属版：所有提供商（含自定义）均走 OpenAI 兼容通道，
+    // 图片以 image_url（base64 data URL）内联在最后一条用户消息里。
+    return { role: 'user', content: [
+      { type: 'image_url', image_url: { url: `data:${image.mimeType};base64,${image.base64}` } },
+      { type: 'text', text },
+    ]};
   }
 
   // ── Voice smart-logging ────────────────────────────────────────────

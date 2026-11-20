@@ -135,7 +135,7 @@ async function _checkCookDay(userId, today) {
 
   for (const row of rows) {
     if (_alreadyFired(userId, 'cook_day', row.id, today)) continue;
-    const name = row.recipe_name || 'Recipe';
+    const name = row.recipe_name || '菜谱';
     try {
       await notifyCookDay(userId, name, today);
       _markFired(userId, 'cook_day', row.id, today);

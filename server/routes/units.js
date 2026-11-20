@@ -1,7 +1,7 @@
 /**
  * units.js — server-side units catalog management.
  *
- * The 37 built-in cooking units live client-side in src/lib/units.js
+ * The 39 built-in cooking units live client-side in src/lib/units.js
  * and never change. This route surfaces just the per-user overlays:
  *   - which built-ins the user has hidden
  *   - which custom units the user has added

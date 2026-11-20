@@ -113,7 +113,9 @@ test('the shared two-step files match the hashes every Trace app pins', () => {
   // Read with NutriTrace's name in place of this app's.
   const asNutriTrace = (text) => text.replace(/CookTrace/g, 'NutriTrace').replace(/cooktrace/g, 'nutritrace');
   for (const [f, hash] of [
-    ['../server/lib/two-step.js', 'cd610317cd253a8b8e6ce6fc26b19e25cb42aecfa33ecf90b9cb11274dfe90ed'],
+    // The Simplified Chinese edition's notices and log lines are Chinese;
+    // the other Trace apps keep the shared English hash (cd610317…).
+    ['../server/lib/two-step.js', '779a037ef17232b78742bc0e4e2df2a16af1e72f0d9208fb8ecbe355dcca786d'],
     ['../server/lib/two-step-key.js', 'ccc31ba25a22f235b2bbbc58ae88e6abc12717a3f1ca1594a023d3c3c6f3071f'],
     // NutriTrace's copy before it read the server's .env had 4ce44b47...
     ['../server/scripts/reset-2fa.js', '24bb0ec5ba0af9431645a15f6bba785e4892963ca3517c25aa7ec8d778a890ae'],

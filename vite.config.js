@@ -101,9 +101,9 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'CookTrace',
+        name: 'CookTrace · 厨房好帮手',
         short_name: 'CookTrace',
-        description: 'Trace Every Recipe — From Pantry to Plate. Self-hosted recipes, pantry, and cook diary.',
+        description: '自托管菜谱、食材库与烹饪日记，从食材库到餐桌全程记录。',
         theme_color: '#0A0B0F',
         background_color: '#0A0B0F',
         display: 'standalone',
@@ -113,8 +113,8 @@ export default defineConfig({
         // Long-press the installed app's icon (from TraceApps/nutritrace#278):
         // the shopping list, or scan an item into the pantry (src/lib/app-shortcut.js).
         shortcuts: [
-          { name: 'Shopping List', short_name: 'Shopping List', url: './#/?new=shopping', icons: [{ src: 'icons/icon-192.png', sizes: '192x192' }] },
-          { name: 'Scan to Pantry', short_name: 'Scan to Pantry', url: './#/?new=scan', icons: [{ src: 'icons/icon-192.png', sizes: '192x192' }] },
+          { name: '购物清单', short_name: '购物清单', url: './#/?new=shopping', icons: [{ src: 'icons/icon-192.png', sizes: '192x192' }] },
+          { name: '扫码入库', short_name: '扫码入库', url: './#/?new=scan', icons: [{ src: 'icons/icon-192.png', sizes: '192x192' }] },
         ],
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },

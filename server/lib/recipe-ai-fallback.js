@@ -12,8 +12,8 @@
 import * as cheerio from 'cheerio';
 import { logger } from '../logger.js';
 import { fetchChecked, serviceBase } from './ssrf-guard.js';
-import { openAIBase } from './openai-chat-params.js';
-import { AI_DEFAULT_MODELS, modelFor } from './ai-models.js';
+import { openAIBase, openAIChatUrl } from './openai-chat-params.js';
+import { AI_DEFAULT_MODELS, AI_PROVIDER_BASE_URLS, modelFor } from './ai-models.js';
 
 // Cap the HTML payload sent to the LLM. Recipes virtually never need
 // more than this; oversized pages get truncated.
@@ -160,13 +160,23 @@ function _parseJsonish(text) {
 async function _callProvider(cfg, systemPrompt, userText) {
   const provider = cfg.provider;
   const apiKey   = cfg.apiKey;
-  // Renamed models go out under their new name, shut-down Gemini ones as
-  // the default, the same as Trace (lib/ai-models.js).
+  // The model the user set, or the provider's default
+  // (lib/ai-models.js), the same as Trace.
   const model    = modelFor(provider, cfg.model || _defaultModel(provider));
   switch (provider) {
-    case 'claude': return _callClaude(apiKey, model, systemPrompt, userText);
-    case 'openai': return _callOpenAI(apiKey, model, systemPrompt, userText);
-    case 'gemini': return _callGemini(apiKey, model, systemPrompt, userText);
+    // Built-in Chinese providers: their own official address, all
+    // OpenAI-compatible. The address is a constant, so no user-endpoint
+    // address check applies (fetch, not _sendToUserEndpoint).
+    case 'deepseek':
+    case 'kimi':
+    case 'zhipu':
+    case 'qwen':
+      return _callOpenAI(apiKey, model, systemPrompt, userText, AI_PROVIDER_BASE_URLS[provider]);
+    case 'doubao': {
+      // Volcano Ark: the model is the user's inference endpoint ID.
+      if (!model) throw new Error('AI: doubao (Volcano Ark) needs a model — the inference endpoint ID (ep-…)');
+      return _callOpenAI(apiKey, model, systemPrompt, userText, AI_PROVIDER_BASE_URLS.doubao);
+    }
     // 'custom' is the app's name for an OpenAI-compatible endpoint,
     // 'oai-compat' the server's (AI_PROVIDER).
     case 'custom':
@@ -221,7 +231,7 @@ export function importAiConfig(user, env) {
   if (provider && apiKey) return { provider, apiKey, model: model || '', baseUrl: baseUrl || '', source: 'user' };
   if (env.AI_API_KEY || (isCompatibleProvider(env.AI_PROVIDER) && env.AI_BASE_URL)) {
     return {
-      provider: env.AI_PROVIDER || 'claude',
+      provider: env.AI_PROVIDER || 'deepseek',
       apiKey:   env.AI_API_KEY || '',
       model:    env.AI_MODEL || '',
       baseUrl:  env.AI_BASE_URL || '',
@@ -232,30 +242,10 @@ export function importAiConfig(user, env) {
   return null;
 }
 function _defaultModel(provider) {
-  return ({ ...AI_DEFAULT_MODELS, custom: 'gpt-5.6-luna' })[provider] || '';
+  return ({ ...AI_DEFAULT_MODELS, custom: 'deepseek-chat' })[provider] || '';
 }
 
-async function _callClaude(apiKey, model, systemPrompt, userText) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 4096,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userText }],
-    }),
-  });
-  if (!res.ok) throw await _providerError('Claude', res);
-  const data = await res.json();
-  return data.content?.[0]?.text || '';
-}
-
-async function _callOpenAI(apiKey, model, systemPrompt, userText, baseUrl = 'https://api.openai.com', cfg = {}) {
+async function _callOpenAI(apiKey, model, systemPrompt, userText, baseUrl = 'https://api.deepseek.com', cfg = {}) {
   const headers = { 'content-type': 'application/json', 'accept': 'application/json' };
   // Some self-hosted endpoints (Ollama in particular) reject a placeholder key.
   if (apiKey && apiKey !== 'no-key') headers['Authorization'] = `Bearer ${apiKey}`;
@@ -263,7 +253,9 @@ async function _callOpenAI(apiKey, model, systemPrompt, userText, baseUrl = 'htt
   // redirect hop too; the server's own (AI_* env vars) is the owner's.
   const send = cfg.source === 'user' ? _sendToUserEndpoint(cfg) : fetch;
   const base = cfg.source === 'user' ? (serviceBase(baseUrl) ?? baseUrl) : baseUrl;
-  const res = await send(`${base}/v1/chat/completions`, {
+  // A base ending in a versioned path (/v1, Ark's /v3, Zhipu's /v4)
+  // keeps it; a bare origin gets /v1 (openai-chat-params.js).
+  const res = await send(openAIChatUrl(base), {
     method: 'POST',
     headers,
     body: JSON.stringify({
@@ -275,21 +267,7 @@ async function _callOpenAI(apiKey, model, systemPrompt, userText, baseUrl = 'htt
       ],
     }),
   });
-  if (!res.ok) throw await _providerError('OpenAI', res);
+  if (!res.ok) throw await _providerError('AI', res);
   const data = await res.json();
   return data.choices?.[0]?.message?.content || '';
-}
-
-async function _callGemini(apiKey, model, systemPrompt, userText) {
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: systemPrompt }] },
-      contents: [{ role: 'user', parts: [{ text: userText }] }],
-    }),
-  });
-  if (!res.ok) throw await _providerError('Gemini', res);
-  const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }

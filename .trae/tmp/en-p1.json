@@ -1,0 +1,1053 @@
+{
+ "nav": {
+  "recipes": "Recipes",
+  "pantry": "Pantry",
+  "diary": "Diary",
+  "shopping": "Shopping",
+  "manage": "Manage",
+  "settings": "Settings"
+ },
+ "sync": {
+  "synced": "Synced",
+  "syncing": "Syncing…",
+  "pending_web": "{count, plural, =0 {Offline. Your kitchen still works here.} one {Offline. # change is waiting to go up.} other {Offline. # changes are waiting to go up.}}",
+  "refused": "Your server didn't accept {what}: {reason}.",
+  "sign_out_waiting_title": "Changes are still waiting",
+  "sign_out_waiting": "{count, plural, one {# change has not reached your server yet. Signing out now discards it. Connect and try again to keep it.} other {# changes have not reached your server yet. Signing out now discards them. Connect and try again to keep them.}}",
+  "sign_out_anyway": "Sign Out Anyway",
+  "switch_account_waiting_title": "Another Account's Changes Are Waiting",
+  "switch_account_waiting": "{count, plural, one {# change made on this device by the account signed in before has not reached the server. Signing in now discards it. To keep it, sign in as that account first.} other {# changes made on this device by the account signed in before have not reached the server. Signing in now discards them. To keep them, sign in as that account first.}}",
+  "switch_account_anyway": "Sign In Anyway",
+  "same_server_title": "Is This the Same Server?",
+  "same_server": "This server is at a different address than the one this device used before, and it can't tell whether it's the same server. If it is, your data here stays and syncs with it. If not, it's treated as another account's.",
+  "same_server_yes": "Same Server",
+  "same_server_no": "Different Server",
+  "account_check_failed_title": "Couldn't Open Your Data",
+  "account_check_failed": "This device couldn't check whose data it holds, so nothing is shown yet. Try again, or sign out.",
+  "sync_offline": "Offline",
+  "sync_failing": "Can't reach the server",
+  "not_synced": "Not synced yet",
+  "retry": "Retry",
+  "retrying": "Retrying…",
+  "dismiss_message": "Dismiss sync message",
+  "error_title": "Sync failed",
+  "connection": {
+   "server_fallback": "server",
+   "no_network_title": "No network connection",
+   "cant_reach_title": "Can’t reach {host}",
+   "reconnect": "Reconnect to the internet.",
+   "server_error": "The server returned HTTP {status}. Try again shortly.",
+   "mobile_data": "You’re connected through mobile data. This server may require your home Wi-Fi or VPN.",
+   "check_connection": "Check your Wi-Fi, VPN, or server.",
+   "saved_locally": "Your changes are saved locally and will sync automatically."
+  }
+ },
+ "routes": {
+  "recipes": {
+   "title": "Recipes",
+   "search_placeholder": "Search recipes…",
+   "new_recipe": "New Recipe",
+   "empty_title": "No Recipes Yet",
+   "empty_desc": "Add your first recipe to get started.",
+   "create_cta": "Create a Recipe",
+   "no_match": "No recipes match \"{q}\"."
+  },
+  "pantry": {
+   "title": "Pantry",
+   "search_placeholder": "Search pantry…",
+   "empty_title": "Pantry Is Empty",
+   "empty_desc": "Add ingredients here, or save a recipe. Every ingredient you use auto-populates the pantry.",
+   "add_item": "Add an Item",
+   "no_match": "No matches for \"{q}\"."
+  },
+  "diary": {
+   "title": "Diary",
+   "empty_title": "Nothing Logged Yet",
+   "empty_desc": "Mark recipes as cooked from the recipe page, or plan one for a future date.",
+   "plan_cook": "Plan a Cook",
+   "no_matches_title": "No Matches",
+   "no_matches_desc": "No diary entries found for {name} in the current range.",
+   "this_recipe": "this recipe",
+   "clear_filter": "Clear Filter"
+  },
+  "shopping": {
+   "title": "Shopping",
+   "empty_title": "List Is Empty",
+   "empty_desc": "Add items above, or pull missing ingredients from a recipe.",
+   "add_from_recipe": "Add from Recipe",
+   "add_placeholder": "Add item…",
+   "group_by_label": "Group by",
+   "group_by_aisle": "By Aisle",
+   "group_by_recipe": "By Recipe",
+   "group_by_flat": "Flat",
+   "uncategorized": "Uncategorized",
+   "other": "Other",
+   "change_aisle": "Change Aisle",
+   "delete": "Delete",
+   "aisle_help": "Pick a known aisle or type a fresh label. Items added later from the same pantry category will use its default aisle automatically.",
+   "aisle_placeholder": "e.g. Produce, Dairy, Bakery…",
+   "aisle_set": "Set",
+   "aisle_none": "No aisle",
+   "hide_checked": "Hide checked",
+   "show_checked_n": "Show {n} checked"
+  },
+  "settings": {
+   "title": "Settings"
+  }
+ },
+ "common": {
+  "sign_out": "Sign Out",
+  "log_out": "Log Out",
+  "signing_out": "Signing out…",
+  "experimental": "Experimental",
+  "hide": "Hide",
+  "save": "Save",
+  "saving": "Saving…",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "back": "Back",
+  "edit": "Edit",
+  "done": "Done",
+  "close": "Close",
+  "clear": "Clear",
+  "loading": "Loading…",
+  "signed_in": "Signed In",
+  "signed_out": "Signed Out",
+  "linked": "Linked",
+  "unlinked": "Account unlinked",
+  "admin": "admin",
+  "errors": {
+   "cant_reach_server": "Couldn't reach the server.",
+   "failed": "Couldn't do that. Try again.",
+   "unlink_failed": "Couldn't unlink the account"
+  }
+ },
+ "pantry_sheet": {
+  "name": "Name",
+  "brand": "Brand",
+  "barcode": "Barcode",
+  "on_hand": "On Hand",
+  "variants": "Variants",
+  "expires_on": "Expires On",
+  "expires_on_hint": "(optional, helps catch items going bad)"
+ },
+ "trace": {
+  "panel_label": "AI coach chat",
+  "panel_sub": "Your AI Cooking & Recipe Assistant",
+  "welcome_name": "Hi, I'm {name}!",
+  "welcome_desc": "Ask me anything about recipes, pantry, meal plans, or shopping. I have access to your kitchen data and can find recipes, scale them, log what you made, and tell you what you can cook from what's on hand.",
+  "chip_pantry": "Cook From My Pantry",
+  "chip_pantry_ask": "What can I make with what's in my pantry?",
+  "chip_suggestion": "Recipe Suggestion",
+  "chip_suggestion_ask": "Suggest a recipe for tonight.",
+  "chip_recent": "Recently Cooked",
+  "chip_recent_ask": "What recipes have I cooked recently?",
+  "chip_shopping": "Shopping List",
+  "chip_shopping_ask": "Build a shopping list for this week.",
+  "ask_placeholder": "Ask {name}…",
+  "listening": "Listening…",
+  "clear_conversation": "Clear conversation",
+  "clear_confirm_title": "Clear this conversation?",
+  "clear_confirm_message": "Messages in this conversation will be deleted. This can't be undone.",
+  "clear_confirm_ok": "Clear",
+  "attach_image": "Attach image"
+ },
+ "editor": {
+  "name_required": "Name *",
+  "description": "Description",
+  "rating": "Rating",
+  "prep_min": "Prep (min)",
+  "cook_min": "Cook (min)",
+  "rest_min": "Rest (min)",
+  "total_min": "Total (min)",
+  "yield": "Yield",
+  "category": "Category",
+  "source_url": "Source URL",
+  "video_url": "Video URL",
+  "add_ingredient": "Add Ingredient",
+  "add_step": "Add Step",
+  "add_group": "Add Group"
+ },
+ "cooking_now": {
+  "label": "Cooking",
+  "untitled": "A recipe",
+  "label_many": "Cooking {n}",
+  "just_started": "just started",
+  "minutes": "{n, plural, one {# min} other {# min}}",
+  "hours": "{n}h {m}m",
+  "more": "{n, plural, one {# more cooking} other {# more cooking}}"
+ },
+ "recipe": {
+  "prep_time": "Prep Time",
+  "cook_time": "Cook Time",
+  "rest_time": "Rest Time",
+  "total_time": "Total Time",
+  "servings": "Servings",
+  "serving_singular": "Serving",
+  "ingredients": "Ingredients",
+  "instructions": "Instructions",
+  "kitchen_gear": "Kitchen Gear",
+  "video_instructions": "Video Instructions",
+  "notes": "Notes",
+  "nutrition": "Nutrition",
+  "cook_history": "Cook History",
+  "cook_mode": "Cook Mode",
+  "tags": "Tags"
+ },
+ "settings": {
+  "appearance": {
+   "section": "Appearance",
+   "theme": "Theme",
+   "accent_color": "Accent Color",
+   "navigation_style": "Navigation Style"
+  },
+  "regional": {
+   "section": "Regional & Units",
+   "language": "Language"
+  },
+  "cooking": {
+   "section": "Cooking"
+  },
+  "household": {
+   "section": "Household"
+  },
+  "nutrition": {
+   "section": "Nutrition"
+  },
+  "server_connection": {
+   "section": "Server Connection"
+  },
+  "email": {
+   "section": "Email (SMTP)"
+  },
+  "backup": {
+   "section": "Backup & Restore"
+  },
+  "import": {
+   "section": "Import from Another App"
+  },
+  "kitchens": {
+   "section": "Kitchens"
+  },
+  "diagnostics": {
+   "section": "Diagnostics"
+  },
+  "updates": {
+   "section": "Updates"
+  },
+  "support": {
+   "section": "Support"
+  },
+  "about": {
+   "section": "About"
+  },
+  "diary": {
+   "section": "Diary"
+  },
+  "water": {
+   "section": "Water"
+  },
+  "foods": {
+   "section": "Foods"
+  },
+  "categories": {
+   "section": "Categories"
+  },
+  "nutrients": {
+   "section": "Nutrients"
+  },
+  "goals": {
+   "section": "Goals"
+  },
+  "body_stats": {
+   "section": "Body Stats"
+  },
+  "statistics": {
+   "section": "Statistics"
+  },
+  "connected_services": {
+   "section": "Food Sources"
+  },
+  "ai": {
+   "section": "AI Assistant"
+  },
+  "notifications": {
+   "section": "Notifications"
+  },
+  "wellness": {
+   "section": "Wellness"
+  },
+  "sharing": {
+   "section": "Food Sharing"
+  },
+  "profile_hero": {
+   "label_fallback": "My Profile",
+   "subtitle_empty": "Tap to add your name and photo"
+  },
+  "authentication": {
+   "section": "Authentication"
+  },
+  "apitokens": {
+   "section": "API Tokens"
+  },
+  "webhooks": {
+   "section": "Webhooks"
+  },
+  "users": {
+   "section": "Users",
+   "users_heading": "Users",
+   "add_user": "+ Add User",
+   "username": "Username",
+   "username_required": "Username *",
+   "full_name": "Full Name (Optional)",
+   "password_required": "Password *",
+   "confirm_required": "Confirm *",
+   "role": "Role",
+   "role_admin": "admin",
+   "role_user": "user",
+   "role_self_suffix": "(you)",
+   "create": "Create",
+   "creating": "Creating…",
+   "delete_user_title": "Delete {name}?",
+   "delete_user_message": "All of this user’s data — foods, meals, diary entries, settings — will be removed. This cannot be undone.",
+   "delete": "Delete",
+   "promote_title": "Promote {name}?",
+   "promote_message": "They’ll be able to manage users, sharing, email config, and OIDC providers.",
+   "promote_confirm": "Promote",
+   "demote_title": "Demote {name}?",
+   "demote_message": "They’ll lose admin access. You can promote them back later.",
+   "demote_confirm": "Demote",
+   "reset_password": "Reset Password",
+   "reset_password_prompt": "Set new password for {name}\n\n(Must be 8+ chars with upper, lower, number, and special character.)",
+   "invite_user": "Invite User",
+   "invite_user_explainer": "Send a sign-up link so the user picks their own password. Recommended.",
+   "email_optional": "Email (Optional)",
+   "send_invite": "Send Invite",
+   "generate_link": "Generate Invite Link",
+   "invite_sent": "Invite sent",
+   "invite_sent_to": "Invite sent to {email}",
+   "user_fallback": "user",
+   "share_link_intro": "Share this link:",
+   "copy": "Copy",
+   "copy_link": "Copy Link",
+   "add_user_show": "Add User Manually",
+   "add_user_hide": "Hide Manual Add",
+   "add_user_explainer": "You set the username and password yourself, then share them with the user. Useful when SMTP isn’t configured or for offline setups.",
+   "create_directly": "Create User",
+   "session_duration": "Session Duration",
+   "session_never": "Never Expires",
+   "session_8h": "8 hours",
+   "session_1d": "1 day",
+   "session_7d": "7 days",
+   "session_30d": "30 days",
+   "session_90d": "90 days",
+   "session_1y": "1 year",
+   "save": "Save",
+   "disable_um": "Disable User Management",
+   "disable_um_subtitle": "Removes all user accounts and returns to single-user mode",
+   "disable_um_title": "Disable User Management?",
+   "disable_um_message": "This will remove all user accounts and their data cannot be recovered. The app will return to single-user mode.",
+   "disable_um_confirm": "Disable & Delete All",
+   "enable_um": "Enable User Management",
+   "enable_um_subtitle": "Add multiple user accounts with separate data & settings",
+   "create_admin_account": "Create Admin Account",
+   "create_admin_explainer": "The first account is always admin. All existing food, meal, and diary data on this server will be assigned to it.",
+   "enable_create": "Enable & Create Admin",
+   "enabling": "Enabling…",
+   "toast_user_created": "User added",
+   "toast_user_deleted": "User deleted",
+   "toast_password_reset": "Password reset",
+   "toast_role_changed": "{name} is now {role}",
+   "toast_um_enabled": "User management turned on",
+   "toast_um_disabled": "User management turned off",
+   "toast_invite_sent": "Invite sent",
+   "toast_link_copied": "Link copied",
+   "err_username_required": "Enter a username.",
+   "err_passwords_mismatch": "The passwords don't match.",
+   "err_username_password_required": "Enter a username and a password.",
+   "err_registration_failed": "Couldn't create the admin account",
+   "err_failed_to_add": "Couldn't add the user",
+   "err_could_not_change_role": "Couldn't change the role",
+   "err_could_not_reset_password": "Couldn't reset the password",
+   "err_could_not_reach_server": "Couldn't reach the server."
+  },
+  "server": {
+   "section": "Server Connection"
+  }
+ },
+ "attach_image": {
+  "button": "Attach Image",
+  "camera": "Camera",
+  "gallery": "Gallery"
+ },
+ "login": {
+  "subtitle": "Sign in to your account",
+  "username": "Username",
+  "username_placeholder": "Enter username",
+  "password": "Password",
+  "password_placeholder": "Enter password",
+  "sign_in": "Sign In",
+  "signing_in": "Signing in…",
+  "forgot_password": "Forgot Password?",
+  "locked_out": "Locked Out?",
+  "session_ended": "You were signed out on this device: the account's password or two-step sign-in changed, or Sign Out Everywhere was used. Sign in again to keep going. Changes waiting on this device go up once you do.",
+  "sso_sign_in_with": "Sign In with {provider}",
+  "sso_or": "or",
+  "no_signin_methods": "No sign-in methods available. Ask your administrator.",
+  "errors": {
+   "failed": "Couldn't sign in"
+  },
+  "cookie_warning": {
+   "http_title": "Signing in won't work on this address",
+   "http_body": "This page uses plain HTTP, but the server only sends its sign-in cookie over HTTPS, so your browser throws it away and signing in sends you back to the sign-in page. Open CookTrace over HTTPS, or, on a trusted home network, set INSECURE_COOKIES=1 on the server and restart it.",
+   "dropped_title": "Your browser didn't keep you signed in",
+   "dropped_body": "Your password was right, but the browser didn't keep the sign-in cookie. Check that cookies are allowed for this site, and if CookTrace is behind a reverse proxy, that the proxy passes cookies through.",
+   "fix_link": "How to fix it"
+  },
+  "recovery": {
+   "confirm_delete": "This will delete all user accounts and everything saved in them (recipes, pantry and plans). Continue?",
+   "explainer_delete": "If you never set up user accounts intentionally, you can disable user management. <strong>This will delete all user accounts and everything saved in them</strong> (recipes, pantry and plans).",
+   "token_prompt": "Enter the <code>RECOVERY_TOKEN</code> from your server environment:",
+   "token_placeholder": "Recovery token",
+   "action": "Disable User Management & Reset",
+   "disabling": "Disabling…",
+   "failed": "Couldn't recover the account",
+   "success": "User management turned off. You're in single-user mode now.",
+   "done": "User management has been disabled.<br>Redirecting…"
+  }
+ },
+ "forgot_password": {
+  "title": "Reset Password",
+  "intro": "Enter your email address and we'll send you a link to reset your password.",
+  "email_label": "Email Address",
+  "send_link": "Send Reset Link",
+  "sending": "Sending…",
+  "back_to_signin": "Back to Sign In",
+  "sent": "If an account exists for <strong>{email}</strong>, a reset link has been sent. Check your inbox."
+ },
+ "reset_password": {
+  "title": "New Password",
+  "verifying": "Verifying link…",
+  "invalid_link": "This reset link is invalid or has expired.",
+  "request_new": "Request a New Link",
+  "success": "Password updated. Redirecting…",
+  "set_for": "Set a new password for <strong>{username}</strong>",
+  "new_password": "New Password",
+  "confirm_password": "Confirm Password",
+  "password_placeholder": "8+ chars, upper, lower, number, symbol",
+  "submit": "Set New Password",
+  "saving": "Saving…",
+  "errors": {
+   "required": "Password is required",
+   "mismatch": "The passwords don't match.",
+   "failed": "Reset failed"
+  }
+ },
+ "profile": {
+  "title": "Profile",
+  "personal_info": "Personal Info",
+  "security": "Security",
+  "change_photo": "Change Photo",
+  "full_name": "Full Name",
+  "full_name_placeholder": "Your full name",
+  "email_placeholder": "Used for password resets",
+  "nickname": "Nickname / Display Name",
+  "nickname_placeholder": "What should we call you?",
+  "birthday": "Birthday",
+  "gender": "Gender",
+  "gender_unset": "Prefer not to say",
+  "change_password": "Change Password",
+  "set_password": "Set Password",
+  "current_password": "Current Password",
+  "confirm_new_password": "Confirm New Password",
+  "saved": "Profile saved",
+  "password_changed": "Password changed",
+  "sign_out_everywhere": "Sign Out Everywhere",
+  "sign_out_everywhere_hint": "Every other browser, phone and watch signs out. This one stays signed in.",
+  "sign_out_everywhere_title": "Sign Out Everywhere?",
+  "sign_out_everywhere_message": "Every other browser, phone and watch signed in to your account is signed out and has to sign in again. A watch signs in again with your phone. This device stays signed in. API tokens keep working: revoke those under API Tokens.",
+  "signed_out_everywhere": "Signed out everywhere else",
+  "linked_accounts": "Linked Accounts",
+  "no_linked_accounts": "No identity providers linked yet.",
+  "link_with": "Link with",
+  "unlink": "Unlink",
+  "danger_zone": "Danger Zone",
+  "delete_account": "Delete My Account",
+  "delete_account_explainer": "Permanently remove your account and all associated data — foods, meals, diary, wellness, settings.",
+  "delete_account_title": "Delete Your Account?",
+  "delete_account_message": "Your foods, meals, diary, settings, and wellness data will be permanently removed. This cannot be undone.",
+  "delete_account_confirm": "Delete Account",
+  "deleting": "Deleting…",
+  "account_deleted": "Account deleted",
+  "errors": {
+   "save_failed": "Couldn't save the profile",
+   "upload_failed": "Couldn't upload the photo",
+   "password_change_failed": "Couldn't change the password",
+   "delete_account_failed": "Couldn't delete the account"
+  }
+ },
+ "wizard": {
+  "nav": {
+   "skip": "Skip",
+   "get_started": "Get Started",
+   "next": "Next",
+   "finish": "Finish"
+  },
+  "welcome": {
+   "title": "Welcome to CookTrace",
+   "desc": "Your personal nutrition tracker. Let's get you set up in about a minute."
+  },
+  "name": {
+   "title": "What should we call you?",
+   "desc": "Used in greetings, the side menu, and your AI assistant. You can change it later in Settings.",
+   "placeholder": "Your name (optional)"
+  },
+  "usermgmt": {
+   "create_account_title": "Create Your Account",
+   "create_account_desc": "Set up your admin account to secure your CookTrace instance. You can invite other users later from Settings.",
+   "multi_user_title": "Multi-User Support",
+   "multi_user_desc": "CookTrace can run in single-user mode (default) or multi-user mode with separate logins and password resets. You can always enable this later in Settings."
+  },
+  "units": {
+   "title": "Measurement System",
+   "desc": "How do you measure things?"
+  },
+  "gender": {
+   "title": "What is your gender?",
+   "desc": "Used to calculate your calorie needs."
+  },
+  "dob": {
+   "title": "When were you born?",
+   "desc": "Your age affects your metabolic rate."
+  },
+  "height": {
+   "title": "What is your height?",
+   "desc": "Used to estimate your calorie needs."
+  },
+  "weight": {
+   "title": "What is your weight?"
+  },
+  "target": {
+   "title": "What is your target weight?"
+  },
+  "activity": {
+   "title": "How active are you?",
+   "desc": "Affects your daily calorie needs."
+  },
+  "integrations": {
+   "title": "Integrations",
+   "desc": "Connect optional services. Skip anything you don't need — you can configure these later in Settings."
+  },
+  "notifications": {
+   "title": "Stay on Track",
+   "desc": "Get helpful reminders and celebrate your wins. You can customize all of these later in Settings."
+  },
+  "summary": {
+   "title": "Your Daily Goals",
+   "desc": "Calculated from your stats using the Mifflin-St Jeor formula."
+  },
+  "skip_modal": {
+   "title": "Skip setup?",
+   "desc": "You can set up your goals, units, and integrations any time from <strong>Settings</strong>. Until then, calorie targets won't be calculated automatically.",
+   "continue": "Continue setup",
+   "skip_now": "Skip for now"
+  }
+ },
+ "wizard_ct": {
+  "household": {
+   "title": "Who Do You Cook For?",
+   "desc": "Add the people you cook for, with any allergies or diets. Planned servings and allergy warnings use this. You can change it later in Settings.",
+   "skip": "Skip"
+  },
+  "updates": {
+   "title": "Check For Updates",
+   "desc": "Your server can tell you when a new CookTrace is out.",
+   "toggle": "Check for updates automatically",
+   "toggle_sub": "It's how you hear about new features, fixes and security updates",
+   "note": "Your server asks GitHub every few hours whether a newer CookTrace is out. Nothing about you or your data is sent. You can change this any time in Settings, Updates."
+  },
+  "welcome": "Welcome to CookTrace",
+  "get_started": "Get Started",
+  "name_ph": "Your name",
+  "back": "Back",
+  "next": "Next",
+  "create_admin": "Create Your Admin Account",
+  "enable_user_accounts": "Enable User Accounts",
+  "admin_account": "Admin Account",
+  "nickname": "Nickname",
+  "optional_ph": "Optional",
+  "full_name": "Full Name",
+  "email": "Email",
+  "continue": "Continue",
+  "cooking_preferences": "Cooking Preferences",
+  "measurement_system": "Measurement System",
+  "default_servings": "Default Servings",
+  "open_cooktrace": "Open CookTrace"
+ },
+ "diary": {
+  "add_food": "Add Food",
+  "notes_placeholder": "How did today feel? Sleep, energy, hunger, cravings…",
+  "nav": {
+   "previous_day": "Previous Day",
+   "next_day": "Next Day",
+   "jump_to_date": "Jump to Date"
+  },
+  "actions": {
+   "cancel_selection": "Cancel Selection",
+   "delete_selected": "Delete Selected",
+   "log_water": "Log Water",
+   "log_water_long": "Water — log your water intake",
+   "nutrition_summary": "Nutrition Summary",
+   "nutrition_summary_long": "Nutrition Summary — full breakdown of today's nutrients",
+   "body_stats": "Body Stats",
+   "body_stats_long": "Body Stats — log weight, body fat, and measurements"
+  },
+  "toast": {
+   "body_stats_saved": "Body stats saved",
+   "updated": "Updated",
+   "item_removed": "Item removed",
+   "activity_removed": "Activity removed"
+  },
+  "errors": {
+   "note_save_failed": "Note save failed",
+   "name_required": "Please enter a name",
+   "nothing_to_save": "Nothing to save",
+   "activity_save_failed": "Could not save activity",
+   "activity_delete_failed": "Could not delete activity"
+  },
+  "activity": {
+   "section": "Activity",
+   "tap_to_add": "Tap to Add Activity",
+   "add": "Add Activity",
+   "add_to_diary": "Add to Diary",
+   "save_changes": "Save Changes",
+   "title_add": "Add Activity",
+   "title_edit": "Edit Activity",
+   "field_name": "Activity",
+   "field_name_placeholder": "e.g. Morning hike",
+   "field_kcal": "Calories Burned",
+   "field_kcal_placeholder": "kcal",
+   "field_duration": "Duration",
+   "field_duration_placeholder": "minutes",
+   "field_distance": "Distance",
+   "field_distance_placeholder": "e.g. 10 mi",
+   "field_optional": "(optional)",
+   "saving": "Adding…",
+   "estimated_short": "est.",
+   "wellness_hint": "Synced workouts from your device live in Wellness",
+   "not_counted": "not counted — using wearable",
+   "policy_chip": "Policy: wearable wins. Toggle in Settings → Diary.",
+   "actions": {
+    "edit": "Edit",
+    "delete": "Delete"
+   },
+   "errors": {
+    "name_required": "Name required",
+    "kcal_required": "Calories required"
+   }
+  }
+ },
+ "foods": {
+  "search_placeholder": "Search foods or scan barcode...",
+  "scan_barcode": "Scan Barcode",
+  "add_new": "Add New",
+  "n_selected": "{n} selected",
+  "add_n": "Add {n}",
+  "adding": "Adding…",
+  "add_selected_to_diary": "Add Selected to Diary",
+  "search_in": "Search {source}",
+  "searching_in": "Searching {source}…",
+  "no_results_in": "No results in {source}",
+  "sources": {
+   "local": "Local",
+   "from_others": "From Others"
+  },
+  "toast": {
+   "deleted": "Deleted",
+   "cloned": "Cloned"
+  }
+ },
+ "smart_log": {
+  "placeholder": "for breakfast I had 2 eggs and toast"
+ },
+ "goals": {
+  "save_goal": "Save Goal",
+  "toast": {
+   "goal_saved": "Goal saved",
+   "water_goal_saved": "Water goal saved",
+   "template_saved": "Template saved",
+   "template_applied": "\"{name}\" applied"
+  }
+ },
+ "food_editor": {
+  "name_placeholder": "Food name",
+  "brand_placeholder": "Brand (optional)",
+  "saved": "Saved",
+  "added_to_diary": "Added to diary",
+  "errors": {
+   "name_required": "Please enter a name"
+  }
+ },
+ "meal_editor": {
+  "meal_name_placeholder": "Meal name",
+  "recipe_name_placeholder": "Recipe name",
+  "errors": {
+   "no_ingredients": "Please add at least one ingredient"
+  }
+ },
+ "pantry": {
+  "title": "Pantry",
+  "add_item": "Add Item",
+  "search_placeholder": "Search pantry…",
+  "scan_barcode": "Scan Barcode",
+  "filters": {
+   "all": "All",
+   "in_stock": "In Stock",
+   "out": "Out",
+   "all_categories": "All Categories",
+   "uncategorized": "Uncategorized",
+   "select_multiple": "Select",
+   "cancel_select": "Cancel"
+  },
+  "external": {
+   "searching_in": "Searching in {source}…",
+   "no_results_in": "No results in {source}",
+   "sources": {
+    "local": "Pantry",
+    "off": "OFF",
+    "usda": "USDA"
+   }
+  },
+  "actions": {
+   "edit": "Edit",
+   "select_multiple": "Select Multiple",
+   "delete": "Delete",
+   "mark_in_stock": "Mark as in Stock",
+   "mark_out_stock": "Mark as Out of Stock"
+  },
+  "bulk": {
+   "selected": "{n} selected",
+   "select_all": "Select All",
+   "clear": "Clear",
+   "delete": "Delete",
+   "confirm_title": "Delete {n} pantry items?",
+   "confirm_message": "Recipes referencing them stay; this just drops them from your pantry."
+  }
+ },
+ "pantry_editor": {
+  "title_add": "Add Pantry Item",
+  "title_edit": "Edit Pantry Item",
+  "cards": {
+   "photo": "Photo",
+   "basic_info": "Basic Info",
+   "inventory": "Inventory",
+   "category": "Category",
+   "notes": "Notes",
+   "nutrition": "Nutrition",
+   "danger": "Danger Zone"
+  },
+  "fields": {
+   "name": "Name",
+   "name_placeholder": "All-purpose flour",
+   "brand": "Brand",
+   "brand_placeholder": "e.g. King Arthur",
+   "barcode": "Barcode",
+   "serving_size": "Serving Size",
+   "serving_unit": "Unit",
+   "on_hand": "On Hand",
+   "in_stock": "In Stock",
+   "in_stock_desc": "Drives the \"X / Y in pantry\" pill on each recipe card.",
+   "category_none": "None",
+   "notes_placeholder": "Where you keep it, expiration, anything else…"
+  },
+  "actions": {
+   "share_to_off": "Share to OFF",
+   "refresh_off": "Refresh from OFF",
+   "refresh_usda": "Refresh from USDA",
+   "uploading": "Uploading…",
+   "loading": "Loading…",
+   "submitted": "Submitted!",
+   "updated": "Updated!",
+   "show_all_nutrients": "Show All Nutrients",
+   "show_less": "Show Less",
+   "remove": "Remove from Pantry"
+  },
+  "linked": {
+   "linked": "Linked: changing serving size scales every nutrient proportionally",
+   "unlinked": "Unlinked: nutrient values stay put when you change serving size"
+  },
+  "errors": {
+   "name_required": "Name is required",
+   "save_failed": "Save failed",
+   "off_lookup_failed": "OFF lookup failed",
+   "off_not_found": "Not found on Open Food Facts",
+   "share_no_barcode": "Add a barcode to share",
+   "refresh_no_barcode": "Add or scan a barcode first"
+  }
+ },
+ "diary_entry": {
+  "title_add": "Add to Diary",
+  "title_edit": "Edit Diary Entry",
+  "save_changes": "Save Changes",
+  "submit": "Add to Diary",
+  "fields": {
+   "date": "Date",
+   "notes": "Notes",
+   "notes_hint": "(how did it turn out?)",
+   "photos": "Photos",
+   "photos_hint": "(optional — add as many as you want)"
+  },
+  "actions": {
+   "open_recipe": "Open Recipe",
+   "mark_cooked": "Mark as Cooked",
+   "delete": "Delete"
+  }
+ },
+ "accept_invite": {
+  "title": "Create Account",
+  "verifying": "Verifying invite…",
+  "invalid_link": "This invite link is invalid or has expired. Ask your admin for a new one.",
+  "success": "Account created! Redirecting…",
+  "intro": "You've been invited to CookTrace. Choose a username and password to get started.",
+  "intro_with_email": "You were invited as <strong>{email}</strong>. Choose a username and password to get started.",
+  "username_label": "Username *",
+  "username_placeholder": "Choose a username",
+  "full_name_label": "Full Name (Optional)",
+  "full_name_placeholder": "Your name",
+  "password_label": "Password *",
+  "confirm_label": "Confirm Password *",
+  "submit": "Create Account",
+  "creating": "Creating account…",
+  "errors": {
+   "username_required": "Username is required",
+   "failed": "Failed to create account"
+  }
+ },
+ "two_step": {
+  "errors": {
+   "generic": "Something went wrong. Try again.",
+   "copy_failed": "Couldn't copy. Select the text and copy it yourself."
+  },
+  "setup": {
+   "loading": "Loading…",
+   "scan": "Scan this QR code with an authenticator app, such as Aegis, 2FAS, Google Authenticator or 1Password.",
+   "qr_alt": "QR code for your authenticator app",
+   "open_app": "Open in Authenticator App",
+   "key_intro": "Can't scan it? Enter this key in the app instead:",
+   "copy_key": "Copy Key",
+   "key_copied": "Key copied",
+   "key_details": "Time-based, 6 digits, every 30 seconds.",
+   "code_label": "6-Digit Code From the App",
+   "turn_on": "Turn On",
+   "turning_on": "Turning On…"
+  },
+  "codes": {
+   "title": "Save Your Recovery Codes",
+   "explain": "If you lose your phone, each of these codes signs you in once. Keep them somewhere safe, like a password manager. They won't be shown again.",
+   "copy": "Copy Codes",
+   "download": "Download",
+   "copied": "Recovery codes copied",
+   "saved": "I Saved My Codes"
+  },
+  "signin": {
+   "title": "Two-Step Sign-In",
+   "setup_title": "Set Up Two-Step Sign-In",
+   "setup_intro": "Your admin requires two-step sign-in. Set it up now to finish signing in.",
+   "intro": "Enter the 6-digit code from your authenticator app.",
+   "recovery_intro": "Enter one of the recovery codes you saved when you set up two-step sign-in.",
+   "code_label": "Code",
+   "recovery_label": "Recovery Code",
+   "verify": "Verify",
+   "verifying": "Verifying…",
+   "use_recovery": "Use a Recovery Code",
+   "use_app": "Use a Code From Your App",
+   "back": "Back to Sign In",
+   "lost_phone": "Lost your phone and your recovery codes? Ask an admin to reset two-step sign-in for you.",
+   "recovery_used": "Signed in with a recovery code. {count, plural, =0 {You have none left: make new ones in Settings, Profile.} one {# left.} other {# left.}}"
+  },
+  "settings": {
+   "title": "Two-Step Sign-In",
+   "on": "On",
+   "off": "Off",
+   "desc": "After your password, ask for a code from an authenticator app on your phone.",
+   "sso": "You sign in with single sign-on, so your sign-in provider handles two-step sign-in.",
+   "load_failed": "Couldn't load your two-step sign-in settings.",
+   "required_note": "Your admin requires two-step sign-in, so you'll be asked to set it up the next time you sign in.",
+   "key_problem": "Codes from your authenticator app can't be checked on this server right now (its two-step key changed or is missing). Sign in with a recovery code, or ask an admin to reset two-step sign-in, then set it up again.",
+   "cant_set_up": "Two-step sign-in can't be set up on this server right now: it couldn't save its key. Ask your admin.",
+   "set_up": "Set Up Two-Step Sign-In",
+   "password_label": "Your Password",
+   "continue": "Continue",
+   "on_since": "On since {date}",
+   "codes_left": "{count, plural, one {# recovery code left} other {# recovery codes left}}",
+   "codes_low": "Running low on recovery codes. Make new ones so you can still sign in if you lose your phone.",
+   "new_codes": "New Recovery Codes",
+   "codes_explain": "New codes replace the ones you have now. Enter your password and a code from your app (or a recovery code).",
+   "turn_off": "Turn Off",
+   "off_explain": "You'll sign in with your password alone. Enter your password and a code from your app (or a recovery code).",
+   "code_label": "Code From Your App or a Recovery Code",
+   "turned_on": "Two-step sign-in is on",
+   "turned_off": "Two-step sign-in is off"
+  },
+  "admin": {
+   "require": "Require Two-Step Sign-In for Everyone",
+   "require_desc": "Anyone who signs in with a password and hasn't set it up does so right after their password, the next time they sign in. Single sign-on accounts aren't affected.",
+   "required_on": "Two-step sign-in is now required",
+   "required_off": "Two-step sign-in is no longer required",
+   "required_failed": "Couldn't save: {msg}",
+   "reset": "Reset Two-Step Sign-In",
+   "reset_title": "Reset Two-Step Sign-In for {name}?",
+   "reset_message": "Their authenticator app and recovery codes stop working, and they sign in with their password alone until they set it up again. They're emailed if the server sends email.",
+   "your_password": "Your Password",
+   "your_code": "Your Two-Step Code",
+   "reset_confirm": "Reset",
+   "resetting": "Resetting…",
+   "reset_done": "Two-step sign-in reset for {name}"
+  },
+  "locked_out": {
+   "title": "Reset Two-Step Sign-In for One Account",
+   "explain": "For someone who lost their phone and their recovery codes. Only that account changes: it signs in with its password alone until two-step sign-in is set up again.",
+   "username_placeholder": "Username",
+   "action": "Reset Two-Step Sign-In",
+   "resetting": "Resetting…",
+   "failed": "Couldn't reset two-step sign-in",
+   "done": "Two-step sign-in is off for {name}. Sign in with the password.",
+   "disable_title": "Disable User Management"
+  },
+  "link": {
+   "title": "Link {provider}?",
+   "message": "Enter your password to link {provider}. From then on you can sign in with it.",
+   "message_sso": "You sign in with single sign-on, so linking {provider} needs a sign-in in the last 15 minutes. If it's been longer, sign out and sign in again first.",
+   "password_label": "Your Password",
+   "code_label": "Code From Your App or a Recovery Code",
+   "continue": "Continue",
+   "checking": "Checking…"
+  },
+  "email": {
+   "title": "Confirm Your New Email",
+   "explain": "Enter your password to confirm it. Until then, password resets go to your previous email, and single sign-on doesn't link to your account by this one.",
+   "explain_sso": "Confirm it within 15 minutes of signing in. Until then, password resets go to your previous email, and single sign-on doesn't link to your account by this one. If it's been longer, sign out and sign in again first.",
+   "confirm": "Confirm Email",
+   "confirmed": "Email confirmed"
+  },
+  "reset_password_done": "Your password was changed. Two-step sign-in is on for this account, so sign in with your new password and your code."
+ },
+ "connection_status": {
+  "connected": "Connected",
+  "not_connected": "Not connected",
+  "not_connected_error": "Not connected: {error}",
+  "test": "Test",
+  "testing": "Testing…",
+  "testing_connection": "Testing connection…"
+ },
+ "watch": {
+  "keep_awake_text": "Your watch is working through this phone"
+ },
+ "password": {
+  "too_short": "Use at least 8 characters.",
+  "needs_lower": "Add a lowercase letter.",
+  "needs_upper": "Add an uppercase letter.",
+  "needs_number": "Add a number.",
+  "needs_symbol": "Add a symbol, like ! or #.",
+  "strength_0": "Too weak",
+  "strength_1": "Weak",
+  "strength_2": "Fair",
+  "strength_3": "Strong",
+  "strength_4": "Very strong"
+ },
+ "connect": {
+  "needs_setup": "This server isn't set up yet. Open it in a browser to create the first account, then connect here."
+ },
+ "plain_http": {
+  "warning_title": "Connect Without Encryption?",
+  "warning_body": "This server uses plain HTTP, so the connection isn't encrypted. Anyone on the same network can read and change what's sent, including your password.",
+  "warning_advice": "Use it only on your home network or over a VPN.",
+  "warning_stored": "Until you connect, nothing syncs with this server, and the app keeps working with what's on this phone. It asks again the next time it opens.",
+  "connect_anyway": "Connect Anyway",
+  "refused_title": "HTTPS Needed",
+  "refused_body": "This server uses plain HTTP and isn't on your own network, so the app won't connect to it. Plain HTTP works only with a server at a private address, such as 192.168.1.20, or a local name, such as cooktrace.local. Anywhere else, use HTTPS.",
+  "refused_stored": "Nothing syncs with this server, and the app keeps working with what's on this phone. To switch to an HTTPS address, disconnect in Settings > Server Connection and connect again.",
+  "refused_short": "Plain HTTP works only with a server on your own network. Use an https:// address for this server.",
+  "https_guide": "How to Set Up HTTPS",
+  "unreachable": "Couldn't reach {url}. Check the address, and that this phone is on the same network or VPN as the server.",
+  "not_encrypted": "Not Encrypted",
+  "invalid_address": "Enter an address that starts with http:// or https://, such as https://cooktrace.example.com.",
+  "blocked": "Plain HTTP to {origin} isn't allowed. Use an https:// address, or a server on your own network."
+ },
+ "server_signin": {
+  "web_page": "Something other than CookTrace answered with a web page: often a sign-in proxy (Authentik, Authelia, Cloudflare Access), or this isn't your server's address. Let the app reach /api on your server.",
+  "options_failed": "Couldn't load this server's sign-in options. Retry, or sign in with your password if the server allows it.",
+  "token_refused": "This sign-in couldn't be checked, so it was stopped. Update your CookTrace server, or connect with your password.",
+  "retry": "Retry",
+  "checking": "Checking sign-in options…",
+  "unreachable": "Can't reach your server right now. Check that it's running, then Retry.",
+  "proxy_sign_in": "Something in front of your server is asking you to sign in. Sign in there, then reload this page.",
+  "server_error": "Your server answered with an error. Try again in a moment."
+ },
+ "when": {
+  "just_now": "Just Now",
+  "in_moments": "In Moments",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "tomorrow": "Tomorrow",
+  "minutes_ago": "{n, plural, one {A Minute Ago} other {# Minutes Ago}}",
+  "minutes_ahead": "{n, plural, one {In a Minute} other {In # Minutes}}",
+  "hours_ago": "{n, plural, one {An Hour Ago} other {# Hours Ago}}",
+  "hours_ahead": "{n, plural, one {In an Hour} other {In # Hours}}",
+  "days_ago": "{n, plural, one {# Day Ago} other {# Days Ago}}",
+  "days_ahead": "{n, plural, one {In # Day} other {In # Days}}",
+  "months_ago": "{n, plural, one {A Month Ago} other {# Months Ago}}",
+  "months_ahead": "{n, plural, one {In a Month} other {In # Months}}",
+  "years_ago": "{n, plural, one {A Year Ago} other {# Years Ago}}",
+  "years_ahead": "{n, plural, one {In a Year} other {In # Years}}"
+ },
+ "confirm": {
+  "title": "Are You Sure?",
+  "ok": "OK"
+ },
+ "notify": {
+  "update_title": "CookTrace update available",
+  "update_body": "{version} is ready. Tap to install."
+ },
+ "migrate": {
+  "no_recipe": "Its recipe wasn't uploaded, so it was skipped."
+ },
+ "app_ui": {
+  "open_menu": "Open menu"
+ },
+ "login_ui": {
+  "biometric_reason": "Sign in to CookTrace"
+ },
+ "profile_ui": {
+  "biometric_enable_reason": "Enable biometric sign-in",
+  "gender_male": "Male",
+  "gender_female": "Female",
+  "gender_non_binary": "Non-Binary",
+  "unlink_confirm": "Unlink this provider? You won't be able to sign in with it again until you re-link it.",
+  "last_sign_in": "Last sign-in {date}",
+  "biometric_desc": "Use fingerprint or face unlock instead of typing your password each time. Your password is still required on the first sign-in. Sign-in sessions stay valid for up to a year by default. Admins can change this in",
+  "biometric_setup_prefix": "Set up a fingerprint or face unlock in",
+  "android_security_path": "Android Settings > Security",
+  "biometric_setup_suffix": "first, then come back here.",
+  "avatar_alt": "Avatar"
+ },
+ "sidebar_ui": {
+  "nav_menu": "Navigation menu",
+  "tagline": "Trace Every Recipe, From Pantry to Plate"
+ },
+ "bottom_nav_ui": {
+  "main_navigation": "Main navigation"
+ },
+ "sidebar_ct": {
+  "brand": "CookTrace"
+ },
+ "profile_ct": {
+  "toast": {
+   "biometric_cancelled": "Biometric verification was canceled or failed."
+  },
+  "biometric_signin": "Sign In with Biometric"
+ },
+ "manage_ct": {
+  "title": "Manage"
+ }
+}

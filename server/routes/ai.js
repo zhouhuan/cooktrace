@@ -3,8 +3,8 @@ import { requireAuth, userMgmtActive } from '../middleware/auth.js';
 import { wrap } from '../logger.js';
 import { getAiConfig } from '../ai.js';
 import { makeRateLimiter } from '../middleware/rate-limit.js';
-import { getOpenAIChatParams, openAIBase } from '../lib/openai-chat-params.js';
-import { AI_DEFAULT_MODELS, geminiModelFor, modelFor } from '../lib/ai-models.js';
+import { getOpenAIChatParams, openAIBase, openAIChatUrl } from '../lib/openai-chat-params.js';
+import { AI_DEFAULT_MODELS, AI_PROVIDER_BASE_URLS, modelFor } from '../lib/ai-models.js';
 import { REPLY_MAX_TOKENS, sendForReply, stoppedShort, stoppedShortError } from '../lib/trace-reply.js';
 import db from '../db.js';
 
@@ -100,30 +100,44 @@ router.post('/chat', requireAuth, aiChatLimit, wrap(async (req, res) => {
   }
 
   const cfg = getAiConfig();
-  const provider = cfg.ai_provider || 'claude';
-  // Renamed models go out under their new name, shut-down Gemini ones as
-  // the default (lib/ai-models.js); an OpenAI-compatible server's as set.
+  // 简体中文专属版: deepseek | kimi | zhipu | qwen | doubao | custom | oai-compat
+  const provider = cfg.ai_provider || 'deepseek';
+  // The model an admin set, or the provider's default (lib/ai-models.js);
+  // an OpenAI-compatible server's as set.
   const model    = modelFor(provider, cfg.ai_model || AI_DEFAULT_MODELS[provider] || '');
   const apiKey   = cfg.ai_api_key;
   const baseUrl  = openAIBase(cfg.ai_base_url);
 
-  // API key required for cloud providers; oai-compat local endpoints
-  // (Ollama, LM Studio, etc.) often don't need one — mirror callAI().
-  if (!apiKey && provider !== 'oai-compat') {
+  // API key required for the built-in cloud providers; custom /
+  // oai-compat endpoints (Ollama, LM Studio, etc.) often don't need
+  // one — mirror callAI().
+  if (!apiKey && provider !== 'oai-compat' && provider !== 'custom') {
     return res.status(503).json({ error: 'AI not configured on server. Set AI_API_KEY in environment.' });
   }
-  if (provider === 'oai-compat') {
-    if (!baseUrl) return res.status(503).json({ error: 'AI_PROVIDER=oai-compat requires AI_BASE_URL in environment.' });
-    if (!model)   return res.status(503).json({ error: 'AI_PROVIDER=oai-compat requires AI_MODEL in environment.' });
+  if (provider === 'oai-compat' || provider === 'custom') {
+    if (!baseUrl) return res.status(503).json({ error: `AI_PROVIDER=${provider} requires AI_BASE_URL in environment.` });
+    if (!model)   return res.status(503).json({ error: `AI_PROVIDER=${provider} requires AI_MODEL in environment.` });
   }
 
   let text;
   try {
     switch (provider) {
-      case 'claude':     text = await _callClaude(apiKey, model, messages, systemPrompt); break;
-      case 'openai':     text = await _callOpenAI(apiKey, model, messages, systemPrompt, 'https://api.openai.com'); break;
-      case 'gemini':     text = await _callGemini(apiKey, model, messages, systemPrompt); break;
-      case 'oai-compat': text = await _callOpenAI(apiKey || 'no-key', model, messages, systemPrompt, baseUrl.replace(/\/+$/, '')); break;
+      // Built-in Chinese providers, all OpenAI-compatible: their own
+      // official address, the model from the config or the default.
+      case 'deepseek':
+      case 'kimi':
+      case 'zhipu':
+      case 'qwen':
+        text = await _callOpenAI(apiKey, model, messages, systemPrompt, AI_PROVIDER_BASE_URLS[provider]); break;
+      case 'doubao': {
+        // Volcano Ark serves each deployment behind an inference
+        // endpoint ID (ep-…): no preset list to fall back to.
+        if (!model) return res.status(503).json({ error: 'AI_PROVIDER=doubao requires AI_MODEL (the Ark inference endpoint ID, e.g. ep-2024…) in environment.' });
+        text = await _callOpenAI(apiKey, model, messages, systemPrompt, AI_PROVIDER_BASE_URLS.doubao); break;
+      }
+      case 'oai-compat':
+      case 'custom':
+        text = await _callOpenAI(apiKey || 'no-key', model, messages, systemPrompt, baseUrl.replace(/\/+$/, '')); break;
       default: return res.status(400).json({ error: `Unknown provider: ${provider}` });
     }
   } catch (e) {
@@ -137,35 +151,13 @@ router.post('/chat', requireAuth, aiChatLimit, wrap(async (req, res) => {
 
 export default router;
 
-// ── Provider implementations (server-side) ────────────────────────────────────
-
-async function _callClaude(apiKey, model, messages, systemPrompt) {
-  // The app's limit (it was 1,024 here, which cut a long rewrite off); a
-  // model that can't write that many is asked again as before (lib/trace-reply.js).
-  const body = { model, max_tokens: REPLY_MAX_TOKENS, system: systemPrompt, messages };
-  // An empty reply is asked for once more (lib/trace-reply.js).
-  const { ok, status, data } = await sendForReply('claude', body, async (b) => {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify(b),
-    });
-    return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
-  });
-  if (!ok) throw new Error(data.error?.message || `Claude API error ${status}`);
-  const short = stoppedShort('claude', data);
-  if (short) throw stoppedShortError(short);
-  return data.content[0].text;
-}
+// ── Provider implementation (server-side) ────────────────────────────────────
 
 // The app's limit (it was 1,024 here, which cut a long rewrite off); a
 // server or model that won't take that many is asked again as before
-// (lib/trace-reply.js).
-async function _callOpenAI(apiKey, model, messages, systemPrompt, baseUrl = 'https://api.openai.com') {
+// (lib/trace-reply.js). Every provider in this edition goes through
+// this one OpenAI-compatible Chat Completions call.
+async function _callOpenAI(apiKey, model, messages, systemPrompt, baseUrl = 'https://api.deepseek.com') {
   const body = {
     model,
     messages: [{ role: 'system', content: systemPrompt }, ...messages],
@@ -173,7 +165,9 @@ async function _callOpenAI(apiKey, model, messages, systemPrompt, baseUrl = 'htt
   };
   // An empty reply is asked for once more (lib/trace-reply.js).
   const { ok, status, data } = await sendForReply('openai', body, async (b) => {
-    const res = await fetch(`${baseUrl}/v1/chat/completions`, {
+    // A base ending in a versioned path (/v1, Ark's /v3, Zhipu's /v4)
+    // keeps it; a bare origin gets /v1 (lib/openai-chat-params.js).
+    const res = await fetch(openAIChatUrl(baseUrl), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -184,35 +178,8 @@ async function _callOpenAI(apiKey, model, messages, systemPrompt, baseUrl = 'htt
     });
     return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
   });
-  if (!ok) throw new Error(data.error?.message || data.message || `OpenAI API error ${status}`);
+  if (!ok) throw new Error(data.error?.message || data.message || `AI API error ${status}`);
   const short = stoppedShort('openai', data);
   if (short) throw stoppedShortError(short);
   return data.choices[0].message.content;
-}
-
-async function _callGemini(apiKey, model, messages, systemPrompt) {
-  const m = geminiModelFor(model);
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`;
-  const contents = messages.map(msg => ({
-    role: msg.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: msg.content }],
-  }));
-  const body = {
-    systemInstruction: { parts: [{ text: systemPrompt }] },
-    contents,
-  };
-  // An empty reply is asked for once more (lib/trace-reply.js).
-  const sent = await sendForReply('gemini', body, async (b) => {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(b),
-    });
-    return { ok: res.ok, status: res.status, data: await res.json() };
-  });
-  const data = sent.data;
-  if (!sent.ok) throw new Error(data.error?.message || `Gemini API error ${sent.status}`);
-  const short = stoppedShort('gemini', data);
-  if (short) throw stoppedShortError(short);
-  return data.candidates[0].content.parts[0].text;
 }

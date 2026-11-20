@@ -176,6 +176,7 @@ const UNIT_VARIANTS = {
   mg: 'mg', milligram: 'mg', milligrams: 'mg',
   g: 'g', gram: 'g', grams: 'g', gr: 'g',
   kg: 'kg', kilogram: 'kg', kilograms: 'kg', kilo: 'kg', kilos: 'kg',
+  jin: 'jin', liang: 'liang', '斤': 'jin', '两': 'liang',
   pc: 'pc', pcs: 'pc', piece: 'pc', pieces: 'pc',
   clove: 'clove', cloves: 'clove',
   sprig: 'sprig', sprigs: 'sprig',
@@ -214,7 +215,7 @@ const VOLUME_TO_ML = {
   tsp: 4.929, tbsp: 14.787, 'fl oz': 29.574,
   cup: 236.588, pt: 473.176, qt: 946.353, gal: 3785.411,
 };
-const WEIGHT_TO_G = { mg: 0.001, g: 1, kg: 1000, oz: 28.3495, lb: 453.592 };
+const WEIGHT_TO_G = { mg: 0.001, g: 1, kg: 1000, oz: 28.3495, lb: 453.592, jin: 500, liang: 50 };
 
 /** 'volume', 'weight', 'count' (pieces, cloves, unknown units), or null for none. */
 export function unitFamily(unit) {

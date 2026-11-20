@@ -197,8 +197,8 @@ export async function runScheduledBackup() {
       if (adminRow) {
         const { pushNotify } = await import('../lib/push-notify.js');
         await pushNotify(adminRow.id, 'notifBackupFailed',
-          '🛟 CookTrace backup failed',
-          `Scheduled backup error: ${e.message || 'unknown'}`,
+          '🛟 CookTrace 备份失败',
+          `定时备份出错：${e.message || '未知原因'}`,
           7);
       }
     } catch {}

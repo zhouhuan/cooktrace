@@ -27,6 +27,19 @@ export function openAIBase(url) {
     .replace(/\/v1$/i, '');
 }
 
+/**
+ * The Chat Completions address a base URL stands for. A base that ends
+ * in a versioned path (Moonshot's /v1, Volcano Ark's /v3, Zhipu's /v4)
+ * or in the full endpoint keeps it; a bare origin gets /v1, the path
+ * OpenAI-compatible providers document by default.
+ */
+export function openAIChatUrl(url) {
+  const base = String(url || '').trim().replace(/\/+$/, '');
+  if (/\/chat\/completions$/i.test(base)) return base;
+  if (/\/v\d+$/i.test(base)) return `${base}/chat/completions`;
+  return `${base}/v1/chat/completions`;
+}
+
 export function getOpenAIChatParams({ baseUrl, model, hasTools, maxTokens = 4096 }) {
   const isOfficialOpenAI = openAIBase(baseUrl) === OPENAI_API_ORIGIN;
   if (!isOfficialOpenAI) return { stream: false, max_tokens: maxTokens };

@@ -285,7 +285,7 @@
       <h3 id="test-dialog-title">{$_('settings_email_ct.send_test_email')}</h3>
       <p>{$_('settings_email_ui.test_where')}</p>
       <input bind:this={testDialogInputEl} class="form-input" type="email"
-        placeholder="you@example.com" bind:value={testRecipient}
+        placeholder="请输入邮箱" bind:value={testRecipient}
         on:keydown={(e) => e.key === 'Enter' && confirmTestSmtp()} />
       <div class="test-dialog-actions">
         <button class="btn btn-ghost" on:click={closeTestDialog}>{$_('settings_email_ct.cancel')}</button>

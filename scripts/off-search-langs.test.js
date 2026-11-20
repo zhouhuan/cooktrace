@@ -36,13 +36,14 @@ async function searched(lang, country) {
 
 test('langs= follows the setting, with English alongside', () => {
   assert.equal(offSearchLangs('en'), 'en');
-  assert.equal(offSearchLangs(undefined), 'en');
+  assert.equal(offSearchLangs(undefined), 'zh,en', 'the Chinese edition defaults to zh');
+  assert.equal(offSearchLangs('zh'), 'zh,en');
   assert.equal(offSearchLangs('uk'), 'uk,en');
 });
 
 test('the Pantry search sends langs=, not the ignored lc=', async () => {
   const def = await searched();
-  assert.equal(def.searchParams.get('langs'), 'en');
+  assert.equal(def.searchParams.get('langs'), 'zh,en');
   assert.equal(def.searchParams.get('lc'), null);
   const uk = await searched('uk', 'Ukraine');
   assert.equal(uk.host, 'search.openfoodfacts.org');
@@ -54,7 +55,7 @@ test('Settings offers Ukrainian and Ukraine, with labels', () => {
   const s = readFileSync(new URL('../src/components/settings/SettingsFoodSources.svelte', import.meta.url), 'utf8');
   assert.match(s, /\['uk','Ukrainian'\]/);
   assert.match(s, /'Ukraine'/);
-  const en = JSON.parse(readFileSync(new URL('../src/i18n/en.json', import.meta.url), 'utf8')).settings_food_sources_ui;
-  assert.equal(en.lang_uk, 'Ukrainian');
-  assert.equal(en.country_ukraine, 'Ukraine');
+  const zh = JSON.parse(readFileSync(new URL('../src/i18n/zh.json', import.meta.url), 'utf8')).settings_food_sources_ui;
+  assert.equal(zh.lang_uk, '乌克兰语');
+  assert.equal(zh.country_ukraine, '乌克兰');
 });
