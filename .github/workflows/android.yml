@@ -1,0 +1,124 @@
+name: android
+
+# CookTrace 简体中文版 Android 构建流水线。
+#
+# 三个 job：
+#   test         — push 时跑 i18n 完整性检查与单元测试（Node 22）
+#   release      — 打 tag `v*` 或手动触发：构建已签名 APK 并附到 GitHub Release
+#                  （Release 资产同时就是应用内在线升级的下载源，见
+#                   src/lib/updates.js → zhouhuan/cooktrace）
+#   init-signing — 一次性手动触发：生成 release 签名密钥库。把输出的
+#                  keystore 与口令存为仓库 secrets（KEYSTORE_BASE64 /
+#                  KEYSTORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD）后，后续
+#                  所有 release 构建将使用同一签名，保证覆盖安装升级可用。
+#                  生成后请同时把 keystore 文件自行备份——丢失后无法再对
+#                  已发布的应用推送更新。
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm ci --prefix server
+      - run: npm run i18n:check
+      - run: npm run check:zh
+      - run: npm test
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate release tag and app version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          APP_VERSION=$(grep -oP 'versionName\\s+"[^"]+"' android/app/build.gradle | head -1 | sed 's/.*"\\(.*\\)"/\\1/')
+          test "$TAG_VERSION" = "$APP_VERSION" || { echo "Tag $TAG_VERSION does not match Android versionName $APP_VERSION"; exit 1; }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx cap sync android
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # A release APK must always use the persistent release key. Never
+      # silently produce a debug-signed artifact that cannot upgrade installs.
+      - name: Restore signing keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          for name in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing required Actions secret: $name"
+              exit 1
+            fi
+          done
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/app/cooktrace-release.keystore
+          keytool -list -keystore android/app/cooktrace-release.keystore -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
+          cat > android/keystore.properties <<EOF
+          storeFile=cooktrace-release.keystore
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          EOF
+          echo "signing: persistent release keystore verified"
+
+      - name: Build release APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      - name: Collect APK
+        id: apk
+        run: |
+          VER=$(grep -oP 'versionName\\s+"[^"]+"' android/app/build.gradle | head -1 | sed 's/.*"\\(.*\\)"/\\1/')
+          cp android/app/build/outputs/apk/release/app-release.apk "cooktrace-v${VER}.apk"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+
+      # Release 资产 = 应用内升级下载源（src/lib/apk-asset.js 挑选不带
+      # wear/watch 字样的 .apk 资产）。
+      - name: Attach APK to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: cooktrace-v*.apk
+          prerelease: ${{ contains(github.ref, '-dev') }}
+          make_latest: ${{ !contains(github.ref, '-dev') }}
+          generate_release_notes: true
+
+      # Manual runs on dev upload an artifact; they do not create a Release.
+      - name: Upload APK artifact (manual runs)
+        if: "${!startsWith(github.ref, 'refs/tags/v')}"
+        uses: actions/upload-artifact@v4
+        with:
+          name: cooktrace-apk-${{ steps.apk.outputs.version }}
+          path: cooktrace-v*.apk
