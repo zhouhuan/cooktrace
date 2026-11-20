@@ -378,7 +378,7 @@ test('a recovery code signs in once, typed any way; it is logged and counted', {
   const again = await send(S, { path: '/api/auth/two-step/verify', body: { pending_token: (await login('alice', ip)).data.pending_token, code }, ip });
   assert.equal(again.status, 401);
   assert.match(again.data.error, /already used/);
-  assert.match(S.log, /alice \(id \d+\): signed in with a recovery code \(9 left\)/);
+  assert.match(S.log, /alice \(id \d+\): 使用恢复代码登录 \(9 left\)/);
   assert.equal(S.log.includes(code), false, 'the log never has the code');
   assert.equal((await send(S, { method: 'GET', path: '/api/auth/two-step/status', bearer: tok.alice, ip })).data.recovery_codes_left, 9);
 });
