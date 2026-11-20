@@ -8,7 +8,8 @@
  * sent once more, and a second empty reply is said as an error. A
  * stand-in endpoint answers the way theirs did, for the app directly and
  * through the server's own chat (Trace set by environment variables), in
- * OpenAI's, Claude's and Gemini's shapes.
+ * Qwen and a custom OpenAI-compatible provider; pure response-shape helpers
+ * still cover older formats.
  */
 import assert from 'node:assert/strict';
 import http from 'node:http';
