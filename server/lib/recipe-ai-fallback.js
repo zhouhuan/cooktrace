@@ -219,7 +219,9 @@ export function isCompatibleProvider(provider) {
 }
 
 const SUPPORTED_IMPORT_PROVIDERS = new Set([
-  'deepseek', 'kimi', 'zhipu', 'qwen', 'doubao', 'custom', 'oai-compat',
+  ...Object.keys(AI_DEFAULT_MODELS),
+  'custom',
+  'oai-compat',
 ]);
 const isSupportedImportProvider = (provider) => SUPPORTED_IMPORT_PROVIDERS.has(provider);
 
