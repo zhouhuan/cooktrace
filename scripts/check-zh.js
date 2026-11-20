@@ -17,7 +17,7 @@ const I18N_DIR = path.join(__dirname, '..', 'src', 'i18n');
 // Brand names and standard symbols that may appear in Latin letters.
 const WHITELIST = new Set([
   'CookTrace', 'Trace', 'NutriTrace', 'NoteTrace', 'LiftTrace', 'DeepSeek', 'Kimi',
-  'Moonshot', 'GLM', 'Qwen', 'Doubao', 'GitHub', 'OpenAI', 'Gemini', 'Claude',
+  'Moonshot', 'GLM', 'Qwen', 'Doubao', 'GitHub', 'OpenAI', 'Claude',
   'USDA', 'OpenFoodFacts', 'Mealie', 'Mealime', 'Paprika', 'Tandoor', 'Android',
   'Wear', 'OS', 'PWA', 'APK', 'OCR', 'SMTP', 'OIDC', 'API', 'MCP', 'JWT', 'TOTP',
   'Wi-Fi', 'SQLite', 'Docker', 'CSV', 'AI', 'ID', 'IP', 'UUID', 'PIN', 'QR',
