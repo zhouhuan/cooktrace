@@ -125,7 +125,7 @@ test('a provider the browser can\'t read says what to check, not "Failed to fetc
 test('direct provider requests go through fetchProvider', () => {
   const chat = read('../src/lib/aiChat.js');
   assert.match(chat, /const res = await fetchProvider\(openAIChatUrl\(baseUrl\), \{/);
-  assert.doesNotMatch(chat, /api\\.anthropic\\.com|generativelanguage\\.googleapis\\.com/, 'removed provider transports are absent');
+  assert.doesNotMatch(chat, /api\.anthropic\.com|generativelanguage\.googleapis\.com/, 'removed provider transports are absent');
   // The only plain fetches left: fetchProvider's own, and the app's server.
   const rest = chat.replace(/export async function fetchProvider[\s\S]*?\n\}\n/, '');
   for (const m of rest.matchAll(/await fetch\(([^,]+),/g)) assert.match(m[1], /^apiUrl\(/, m[0]);
