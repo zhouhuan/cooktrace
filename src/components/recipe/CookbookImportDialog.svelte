@@ -117,20 +117,15 @@
     }
   }
 
-  function _buildCookbookMessage(provider, sys, text) {
-    if (text) {
-      // Text path: same as before.
-      return {
-        role: 'user',
-        content: `Cookbook text follows. Identify and emit one create_recipe call per recipe.
+  function _buildCookbookMessage(text) {
+    return {
+      role: 'user',
+      content: `Cookbook text follows. Identify and emit one create_recipe call per recipe.
 
 ----- BEGIN COOKBOOK TEXT -----
 ${text}
 ----- END COOKBOOK TEXT -----`,
-      };
-    }
-    // Scanned PDFs are rejected in prepare(); only extracted text reaches this helper.
-    return null;
+    };
   }
 
   async function extractRecipes() {
@@ -156,7 +151,7 @@ Rules:
 - Don't fabricate. If a field isn't visible for a given recipe, omit it.
 - Don't combine multiple recipes into one. Each create_recipe call is one recipe.`;
 
-    const userMsg = _buildCookbookMessage(provider, sys, preview.text);
+    const userMsg = _buildCookbookMessage(preview.text);
 
     let toolsUnsupported = false;
     try {
