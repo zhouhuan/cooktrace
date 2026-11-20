@@ -399,7 +399,7 @@
     },
     "cookie_warning": {
       "http_title": "在此地址上无法登录",
-      "http_body": "此页面使用纯 HTTP，但服务器只通过 HTTPS 发送登录凭据，因此浏览器会将其丢弃，导致登录后又跳回登录页。请通过 HTTPS 打开 CookTrace；或者在可信的家庭网络中，在服务器上设置 INSECURE_COOKIES=1 并重启。",
+      "http_body": "此页面使用纯 HTTP，但服务器只通过 HTTPS 发送登录凭据，因此浏览器会将其丢弃，导致登录后又跳回登录页。请通过 HTTPS 打开 CookTrace；或者在可信的家庭网络中，在服务器上设置 <code>INSECURE_COOKIES=1</code> 并重启。",
       "dropped_title": "浏览器未能保持你的登录状态",
       "dropped_body": "你的密码正确，但浏览器没有保留登录凭据。请检查浏览器是否允许此站点保存登录信息；如果 CookTrace 部署在反向代理后面，还要检查代理是否正确传递登录凭据。",
       "fix_link": "如何解决"
