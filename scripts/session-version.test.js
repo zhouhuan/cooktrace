@@ -311,8 +311,8 @@ test('two-step sign-in on, off, and every reset sign the account out; on and off
   assert.equal(off.status, 200, JSON.stringify(off.data));
   assert.equal(await state({ bearer: off.data.session.token }), true);
   assert.equal(await state({ bearer: other }), 'ended');
-  assert.match(S.log, /every session signed out \(two-step sign-in turned on\)/);
-  assert.match(S.log, /every session signed out \(two-step sign-in turned off by its owner\)/);
+  assert.match(S.log, /every session signed out \(开启两步验证\)/);
+  assert.match(S.log, /every session signed out \(two-step sign-in 被账号所有者关闭\)/);
 
   // Resets: an admin's, RECOVERY_TOKEN, and the command line.
   const enable = async (bearer) => {
@@ -328,13 +328,13 @@ test('two-step sign-in on, off, and every reset sign the account out; on and off
   assert.equal(adminReset.status, 200, JSON.stringify(adminReset.data));
   assert.equal(await state({ bearer: t }), 'ended');
   assert.equal(await state({ bearer: adminTok }), true, 'the admin keeps going');
-  assert.match(S.log, /every session signed out \(two-step sign-in reset by an admin\) by admin/);
+  assert.match(S.log, /every session signed out \(two-step sign-in 被管理员重置\) by admin/);
 
   t = await enable((await account('tsr')).a);
   const owner = await send(S, { path: '/api/auth/two-step/recover', body: { token: RECOVERY_TOKEN, username: 'tsr' }, ip: newIp() });
   assert.equal(owner.status, 200, JSON.stringify(owner.data));
   assert.equal(await state({ bearer: t }), 'ended');
-  assert.match(S.log, /every session signed out \(two-step sign-in reset with the RECOVERY_TOKEN\)/);
+  assert.match(S.log, /every session signed out \(two-step sign-in 使用 RECOVERY_TOKEN 重置\)/);
 
   t = await enable((await account('tsc')).a);
   const out = execFileSync(process.execPath, ['scripts/reset-2fa.js', 'tsc'], { cwd: SERVER_DIR, env: serverEnv(S.dir, 0), encoding: 'utf8' });

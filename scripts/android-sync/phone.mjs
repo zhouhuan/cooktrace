@@ -451,7 +451,9 @@ const scenarios = {
     out.bobPhone = (await api.getRecipes()).map(r => r.name).sort();
     // Categories: the account's own, matched, never a second copy of each.
     const serverCats = (await web('GET', '/api/recipes/categories', null, B_TOKEN)).map(c => c.slug).sort();
-    out.serverCatDupes = serverCats.filter(x => /-\d+$/.test(x));
+    const categoryCounts = new Map();
+    for (const slug of serverCats) categoryCounts.set(slug, (categoryCounts.get(slug) || 0) + 1);
+    out.serverCatDupes = [...categoryCounts].filter(([, count]) => count > 1).map(([slug]) => slug);
     out.phoneCats = (await db.query(`SELECT slug FROM recipe_categories ORDER BY slug`)).values.map(r => r.slug);
     out.serverCats = serverCats;
   },

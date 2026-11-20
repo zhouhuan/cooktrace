@@ -204,13 +204,13 @@ function _sendToUserEndpoint(cfg) {
 // message ("model not found"), never the raw reply, which goes to the log.
 async function _providerError(name, res) {
   const raw = await res.text().catch(() => '');
-  logger.warn(`[recipe-ai] ${name} returned ${res.status}: ${raw.slice(0, 500)}`);
+  logger.warn(`[recipe-ai] ${name} returned HTTP ${res.status}`);
   let message = '';
   try {
     const e = JSON.parse(raw)?.error;
     message = typeof e === 'string' ? e : (typeof e?.message === 'string' ? e.message : '');
   } catch {}
-  return new Error(`${name} returned ${res.status}${message ? `: ${message.slice(0, 200)}` : ''}`);
+  return new Error(`AI 服务返回错误（HTTP ${res.status}）${message ? `：${message.slice(0, 200)}` : ''}`);
 }
 
 // OpenAI-compatible endpoints (Ollama, LM Studio...) often need no API key.

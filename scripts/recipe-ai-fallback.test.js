@@ -107,11 +107,11 @@ test("a provider's refusal shows its status and message, never the raw reply", a
   try {
     const cfg = { provider: 'custom', apiKey: '', model: 'm', baseUrl: ep.base, source: 'user', allowPrivate: true };
     await assert.rejects(aiExtractRecipe('<h1>x</h1>', 'https://example.com', cfg), (e) => {
-      assert.equal(e.message, 'OpenAI returned 500');
+      assert.equal(e.message, 'AI 服务返回错误（HTTP 500）');
       return true;
     });
     body = JSON.stringify({ error: { message: 'model "m" not found' } });
-    await assert.rejects(aiExtractRecipe('<h1>x</h1>', 'https://example.com', cfg), /OpenAI returned 500: model "m" not found/);
+    await assert.rejects(aiExtractRecipe('<h1>x</h1>', 'https://example.com', cfg), /AI 服务返回错误（HTTP 500）：model "m" not found/);
   } finally { ep.close(); }
 });
 

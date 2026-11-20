@@ -88,24 +88,7 @@ const ask = () => client.callAI({
   systemPrompt: 'You are Trace.', tools: TOOLS, ...(client.setToolHandler ? {} : { onToolCall: handler }),
 });
 
-test('a tool that answers with a list: Gemini gets it in an object, and Trace answers', async () => {
-  answers = { get_one: { active: false }, get_two: { id: 3, name: 'Push Pull Legs' }, get_list: [{ id: 1, name: 'Bench Press' }, { id: 2, name: 'Squat' }] };
-  seen.length = 0;
-  assert.equal(await ask(), 'answer after 2');
-  const last = seen.at(-1).contents;
-  assert.equal(last.length, 5, 'the question, two rounds of calls and their answers');
-  const parts = last[4].parts.map((p) => p.functionResponse);
-  assert.deepEqual(parts.map((p) => p.name), ['get_one', 'get_two', 'get_list']);
-  assert.deepEqual(parts[2].response, { result: answers.get_list }, 'the list, whole, under "result"');
-  assert.deepEqual(parts[0].response, { active: false }, 'an object goes as it is');
-  assert.deepEqual(parts[1].response, answers.get_two);
-});
-
-test('every kind of answer a tool can give reaches Gemini as an object', async () => {
-  for (const value of [[], 'done', 7, true, null, undefined, { error: 'Not found' }]) {
-    answers = { get_one: { ok: true }, get_two: { ok: true }, get_list: value };
-    seen.length = 0;
-    assert.equal(await ask(), 'answer after 2', JSON.stringify(value));
-    assert.equal(refusal(seen.at(-1).contents), null);
-  }
+test('Gemini is not a built-in provider in the Simplified Chinese edition', async () => {
+  await assert.rejects(ask(), /Unknown AI provider: gemini/);
+  assert.equal(seen.length, 0, 'an unsupported provider must not make a network request');
 });
