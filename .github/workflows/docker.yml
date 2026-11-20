@@ -5,7 +5,9 @@ on:
     # Semver tags intentionally omitted. Merging to main already fires this
     # workflow and publishes :latest to both registries; a tag push would
     # fire it again with no matching tag rule (branches-only metadata),
-    # producing a spurious failure. Historical versions live on the GitHub
+    # producing a spurious failure. The upstream repo publishes to its
+    # configured registries; forks build only unless they have their own
+    # Docker Hub credentials. Historical versions live on the GitHub
     # Releases page with signed APKs; Docker consumers pin :latest or use
     # manifest digests.
     branches: [ main, dev ]
@@ -76,13 +78,11 @@ jobs:
             fi
           } >> "$GITHUB_OUTPUT"
 
-      # Only two image tags are published, mirrored to both registries:
+      # Only two image tags are emitted when a registry is configured:
       #   push to main → :latest
       #   push to dev  → :dev
-      # (semver git tags no longer trigger this workflow; see the top-of-file
-      # trigger comment for why.)
-      # Same tag set exists at both ghcr.io/traceapps/cooktrace
-      # (primary) and traceapps/cooktrace on Docker Hub (mirror).
+      # The upstream owner publishes to GHCR and optionally Docker Hub; forks
+      # do not attempt to write to the upstream organization's GHCR package.
       #
       # Semver family tags (:1.2.3, :1.2, :1) and per-commit :sha-*
       # tags are intentionally not emitted. Registry stays uncluttered
