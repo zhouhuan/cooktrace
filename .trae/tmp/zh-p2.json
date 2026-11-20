@@ -182,7 +182,7 @@
     "full_backup": "完整备份",
     "auto_backup": "自动备份",
     "env_lock_pill": "由环境变量锁定",
-    "env_lock_title": "已由 BACKUP_SCHEDULE / BACKUP_TIME / BACKUP_RETENTION 环境变量锁定",
+    "env_lock_title": "已由 <code>BACKUP_SCHEDULE</code> / <code>BACKUP_TIME</code> / <code>BACKUP_RETENTION</code> 环境变量锁定",
     "schedule": "计划",
     "daily": "每天",
     "weekly": "每周",
@@ -461,7 +461,7 @@
   },
   "settings_webhooks": {
     "intro": "当 CookTrace 中发生事件时，出站 Webhook 会立即通知其他服务，例如菜谱已烹饪、购物清单已全部勾选或食材库中的某种食材已耗尽。每个 Webhook 都会向你提供的网址发送带签名的 HTTP POST 请求。",
-    "disabled_notice": "此服务器尚未启用 Webhook。你仍可创建 Webhook，但必须设置 WEBHOOKS_ENABLED=1 后才会触发。",
+    "disabled_notice": "此服务器尚未启用 Webhook。你仍可创建 Webhook，但必须设置 <code>WEBHOOKS_ENABLED=1</code> 后才会触发。",
     "just_created": {
       "title": "Webhook 已创建：",
       "warn": "请立即复制此密钥。它之后不会再次显示；验证推送请求的签名时需要使用此密钥。",
@@ -686,7 +686,7 @@
     "help_custom": "任何符合 OIDC 1.0 标准并支持授权码流程、PKCE 和服务发现的服务商都应可用。",
     "preset_custom": "自定义 / 通用 OIDC",
     "confirm_delete_provider": "删除服务商“{name}”？已关联的用户将失去此登录方式。",
-    "confirm_disable_password": "禁用密码登录？尚未关联 OIDC 的用户将无法登录，直到你重新启用密码登录。RECOVERY_TOKEN 仍可使用。",
+    "confirm_disable_password": "禁用密码登录？尚未关联 OIDC 的用户将无法登录，直到你重新启用密码登录。<code>RECOVERY_TOKEN</code> 仍可用于恢复访问。",
     "um_required_desc_html": "单点登录基于用户账号，因此必须先启用用户管理。请前往<strong>设置 > 用户管理</strong>完成配置，然后返回此处。",
     "admin_only_desc": "只有管理员可以配置身份提供商。如需此权限，请联系此 CookTrace 实例的管理员提升你的账号权限。",
     "providers_title": "OIDC 服务商（单点登录）",
