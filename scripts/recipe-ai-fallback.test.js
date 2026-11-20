@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import http from 'node:http';
 import { aiExtractRecipe, importAiConfig } from '../server/lib/recipe-ai-fallback.js';
+import { logger } from '../server/logger.js';
 
 // The chosen AI without where it came from, to compare with how it was picked before.
 const picked = (cfg) => { if (!cfg) return cfg; const { source: _source, ...rest } = cfg; return rest; };
@@ -103,18 +104,26 @@ test("a user's own AI address on the server's network: the owner may, others may
   } finally { ep.close(); }
 });
 
-test("a provider's refusal shows its status and message, never the raw reply", async () => {
+test("a provider's refusal shows its status and safe message, never the raw reply in errors or logs", async () => {
   let body = 'INTERNAL ADMIN DATA: db_password=hunter2';
   const ep = await endpoint((req, res) => { res.writeHead(500, { 'content-type': 'text/plain' }); res.end(body); });
+  const originalWarn = logger.warn;
+  const warnings = [];
+  logger.warn = (...args) => warnings.push(args.join(' '));
   try {
     const cfg = { provider: 'custom', apiKey: '', model: 'm', baseUrl: ep.base, source: 'user', allowPrivate: true };
     await assert.rejects(aiExtractRecipe('<h1>x</h1>', 'https://example.com', cfg), (e) => {
       assert.equal(e.message, 'AI 服务返回错误（HTTP 500）');
       return true;
     });
+    assert.match(warnings.join(' '), /HTTP 500/);
+    assert.doesNotMatch(warnings.join(' '), /INTERNAL ADMIN DATA|db_password|hunter2/);
     body = JSON.stringify({ error: { message: 'model "m" not found' } });
     await assert.rejects(aiExtractRecipe('<h1>x</h1>', 'https://example.com', cfg), /AI 服务返回错误（HTTP 500）：model "m" not found/);
-  } finally { ep.close(); }
+  } finally {
+    logger.warn = originalWarn;
+    ep.close();
+  }
 });
 
 test("a user's AI address can't redirect to cloud metadata", async () => {
