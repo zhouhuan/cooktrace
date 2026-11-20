@@ -45,7 +45,7 @@ function placeholders(s) {
   const source = String(s);
   // Compare interpolation names and ICU expression structure separately.
   // A greedy "{...}" match breaks on ICU's nested plural/select branches.
-  const variables = [...source.matchAll(/\\{\\s*([A-Za-z_][\\w.-]*)/g)].map(m => m[1]).sort();
+  const variables = [...source.matchAll(/\\{\\s*([A-Za-z_][\\w.-]*)\\s*(?=\\}|,)/g)].map(m => m[1]).sort();
   const icu = [...source.matchAll(/\\{\\s*([A-Za-z_][\\w.-]*)\\s*,\\s*(plural|select|selectordinal)\\s*,/g)]
     .map(m => `${m[1]}:${m[2]}`).sort();
   const selectors = [...source.matchAll(/(?:^|[\\s,])((?:=\\d+)|zero|one|two|few|many|other)\\s*\\{/g)]
@@ -57,6 +57,7 @@ function foreignRuns(value) {
   const stripped = String(value)
     .replace(/https?:\\/\\/[^\\s<>"{}]+/gi, ' ')
     .replace(/@:[\\w.]+/g, ' ')
+    .replace(/<code>[\\s\\S]*?<\\/code>/gi, ' ')
     .replace(/<\\/?[a-zA-Z][^>]*>/g, ' ')
     // Ignore interpolation identifiers and ICU control syntax, but keep the
     // human-readable text inside plural/select branches for translation checks.
