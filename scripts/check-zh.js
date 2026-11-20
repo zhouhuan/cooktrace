@@ -28,7 +28,8 @@ const WHITELIST = new Set([
   'Mifflin', 'Mifflin-St', 'St', 'Jeor', 'King', 'Arthur', 'X', 'Y', 'MM-DD', 'Omega-3', 'Aegis', 'FAS', 'Authenticator', 'Password',
   'Cloudflare', 'Access', 'zxcvbn', 'MM', 'DD', 'Omega', 'Ctrl', 'B', 'I', 'U', 'Material', 'Symbol', 'Symbols',
   'YouTube', 'Vimeo', 'Chrome', 'iPhone', 'Safari',
-  'HTTP', 'MB', 'KB', 'Esc', 'A', 'D', 'E', 'K', 'M', 'B1', 'B2', 'B3', 'B5', 'B6', 'B9', 'B12',
+  'HTTP', 'HTTPS', 'URI', 'POST', 'VPN', 'SSO', 'TLS', 'README', 'YYYY', 'YYYY-MM-DD',
+  'MB', 'KB', 'Esc', 'A', 'D', 'E', 'K', 'M', 'B1', 'B2', 'B3', 'B5', 'B6', 'B9', 'B12',
   'g', 'kg', 'mg', 'ug', 'ml', 'cl', 'dl', 'l', 'oz', 'lb', 'lbs', 'cup', 'cups',
   'tsp', 'tbsp', 'pt', 'qt', 'gal', 'fl', 'kcal', 'kJ', 'C', 'F', 'cm', 'mm',
   'km', 'in', 'pcs', 'pc',
@@ -112,9 +113,7 @@ function foreignRuns(value) {
     // human-readable text inside plural/select branches for translation checks.
     .replace(/\{\s*[A-Za-z_][\w.-]*(?:\s*,\s*(?:plural|select|selectordinal)\s*,)?/g, ' ')
     .replace(/\b(?:zero|one|two|few|many|other|=\d+)\s*(?=\{)/g, ' ')
-    .replace(/[{}]/g, ' ')
-    // Environment variable names and other all-caps configuration tokens.
-    .replace(/\b[A-Z][A-Z0-9_]{2,}\b/g, ' ');
+    .replace(/[{}]/g, ' ');
   const out = [];
   for (const m of stripped.matchAll(/[A-Za-z][A-Za-z0-9'’-]*/g)) {
     if (!WHITELIST.has(m[0])) out.push(m[0]);
