@@ -103,38 +103,18 @@
         return;
       }
       if (data.empty) {
-        // Scanned cookbook PDF. Offer the AI Vision fallback if the
-        // configured provider supports PDF document blocks.
-        const provider = $aiProvider;
-        const aiPdfCapable = $aiEnabled && !envLocked && (provider === 'claude' || provider === 'gemini');
-        if (aiPdfCapable) {
-          preview = { text: null, pages: data.pages, scanned: true };
-          phase = 'ready';
-          return;
-        }
+        // Scanned PDFs have no extractable text. Import their pages as
+        // images one at a time through the regular file-import flow.
         phase = 'error';
-        errorMessage = data.hint
-          || $_('cookbook_import_dialog_ui.scanned_no_provider');
+        errorMessage = data.hint || $_('cookbook_import_dialog_ui.scanned_no_provider');
         return;
       }
-      preview = { text: data.text, pages: data.pages, scanned: false };
+      preview = { text: data.text, pages: data.pages };
       phase = 'ready';
     } catch (e) {
       phase = 'error';
       errorMessage = e.message || $_('cookbook_import_dialog_ui.extraction_failed');
     }
-  }
-
-  async function _fileToBase64(file) {
-    return await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = String(reader.result);
-        resolve(dataUrl.split(',')[1] || '');
-      };
-      reader.onerror = () => reject(new Error($_('cookbook_import_dialog_ui.read_failed')));
-      reader.readAsDataURL(file);
-    });
   }
 
   function _buildCookbookMessage(provider, sys, text) {
@@ -157,9 +137,7 @@ ${text}
     if (!preview) return;
     phase = 'extracting';
     createdRecipes = [];
-    progressLine = preview.scanned
-      ? $_('cookbook_import_dialog_ui.reading_scanned')
-      : $_('cookbook_import_dialog_ui.reading');
+    progressLine = $_('cookbook_import_dialog_ui.reading');
 
     const provider = $aiProvider;
     const apiKey   = $aiApiKey;
@@ -178,38 +156,7 @@ Rules:
 - Don't fabricate. If a field isn't visible for a given recipe, omit it.
 - Don't combine multiple recipes into one. Each create_recipe call is one recipe.`;
 
-    let userMsg;
-    if (preview.scanned) {
-      // Scanned cookbook: send PDF as a document block (Claude) or
-      // inlineData (Gemini). We gated on these two providers in prepare().
-      const MAX_BYTES = 20 * 1024 * 1024;
-      if (pdfFile.size > MAX_BYTES) {
-        phase = 'error';
-        errorMessage = $_('cookbook_import_dialog_ui.pdf_too_large', { values: { size: (pdfFile.size / 1024 / 1024).toFixed(1) } });
-        return;
-      }
-      let base64;
-      try { base64 = await _fileToBase64(pdfFile); }
-      catch (e) { phase = 'error'; errorMessage = e.message; return; }
-      if (provider === 'claude') {
-        userMsg = { role: 'user', content: [
-          { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } },
-          { type: 'text', text: 'Identify every recipe in this cookbook and emit one create_recipe call per recipe.' },
-        ]};
-      } else if (provider === 'gemini') {
-        userMsg = {
-          role: 'user',
-          content: 'Identify every recipe in this cookbook and emit one create_recipe call per recipe.',
-          _image: { mimeType: 'application/pdf', base64 },
-        };
-      } else {
-        phase = 'error';
-        errorMessage = $_('cookbook_import_dialog_ui.scanned_needs_provider');
-        return;
-      }
-    } else {
-      userMsg = _buildCookbookMessage(provider, sys, preview.text);
-    }
+    const userMsg = _buildCookbookMessage(provider, sys, preview.text);
 
     let toolsUnsupported = false;
     try {
@@ -334,19 +281,11 @@ Rules:
         </div>
 
       {:else if phase === 'ready'}
-        {#if preview.scanned}
-          <p class="hint">
-            {preview.pages
-              ? $_('cookbook_import_dialog_ui.scanned_hint_pages', { values: { provider: $aiProvider === 'claude' ? 'Claude' : 'Gemini', pages: preview.pages } })
-              : $_('cookbook_import_dialog_ui.scanned_hint', { values: { provider: $aiProvider === 'claude' ? 'Claude' : 'Gemini' } })}
-          </p>
-        {:else}
-          <p class="hint">
-            {preview.pages
-              ? $_('cookbook_import_dialog_ui.text_hint_pages', { values: { size: (preview.text.length / 1024).toFixed(1), pages: preview.pages } })
-              : $_('cookbook_import_dialog_ui.text_hint', { values: { size: (preview.text.length / 1024).toFixed(1) } })}
-          </p>
-        {/if}
+        <p class="hint">
+          {preview.pages
+            ? $_('cookbook_import_dialog_ui.text_hint_pages', { values: { size: (preview.text.length / 1024).toFixed(1), pages: preview.pages } })
+            : $_('cookbook_import_dialog_ui.text_hint', { values: { size: (preview.text.length / 1024).toFixed(1) } })}
+        </p>
         <footer class="actions">
           <button class="btn btn-secondary" on:click={close}>{$_('cookbook_import_dialog.cancel')}</button>
           <button class="btn btn-primary" on:click={extractRecipes}>
