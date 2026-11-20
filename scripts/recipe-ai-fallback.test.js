@@ -12,20 +12,20 @@ const picked = (cfg) => { if (!cfg) return cfg; const { source: _source, ...rest
 function before(user, env) {
   const { provider, apiKey, model, baseUrl } = user;
   if (provider && apiKey) return { provider, apiKey, model: model || '', baseUrl: baseUrl || '' };
-  if (env.AI_API_KEY) return { provider: env.AI_PROVIDER || 'claude', apiKey: env.AI_API_KEY, model: env.AI_MODEL || '', baseUrl: env.AI_BASE_URL || '' };
+  if (env.AI_API_KEY) return { provider: env.AI_PROVIDER || 'deepseek', apiKey: env.AI_API_KEY, model: env.AI_MODEL || '', baseUrl: env.AI_BASE_URL || '' };
   return null;
 }
 
 const users = [
   {},
-  { provider: 'claude', apiKey: 'sk-user' },
+  { provider: 'deepseek', apiKey: 'sk-user' },
   { provider: 'custom', apiKey: 'k', baseUrl: 'http://lan:11434', model: 'llama3' },
   { provider: 'custom', baseUrl: 'http://localhost:11434', model: 'llama3' },
   { provider: 'openai' },
 ];
 const envs = [
   {},
-  { AI_PROVIDER: 'claude', AI_API_KEY: 'sk-env', AI_MODEL: 'm' },
+  { AI_PROVIDER: 'deepseek', AI_API_KEY: 'sk-env', AI_MODEL: 'm' },
   { AI_PROVIDER: 'oai-compat', AI_API_KEY: 'k', AI_BASE_URL: 'http://gw:4000', AI_MODEL: 'm' },
   { AI_PROVIDER: 'oai-compat', AI_BASE_URL: 'http://ollama:11434', AI_MODEL: 'm' },
 ];
@@ -47,7 +47,9 @@ test('keyless OpenAI-compatible endpoints now count', () => {
     { provider: 'oai-compat', apiKey: '', model: 'm', baseUrl: 'http://ollama:11434', source: 'server' });
   assert.deepEqual(importAiConfig({ provider: 'custom', baseUrl: 'http://lan:11434', model: 'llama3' }, {}),
     { provider: 'custom', apiKey: '', model: 'llama3', baseUrl: 'http://lan:11434', source: 'user' });
-  assert.equal(importAiConfig({ provider: 'claude', apiKey: 'k' }, {}).source, 'user');
+  assert.equal(importAiConfig({ provider: 'deepseek', apiKey: 'k' }, {}).source, 'user');
+  assert.equal(importAiConfig({ provider: 'claude', apiKey: 'k' }, {}), null, 'removed providers are not accepted');
+  assert.equal(importAiConfig({}, { AI_PROVIDER: 'gemini', AI_API_KEY: 'k' }), null, 'removed server providers are not accepted');
   assert.equal(importAiConfig({ provider: 'openai' }, {}), null, 'a cloud provider still needs a key');
 });
 
