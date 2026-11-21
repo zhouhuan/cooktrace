@@ -15,6 +15,7 @@
   import { showError, showSuccess, showInfo } from '../stores/toast.js';
   import { pageBanners, bannerStyle, aiEnabled, aiKeyVerified, recipesSort, mixSharedIntoRecipes } from '../stores/settings.js';
   import ActionSheet from '../components/ui/ActionSheet.svelte';
+  import Sheet from '../components/ui/Sheet.svelte';
   import PlanCookDialog from '../components/diary/PlanCookDialog.svelte';
   import ImportFromFileDialog from '../components/recipe/ImportFromFileDialog.svelte';
   import CookbookImportDialog from '../components/recipe/CookbookImportDialog.svelte';
@@ -43,6 +44,9 @@
   }
 
   let createSheetOpen = false;
+  let filterSheetOpen = false;
+  $: activeRecipeFilterCount = (favoritesOnly ? 1 : 0) + (safeOnly ? 1 : 0) + (activeCategorySlug ? 1 : 0);
+  $: activeSharedFilterCount = sharedCategorySlug ? 1 : 0;
   // Measured page-header height: exposed as --header-h on page-shell so
   // sticky sub-bars can pin below it instead of sliding underneath.
   let headerH = 0;
@@ -939,6 +943,69 @@
     {/if}
   </header>
 
+  <Sheet bind:open={filterSheetOpen} title={viewMode === 'shared' ? $_('recipes_ui.filter_shared') : $_('recipes_ui.filter_recipes')} height="auto">
+    <div class="filter-sheet-content">
+      {#if viewMode === 'shared'}
+        {#if sharedCategories.length > 0}
+          <section class="filter-sheet-section">
+            <h4>{$_('recipes_ui.filter_shared')}</h4>
+            <div class="filter-sheet-chips" role="radiogroup" aria-label={$_('recipes_ui.filter_shared')}>
+              <button class="cat-chip" class:active={!sharedCategorySlug} on:click={() => sharedCategorySlug = ''} aria-pressed={!sharedCategorySlug}>{$_('recipes_ui.all')}</button>
+              {#each sharedCategories as c (c.slug)}
+                <button class="cat-chip" dir="auto" class:active={sharedCategorySlug === c.slug}
+                  style={c.color ? `--cat-color:${c.color}` : ''}
+                  on:click={() => sharedCategorySlug = sharedCategorySlug === c.slug ? '' : c.slug}
+                  aria-pressed={sharedCategorySlug === c.slug}>{c.name}</button>
+              {/each}
+            </div>
+          </section>
+        {/if}
+      {:else}
+        {#if categories.length > 0 || hasAvoids}
+          <section class="filter-sheet-section">
+            <h4>{$_('recipes_ui.filter_recipes')}</h4>
+            <div class="filter-sheet-chips">
+              <button class="cat-chip fav-chip" class:active={favoritesOnly} on:click={() => favoritesOnly = !favoritesOnly}
+                aria-pressed={favoritesOnly} title={$_('recipes_ui.show_only_favorites')}>
+                <span class="material-symbols-rounded">{favoritesOnly ? 'favorite' : 'favorite_border'}</span>{$_('recipes_ui.favorites')}
+              </button>
+              {#if hasAvoids}
+                <button class="cat-chip fav-chip" class:active={safeOnly} on:click={() => safeOnly = !safeOnly} aria-pressed={safeOnly}>
+                  <span class="material-symbols-rounded">shield</span>{$_('allergen_info.safe_for_everyone')}
+                </button>
+              {/if}
+              {#if categories.length > 0}
+                <button class="cat-chip" class:active={!activeCategorySlug} on:click={() => setCategoryFilter('')} aria-pressed={!activeCategorySlug}>{$_('recipes_ui.all')}</button>
+                {#each categories as c (c.id)}
+                  <button class="cat-chip" dir="auto" class:active={activeCategorySlug === c.slug}
+                    style={c.color ? `--cat-color:${c.color}` : ''}
+                    on:click={() => setCategoryFilter(activeCategorySlug === c.slug ? '' : c.slug)}
+                    aria-pressed={activeCategorySlug === c.slug}>{c.name}</button>
+                {/each}
+              {/if}
+            </div>
+          </section>
+        {/if}
+      {/if}
+      <section class="filter-sheet-section">
+        <h4>{$_('recipes_ui.sort_recipes')}</h4>
+        <select class="sort-select filter-sheet-sort" bind:value={$recipesSort} title={$_('recipes_ui.sort_recipes')}>
+          <option value="fav-alpha">★ + A→Z</option>
+          <option value="alpha">A → Z</option>
+          <option value="recent">{$_('recipes_page.sort_recent')}</option>
+          <option value="most">{$_('recipes_page.sort_most')}</option>
+          <option value="newest">{$_('recipes_page.sort_newest')}</option>
+        </select>
+      </section>
+      <div class="filter-sheet-footer">
+        <button class="btn btn-secondary" on:click={() => { favoritesOnly = false; safeOnly = false; setCategoryFilter(''); sharedCategorySlug = ''; $recipesSort = 'fav-alpha'; }}>
+          {$_('common.reset')}
+        </button>
+        <button class="btn btn-primary" on:click={() => filterSheetOpen = false}>{$_('common.done')}</button>
+      </div>
+    </div>
+  </Sheet>
+
   <PlanCookDialog bind:open={planOpen} recipe={planTarget} />
   <ActionSheet
     bind:open={createSheetOpen}
@@ -1333,58 +1400,12 @@
     <div class="sticky-controls">
       <div class="search-row">
         <span class="material-symbols-rounded search-icon">search</span>
-        <input
-          class="search" dir="auto"
-          type="search"
-          placeholder={$_('routes.recipes.search_placeholder')}
-          bind:value={query}
-        />
-      </div>
-      <div class="filter-row">
-        {#if categories.length > 0 || hasAvoids}
-          <div class="cat-filter" role="radiogroup" aria-label={$_('recipes_ui.filter_recipes')}>
-            <button class="cat-chip fav-chip"
-              class:active={favoritesOnly}
-              on:click={() => favoritesOnly = !favoritesOnly}
-              aria-pressed={favoritesOnly}
-              title={$_('recipes_ui.show_only_favorites')}>
-              <span class="material-symbols-rounded">{favoritesOnly ? 'favorite' : 'favorite_border'}</span>
-              {$_('recipes_ui.favorites')}
-            </button>
-            {#if hasAvoids}
-              <button class="cat-chip fav-chip"
-                class:active={safeOnly}
-                on:click={() => safeOnly = !safeOnly}
-                aria-pressed={safeOnly}>
-                <span class="material-symbols-rounded">shield</span>
-                {$_('allergen_info.safe_for_everyone')}
-              </button>
-            {/if}
-            {#if categories.length > 0}
-              <button class="cat-chip" dir="auto"
-                class:active={!activeCategorySlug}
-                on:click={() => setCategoryFilter('')}
-                aria-pressed={!activeCategorySlug}
-              >{$_('recipes_ui.all')}</button>
-              {#each categories as c (c.id)}
-                {@const isActive = activeCategorySlug === c.slug}
-                <button class="cat-chip" dir="auto"
-                  class:active={isActive}
-                  style={c.color ? `--cat-color:${c.color}` : ''}
-                  on:click={() => setCategoryFilter(c.slug)}
-                  aria-pressed={isActive}
-                >{c.name}</button>
-              {/each}
-            {/if}
-          </div>
-        {/if}
-        <select class="sort-select" bind:value={$recipesSort} title={$_('recipes_ui.sort_recipes')}>
-          <option value="fav-alpha">★ + A→Z</option>
-          <option value="alpha">A → Z</option>
-          <option value="recent">{$_('recipes_page.sort_recent')}</option>
-          <option value="most">{$_('recipes_page.sort_most')}</option>
-          <option value="newest">{$_('recipes_page.sort_newest')}</option>
-        </select>
+        <input class="search" dir="auto" type="search" placeholder={$_('routes.recipes.search_placeholder')} bind:value={query} />
+        <button class="filter-trigger" on:click={() => filterSheetOpen = true} aria-label={$_('recipes_ui.filter_recipes')}
+          aria-haspopup="dialog" aria-expanded={filterSheetOpen}>
+          <span class="material-symbols-rounded">tune</span><span>{$_('recipes_ui.filter_recipes')}</span>
+          {#if activeRecipeFilterCount > 0}<span class="filter-count">{activeRecipeFilterCount}</span>{/if}
+        </button>
       </div>
     </div><!-- /.sticky-controls -->
     {/if}
@@ -1427,39 +1448,12 @@
         <div class="sticky-controls">
           <div class="search-row">
             <span class="material-symbols-rounded search-icon">search</span>
-            <input
-              class="search" dir="auto"
-              type="search"
-              placeholder={$_('recipes_ui.search_shared')}
-              bind:value={query}
-            />
-          </div>
-          <div class="filter-row">
-            {#if sharedCategories.length > 0}
-              <div class="cat-filter" role="radiogroup" aria-label={$_('recipes_ui.filter_shared')}>
-                <button class="cat-chip" dir="auto"
-                  class:active={!sharedCategorySlug}
-                  on:click={() => sharedCategorySlug = ''}
-                  aria-pressed={!sharedCategorySlug}
-                >{$_('recipes_ui.all')}</button>
-                {#each sharedCategories as c (c.slug)}
-                  {@const isActive = sharedCategorySlug === c.slug}
-                  <button class="cat-chip" dir="auto"
-                    class:active={isActive}
-                    style={c.color ? `--cat-color:${c.color}` : ''}
-                    on:click={() => sharedCategorySlug = isActive ? '' : c.slug}
-                    aria-pressed={isActive}
-                  >{c.name}</button>
-                {/each}
-              </div>
-            {/if}
-            <select class="sort-select" bind:value={$recipesSort} title={$_('recipes_ui.sort_recipes')}>
-              <option value="fav-alpha">★ + A→Z</option>
-              <option value="alpha">A → Z</option>
-              <option value="recent">{$_('recipes_page.sort_recent')}</option>
-              <option value="most">{$_('recipes_page.sort_most')}</option>
-              <option value="newest">{$_('recipes_page.sort_newest')}</option>
-            </select>
+            <input class="search" dir="auto" type="search" placeholder={$_('recipes_ui.search_shared')} bind:value={query} />
+            <button class="filter-trigger" on:click={() => filterSheetOpen = true} aria-label={$_('recipes_ui.filter_shared')}
+              aria-haspopup="dialog" aria-expanded={filterSheetOpen}>
+              <span class="material-symbols-rounded">tune</span><span>{$_('recipes_ui.filter_shared')}</span>
+              {#if activeSharedFilterCount > 0}<span class="filter-count">{activeSharedFilterCount}</span>{/if}
+            </button>
           </div>
         </div>
 
@@ -1755,8 +1749,8 @@
        offset adapts to the banner-on / banner-off / hamburger variants. */
     top: var(--header-h, 0px);
     z-index: 5;
-    margin: 0 calc(-1 * var(--space-4)) 8px;
-    padding: 8px var(--space-4) 4px;
+    margin: 0 calc(-1 * var(--space-4)) 6px;
+    padding: 6px var(--space-4) 8px;
     background: color-mix(in srgb, var(--bg) 92%, transparent);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -1764,8 +1758,39 @@
   }
   .search-row {
     position: relative;
-    margin: 4px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    min-width: 0;
   }
+  .search-row .search { flex: 1 1 auto; min-width: 0; height: 40px; }
+  .filter-trigger {
+    flex: 0 0 auto;
+    min-height: 40px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 0 12px;
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    background: var(--surface-1); color: var(--text-2);
+    font: inherit; font-size: 13px; font-weight: 600;
+    white-space: nowrap; cursor: pointer;
+  }
+  .filter-trigger:hover, .filter-trigger[aria-expanded="true"] { color: var(--accent); border-color: var(--accent); }
+  .filter-trigger .material-symbols-rounded { font-size: 18px; }
+  .filter-count {
+    min-width: 18px; height: 18px; padding: 0 5px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 999px; background: var(--accent-dim); color: var(--accent);
+    font-size: 11px; font-weight: 700; line-height: 1;
+  }
+  .filter-sheet-content { display: flex; flex-direction: column; gap: 18px; padding-bottom: 8px; }
+  .filter-sheet-section { display: flex; flex-direction: column; gap: 10px; }
+  .filter-sheet-section h4 { margin: 0; font-size: 13px; font-weight: 700; color: var(--text-2); }
+  .filter-sheet-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter-sheet-chips .cat-chip { max-width: 100%; }
+  .filter-sheet-sort { align-self: stretch; width: 100%; border-radius: var(--radius-md); padding: 10px 12px; }
+  .filter-sheet-footer { display: flex; gap: 10px; justify-content: flex-end; padding-top: 12px; border-top: 1px solid var(--border); }
+  .filter-sheet-footer .btn { min-width: 96px; }
   .search-icon {
     position: absolute;
     left: 12px;
