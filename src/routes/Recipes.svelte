@@ -1783,6 +1783,12 @@
     border-radius: 999px; background: var(--accent-dim); color: var(--accent);
     font-size: 11px; font-weight: 700; line-height: 1;
   }
+  /* Preserve search space on very narrow phones: the icon and active
+     count remain visible while the localized text label is visually hidden. */
+  @media (max-width: 380px) {
+    .filter-trigger { min-width: 40px; padding-inline: 10px; gap: 0; }
+    .filter-trigger > span:not(.material-symbols-rounded):not(.filter-count) { display: none; }
+  }
   .filter-sheet-content { display: flex; flex-direction: column; gap: 18px; padding-bottom: 8px; }
   .filter-sheet-section { display: flex; flex-direction: column; gap: 10px; }
   .filter-sheet-section h4 { margin: 0; font-size: 13px; font-weight: 700; color: var(--text-2); }
