@@ -979,7 +979,7 @@
                 {#each categories as c (c.id)}
                   <button class="cat-chip" dir="auto" class:active={activeCategorySlug === c.slug}
                     style={c.color ? `--cat-color:${c.color}` : ''}
-                    on:click={() => setCategoryFilter(activeCategorySlug === c.slug ? '' : c.slug)}
+                    on:click={() => setCategoryFilter(c.slug)}
                     aria-pressed={activeCategorySlug === c.slug}>{c.name}</button>
                 {/each}
               {/if}
