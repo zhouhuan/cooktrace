@@ -46,3 +46,10 @@ test('diary segmented tabs keep their labels on one line at narrow widths', () =
   assert.match(diary, /\.seg\s*\{[\s\S]*?white-space: nowrap/);
   assert.match(diary, /\.view-chips\s*\{[\s\S]*?max-width: 100%/);
 });
+
+test('recipe search keeps a compact filter control on narrow phones', () => {
+  const recipes = read('../src/routes/Recipes.svelte');
+  assert.match(recipes, /\.search-row \.search \{ flex: 1 1 auto; min-width: 0/);
+  assert.match(recipes, /\.filter-trigger\s*\{[\s\S]*?white-space: nowrap/);
+  assert.match(recipes, /@media \(max-width: 380px\)[\s\S]*?\.filter-trigger > span:not\(\.material-symbols-rounded\):not\(\.filter-count\) \{ display: none; \}/);
+});
