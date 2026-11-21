@@ -1244,11 +1244,15 @@
   .view-chips {
     position: relative;
     display: flex;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
     gap: 0;
     background: var(--surface-1);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     padding: 3px;
+    box-sizing: border-box;
   }
   .seg-pill {
     position: absolute;
@@ -1270,11 +1274,14 @@
     color: var(--text-2);
     border: none;
     border-radius: var(--radius-sm);
-    padding: 6px 14px;
-    font-size: 13px;
+    padding: 6px clamp(6px, 2vw, 14px);
+    font-size: clamp(11px, 3.5vw, 13px);
     font-weight: 600;
     cursor: pointer;
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
+    line-height: 1.2;
     text-align: center;
     transition: color var(--dur-fast);
   }

@@ -110,8 +110,9 @@
         lastChecked = getLastChecked();
         if (!latest) error = $_('updates.check_failed');
       } else if (isAdmin) {
-        await doServerCheck({ force });
-        lastChecked = new Date();
+        const status = await doServerCheck({ force });
+        lastChecked = status ? new Date() : getLastChecked();
+        if (!status) error = $_('updates.check_failed');
       }
     } finally {
       checking = false;
@@ -121,7 +122,11 @@
   async function doServerCheck({ force = false } = {}) {
     try {
       serverInfo = await checkServerUpdate({ force });
-    } catch { serverInfo = null; }
+      return !!serverInfo;
+    } catch {
+      serverInfo = null;
+      return false;
+    }
   }
 
   function onChannelChange(next) {

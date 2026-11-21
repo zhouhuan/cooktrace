@@ -1099,7 +1099,7 @@
           </div>
 
           <!-- Time + servings + yield -->
-          <div class="field-row">
+          <div class="field-row time-fields">
             <label class="field flex">
               <span class="field-label">{$_('editor.prep_min')}</span>
               <input class="input num" type="number" min="0" bind:value={prepMinutes} />
@@ -1118,6 +1118,8 @@
                 placeholder={totalAutoCalc > 0 ? $_('recipe_editor_ui.auto_n', { values: { n: totalAutoCalc } }) : $_('recipe_editor_ui.auto')}
                 bind:value={totalMinutes} />
             </label>
+          </div>
+          <div class="field-row servings-row">
             <label class="field flex">
               <span class="field-label">{$_('recipe.servings')}</span>
               <input class="input num" type="number" min="1" bind:value={servings} />
@@ -1801,6 +1803,21 @@
   .field-hint { font-weight: 400; color: var(--text-3); font-size: 12px; }
   .field-row { display: flex; gap: 10px; }
   .field-row .flex { flex: 1; min-width: 0; }
+  .time-fields {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .time-fields .field-label {
+    white-space: nowrap;
+    font-size: 12px;
+    letter-spacing: -0.02em;
+  }
+  .time-fields .input { min-width: 0; padding-inline: 8px; }
+  .servings-row { max-width: 180px; }
+  @media (max-width: 640px) {
+    .time-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 10px; }
+  }
 
   .input {
     background: var(--surface-1);

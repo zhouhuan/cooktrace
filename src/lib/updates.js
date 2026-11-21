@@ -63,6 +63,24 @@ function _throttleMs() {
 export const updateAvailable = writable({ available: false, latest: null });
 
 const UA = `TraceApps-${APP_NAME}/${APP_VERSION}`;
+const UPDATE_FETCH_TIMEOUT_MS = 12000;
+
+/** Fetch with a bounded wait so a stalled connection cannot leave the
+ * update screen spinning indefinitely. */
+async function _fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), UPDATE_FETCH_TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } catch (error) {
+    if (controller.signal.aborted) {
+      throw new Error(`Update check timed out after ${UPDATE_FETCH_TIMEOUT_MS}ms`, { cause: error });
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 /**
  * Parse a semver-like tag into { base:[M,m,p], pre:[…] }.
@@ -243,8 +261,8 @@ async function _latestViaServer({ force = false } = {}) {
     version:     status.latest,
     name:        status.latest,
     notes:       status.notes || '',
-    notesUrl:    status.notesUrl || '',
-    publishedAt: status.publishedAt || '',
+    notesUrl:    status.notesUrl || status.notes_url || '',
+    publishedAt: status.publishedAt || status.published_at || '',
     apkAsset:    null,
   };
   try {
@@ -280,12 +298,13 @@ export async function checkForUpdate({ force = false } = {}) {
       // dev.9 even when dev.10 exists). Ignoring the `dev-latest`
       // floating tag itself (its tag_name is the string literal, not
       // a semver).
-      const listRes = await fetch(
+      const listRes = await _fetchWithTimeout(
         `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/releases?per_page=30`,
         { headers },
       );
       if (!listRes.ok) throw new Error(`GitHub API ${listRes.status}`);
       const list = await listRes.json();
+      if (!Array.isArray(list)) throw new Error('GitHub API returned an invalid releases list');
       // Accept both the legacy dotted format (v1.1.0-dev.14) and the
       // new no-dot format (v1.1.0-dev16). The switch was made mid-v1.1
       // for semver compliance (numeric identifiers can't have leading
@@ -301,12 +320,15 @@ export async function checkForUpdate({ force = false } = {}) {
       }
       data = devReleases[0];
     } else {
-      const res = await fetch(
+      const res = await _fetchWithTimeout(
         `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/releases/latest`,
         { headers },
       );
       if (!res.ok) throw new Error(`GitHub API ${res.status}`);
       data = await res.json();
+      if (!data || typeof data !== 'object' || Array.isArray(data) || typeof data.tag_name !== 'string') {
+        throw new Error('GitHub API returned an invalid release payload');
+      }
     }
     // The phone's build, never the watch one beside it: they share a package
     // id, so the wrong pick installs over this app.
@@ -635,11 +657,18 @@ export async function checkServerUpdate({ force = false } = {}) {
     const { apiUrl } = await import('./platform.js');
     const channel = (getChannel() === 'dev' || getChannel() === 'beta') ? 'dev' : 'stable';
     const qs = `?channel=${channel}${force ? '&force=1' : ''}`;
-    const res = await fetch(apiUrl(`/api/updates/server-status${qs}`), {
+    const res = await _fetchWithTimeout(apiUrl(`/api/updates/server-status${qs}`), {
       credentials: 'include',
     });
     if (res.status === 403) return null; // Non-admin — no banner.
-    if (!res.ok) return null;
-    return await res.json();
-  } catch { return null; }
+    if (!res.ok) throw new Error(`Update status API ${res.status}`);
+    const payload = await res.json();
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      throw new Error('Update status API returned an invalid response');
+    }
+    return payload;
+  } catch (error) {
+    console.warn('[updates] server status check failed:', error?.message || error);
+    return null;
+  }
 }

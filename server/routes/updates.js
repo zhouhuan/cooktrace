@@ -43,6 +43,22 @@ const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const GH_REPO_URL  = 'https://api.github.com/repos/zhouhuan/cooktrace';
 const DEV_TAG_RE   = /^v\d+\.\d+\.\d+-dev\.?\d+$/;
 const UA = `TraceApps-CookTrace-Server/${APP_VERSION}`;
+const UPDATE_FETCH_TIMEOUT_MS = 12000;
+
+async function _fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), UPDATE_FETCH_TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } catch (error) {
+    if (controller.signal.aborted) {
+      throw new Error(`GitHub update request timed out after ${UPDATE_FETCH_TIMEOUT_MS}ms`, { cause: error });
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 function _getCfg(key) {
   const row = db.prepare('SELECT value FROM app_config WHERE key = ?').get(key);
@@ -63,18 +79,22 @@ async function _fetchLatest(channel) {
     // in the default list, so picking `[0]` returns the wrong newest.
     // Skips the `dev-latest` floating tag whose tag_name is the string
     // literal (not a semver), which would defeat version-compare.
-    const res = await fetch(`${GH_REPO_URL}/releases?per_page=30`, { headers });
+    const res = await _fetchWithTimeout(`${GH_REPO_URL}/releases?per_page=30`, { headers });
     if (!res.ok) throw new Error(`GitHub API ${res.status}`);
     const list = await res.json();
+    if (!Array.isArray(list)) throw new Error('GitHub API returned an invalid releases list');
     const devReleases = list
       .filter(r => r.prerelease && DEV_TAG_RE.test(r.tag_name || ''))
       .sort((a, b) => _semverCompare(b.tag_name, a.tag_name));
     if (devReleases.length === 0) return { tag: '', notesUrl: '', notes: '', publishedAt: '' };
     data = devReleases[0];
   } else {
-    const res = await fetch(`${GH_REPO_URL}/releases/latest`, { headers });
+    const res = await _fetchWithTimeout(`${GH_REPO_URL}/releases/latest`, { headers });
     if (!res.ok) throw new Error(`GitHub API ${res.status}`);
     data = await res.json();
+    if (!data || typeof data !== 'object' || Array.isArray(data) || typeof data.tag_name !== 'string') {
+      throw new Error('GitHub API returned an invalid release payload');
+    }
   }
   return {
     tag:         data.tag_name    || '',
