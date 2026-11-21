@@ -999,7 +999,7 @@
       </section>
       <div class="filter-sheet-footer">
         <button class="btn btn-secondary" on:click={() => { favoritesOnly = false; safeOnly = false; setCategoryFilter(''); sharedCategorySlug = ''; $recipesSort = 'fav-alpha'; }}>
-          {$_('common.reset')}
+          {$_('common.clear')}
         </button>
         <button class="btn btn-primary" on:click={() => filterSheetOpen = false}>{$_('common.done')}</button>
       </div>
