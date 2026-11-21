@@ -31,7 +31,7 @@ const WHITELIST = new Set([
   'HTTP', 'HTTPS', 'URI', 'POST', 'VPN', 'SSO', 'TLS', 'README', 'YYYY', 'YYYY-MM-DD',
   'MB', 'KB', 'Esc', 'A', 'D', 'E', 'K', 'M', 'B1', 'B2', 'B3', 'B5', 'B6', 'B9', 'B12',
   'g', 'kg', 'mg', 'ug', 'ml', 'cl', 'dl', 'l', 'oz', 'lb', 'lbs', 'cup', 'cups',
-  'tsp', 'tbsp', 'pt', 'qt', 'gal', 'fl', 'kcal', 'kJ', 'C', 'F', 'cm', 'mm',
+  'tsp', 'tbsp', 'pt', 'qt', 'gal', 'fl', 'kcal', 'kJ', 'C', 'F', 'cm', 'mm', 'min',
   'km', 'in', 'pcs', 'pc',
 ]);
 

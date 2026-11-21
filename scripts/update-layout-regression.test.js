@@ -8,6 +8,7 @@ const server = read('../server/routes/updates.js');
 const editor = read('../src/routes/RecipeEditor.svelte');
 const diary = read('../src/routes/CookDiary.svelte');
 const zh = JSON.parse(read('../src/i18n/zh.json'));
+const zhCheck = read('../scripts/check-zh.js');
 
 test('update requests have a timeout and always clear their timer', () => {
   for (const source of [updates, server]) {
@@ -35,6 +36,7 @@ test('recipe time labels use min and remain single-line in responsive columns', 
   assert.equal(zh.editor.cook_min, '烹饪 min');
   assert.equal(zh.editor.rest_min, '静置 min');
   assert.equal(zh.editor.total_min, '总计 min');
+  assert.match(zhCheck, /'min'/, 'the requested Latin unit is explicitly allowed');
   assert.match(editor, /class="field-row time-fields"/);
   assert.match(editor, /\.time-fields \.field-label\s*\{\s*white-space: nowrap/);
   assert.match(editor, /@media \(max-width: 640px\)[\s\S]*?\.time-fields \{ grid-template-columns: repeat\(2/);
